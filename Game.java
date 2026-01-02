@@ -147,7 +147,9 @@ public class Game extends JPanel implements KeyListener {
         platforms = currentMap.getPlatforms();
         background = currentMap.getBackground();
         player1 = createPlayer(p1CharSelect, 100, 340, 1);
-        boss = createBoss(bossSelect);
+
+        int bossType = mapSelect == 0 ? 0 : mapSelect - 1;
+        boss = createBoss(bossType);
 
         bossTargets.clear();
         bossTargets.add(player1);
@@ -443,7 +445,7 @@ public class Game extends JPanel implements KeyListener {
             if (key == KeyEvent.VK_DOWN) mapSelect = (mapSelect + 1) % 6;
             if (key == KeyEvent.VK_ENTER) {
                 if (gameMode == 0) startPVP();
-                else state = SELECT_BOSS;
+                else startBoss();
             }
             if (key == KeyEvent.VK_ESCAPE) {
                 if (gameMode == 0) state = SELECT_P2;
