@@ -13,8 +13,42 @@ public class LightningBoss extends Boss {
         lightningStrikes = new ArrayList<>();
         // Very aggressive AI - suits fast lightning element
         setAIBehavior(new AggressiveAIBehavior(600, 350, 120));
+        loadSprites();
         initializeAttacks();
         initializeSpecialAttack();
+    }
+    
+    /**
+     * Load all Lightning Boss sprite animations (Crystal Mauler)
+     */
+    private void loadSprites() {
+        String basePath = "LightningBoss/animations/PNG/";
+        
+        // Load idle animation (8 frames)
+        animationManager.loadAnimation("idle", basePath + "idle/idle_", 8, 4);
+        
+        // Load run animation (8 frames)
+        animationManager.loadAnimation("run", basePath + "run/run_", 8, 2);
+        
+        // Load jump up animation (3 frames)
+        animationManager.loadAnimation("jump_up", basePath + "j_up/j_up_", 3, 2);
+        
+        // Load jump down animation (3 frames)
+        animationManager.loadAnimation("jump_down", basePath + "j_down/j_down_", 3, 2);
+        
+        // Load attack animations
+        animationManager.loadAnimation("attack1", basePath + "1_atk/1_atk_", 7, 2);
+        animationManager.loadAnimation("attack2", basePath + "2_atk/2_atk_", 6, 2);
+        animationManager.loadAnimation("attack3", basePath + "3_atk/3_atk_", 8, 2);
+        
+        // Load take hit animation (6 frames)
+        animationManager.loadAnimation("take_hit", basePath + "take_hit/take_hit_", 6, 3);
+        
+        // Load death animation (15 frames)
+        animationManager.loadAnimation("death", basePath + "death/death_", 15, 3);
+        
+        // Set default animation
+        animationManager.setAnimation("idle");
     }
 
     @Override

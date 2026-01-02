@@ -29,6 +29,10 @@ public abstract class Characters {
     protected BufferedImage sprite;
     protected Color characterColor;
     protected String name;
+    
+    // New: Professional animation system
+    protected AnimationManager animationManager;
+    protected String currentState; // Track character state for animations
 
     public Characters(int x, int y, int width, int height, int maxHealth) {
         this.x = x;
@@ -50,6 +54,10 @@ public abstract class Characters {
         
         // Initialize attack manager with proper OOP design
         this.attackManager = new AttackManager(this);
+        
+        // Initialize animation system
+        this.animationManager = new AnimationManager();
+        this.currentState = "idle";
     }
 
     protected abstract void initializeAttacks();
@@ -115,9 +123,35 @@ public abstract class Characters {
         // Use the new AttackManager for better encapsulation
         attackManager.updateAll();
         
+        // Update animations
+        updateAnimationState();
+        animationManager.update();
+        
         // Backwards compatibility
         if (rangedAttack != null) rangedAttack.update();
         if (meleeAttack != null) meleeAttack.update();
+    }
+    
+    /**
+     * Update animation state based on character actions
+     * Can be overridden by subclasses for custom behavior
+     */
+    protected void updateAnimationState() {
+        if (isDead()) {
+            currentState = "death";
+        } else if (!onGround) {
+            if (velocityY < 0) {
+                currentState = "jump_up";
+            } else {
+                currentState = "jump_down";
+            }
+        } else if (Math.abs(velocityX) > 0.1) {
+            currentState = "run";
+        } else {
+            currentState = "idle";
+        }
+        
+        animationManager.setAnimation(currentState);
     }
 
     public void draw(Graphics2D g) {
@@ -127,7 +161,14 @@ public abstract class Characters {
     }
 
     protected void drawCharacter(Graphics2D g) {
-        if (sprite != null) {
+        String animToUse = currentState;
+        if (!animationManager.hasAnimation(currentState)) {
+            animToUse = "idle";
+        }
+        if (animationManager.hasAnimation(animToUse)) {
+            animationManager.setAnimation(animToUse);
+            animationManager.draw(g, x, y, width, height, facingRight);
+        } else if (sprite != null) {
             if (facingRight) {
                 g.drawImage(sprite, x, y, width, height, null);
             } else {
@@ -136,7 +177,6 @@ public abstract class Characters {
         } else {
             g.setColor(characterColor);
             g.fillRect(x, y, width, height);
-
             g.setColor(Color.BLACK);
             int eyeY = y + height / 4;
             int eyeSize = Math.max(width / 5, 6);

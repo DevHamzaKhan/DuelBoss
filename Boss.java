@@ -22,7 +22,7 @@ public abstract class Boss extends Characters {
     protected double preferredDistance;
 
     public Boss(int x, int y, int maxHealth, double baseSpeed, String name, Color color) {
-        super(x, y, 80, 100, maxHealth);
+        super(x, y, 159, 192, maxHealth);
         this.name = name;
         this.characterColor = color;
         this.baseSpeed = baseSpeed;
@@ -159,6 +159,36 @@ public abstract class Boss extends Characters {
 
         if (specialAttack != null) {
             specialAttack.draw(g);
+        }
+    }
+    
+    @Override
+    protected void drawCharacter(Graphics2D g) {
+        String animToUse = currentState;
+        if (!animationManager.hasAnimation(currentState)) {
+            animToUse = "idle";
+        }
+        if (animationManager.hasAnimation(animToUse)) {
+            animationManager.setAnimation(animToUse);
+            // Boss sprites are 12/36 width and 60% height of frame (vs player 4/36 and 5/16)
+            animationManager.drawWithRatio(g, x, y, width, height, facingRight, 12.0/36.0, 0.6);
+        } else if (sprite != null) {
+            if (facingRight) {
+                g.drawImage(sprite, x, y, width, height, null);
+            } else {
+                g.drawImage(sprite, x + width, y, -width, height, null);
+            }
+        } else {
+            g.setColor(characterColor);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.BLACK);
+            int eyeY = y + height / 4;
+            int eyeSize = Math.max(width / 5, 6);
+            if (facingRight) {
+                g.fillOval(x + width - eyeSize - 5, eyeY, eyeSize, eyeSize);
+            } else {
+                g.fillOval(x + 5, eyeY, eyeSize, eyeSize);
+            }
         }
     }
 

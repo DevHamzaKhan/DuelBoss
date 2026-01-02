@@ -18,7 +18,7 @@ public class Game extends JPanel implements KeyListener {
     private int menuSelection = 0;
     private int gameMode = 0;
     private String[] menuOptions = {"Player vs Player", "Player vs Boss", "Tutorial", "Exit"};
-    private String[] characterOptions = {"Samurai", "Ninja", "Archer"};
+    private String[] characterOptions = {"Swordsman", "Brawler", "Archer"};
     private String[] mapOptions = {"Default", "Ice", "Fire", "Water", "Lightning", "Earth"};
     private String[] bossOptions = {"Ice Boss", "Fire Boss", "Water Boss", "Lightning Boss", "Earth Boss"};
 
@@ -127,8 +127,8 @@ public class Game extends JPanel implements KeyListener {
         currentMap = getMap(mapSelect);
         platforms = currentMap.getPlatforms();
         background = currentMap.getBackground();
-        player1 = createPlayer(p1CharSelect, 100, 300, 1);
-        player2 = createPlayer(p2CharSelect, 800, 300, 2);
+        player1 = createPlayer(p1CharSelect, 100, 340, 1);
+        player2 = createPlayer(p2CharSelect, 800, 340, 2);
 
         pvpTargets.clear();
         pvpTargets.add(player1);
@@ -146,7 +146,7 @@ public class Game extends JPanel implements KeyListener {
         currentMap = getMap(mapSelect);
         platforms = currentMap.getPlatforms();
         background = currentMap.getBackground();
-        player1 = createPlayer(p1CharSelect, 100, 300, 1);
+        player1 = createPlayer(p1CharSelect, 100, 340, 1);
         boss = createBoss(bossSelect);
 
         bossTargets.clear();
@@ -162,10 +162,10 @@ public class Game extends JPanel implements KeyListener {
 
     private Player createPlayer(int type, int x, int y, int num) {
         switch (type) {
-            case 0: return new Samurai(x, y, num);
-            case 1: return new Ninja(x, y, num);
+            case 0: return new Swordsman(x, y, num);
+            case 1: return new Brawler(x, y, num);
             case 2: return new Archer(x, y, num);
-            default: return new Samurai(x, y, num);
+            default: return new Swordsman(x, y, num);
         }
     }
 

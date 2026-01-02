@@ -17,7 +17,7 @@ public abstract class Player extends Characters {
 
     public Player(int x, int y, int playerNum, int maxHealth, double baseSpeed,
                   double jumpStrength, Color color) {
-        super(x, y, 40, 60, maxHealth);
+        super(x, y, 53, 80, maxHealth);
         this.playerNum = playerNum;
         this.baseSpeed = baseSpeed;
         this.jumpStrength = jumpStrength;

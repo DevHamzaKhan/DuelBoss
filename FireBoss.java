@@ -12,8 +12,34 @@ public class FireBoss extends Boss {
         super(x, y, 200, 5.0, "Fire Boss", new Color(255, 69, 0));
         // Use aggressive AI behavior - suits fire element
         setAIBehavior(new AggressiveAIBehavior(500, 300, 100));
+        loadSprites();
         initializeAttacks();
         initializeSpecialAttack();
+    }
+    
+    /**
+     * Load all Fire Boss sprite animations
+     */
+    private void loadSprites() {
+        String basePath = "FireBoss/individual sprites/";
+        
+        // Load idle animation (6 frames)
+        animationManager.loadAnimation("idle", basePath + "01_demon_idle/demon_idle_", 6, 4);
+        
+        // Load walk animation (12 frames)
+        animationManager.loadAnimation("run", basePath + "02_demon_walk/demon_walk_", 12, 3);
+        
+        // Load attack animation (15 frames)
+        animationManager.loadAnimation("attack1", basePath + "03_demon_cleave/demon_cleave_", 15, 2);
+        
+        // Load take hit animation (5 frames)
+        animationManager.loadAnimation("take_hit", basePath + "04_demon_take_hit/demon_take_hit_", 5, 3);
+        
+        // Load death animation (22 frames)
+        animationManager.loadAnimation("death", basePath + "05_demon_death/demon_death_", 22, 4);
+        
+        // Set default animation
+        animationManager.setAnimation("idle");
     }
 
     @Override
