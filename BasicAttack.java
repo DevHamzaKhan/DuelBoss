@@ -1,10 +1,19 @@
-/*
-Programmers: Hamza Khan & Alec Li
-Program Name: BasicAttack
-Program Date: 2025-12-31
-Program Description: Base class for basic attacks
-*/
+import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class BasicAttack extends Attack {
-}
+    protected int range;
+    protected int width;
+    protected int height;
 
+    public BasicAttack(int damage, int cooldown, int range) {
+        super(damage, cooldown);
+        this.range = range;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public abstract Rectangle getHitbox();
+}
