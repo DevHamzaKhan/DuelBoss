@@ -10,8 +10,8 @@ public class EarthBoss extends Boss {
 
     public EarthBoss(int x, int y) {
         super(x, y, 400, 2.0, "Earth Boss", new Color(139, 90, 43));
-        // Use defensive AI behavior - suits tanky earth element
-        setAIBehavior(new DefensiveAIBehavior(500, 350, 200, 250));
+        // Use aggressive AI behavior like other bosses
+        setAIBehavior(new AggressiveAIBehavior(500, 300, 100));
         loadSprites();
         initializeAttacks();
         initializeSpecialAttack();
@@ -34,6 +34,36 @@ public class EarthBoss extends Boss {
         
         // Set default animation
         animationManager.setAnimation("idle");
+    }
+
+    @Override
+    protected void drawCharacter(Graphics2D g) {
+        String animToUse = currentState;
+        if (!animationManager.hasAnimation(currentState)) {
+            animToUse = "idle";
+        }
+        if (animationManager.hasAnimation(animToUse)) {
+            animationManager.setAnimation(animToUse);
+            // Earth boss sprites are facing opposite direction, so invert facingRight
+            animationManager.drawWithRatio(g, x, y, width, height, !facingRight, 12.0/36.0, 0.6);
+        } else if (sprite != null) {
+            if (!facingRight) {
+                g.drawImage(sprite, x, y, width, height, null);
+            } else {
+                g.drawImage(sprite, x + width, y, -width, height, null);
+            }
+        } else {
+            g.setColor(characterColor);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.BLACK);
+            int eyeY = y + height / 4;
+            int eyeSize = Math.max(width / 5, 6);
+            if (!facingRight) {
+                g.fillOval(x + width - eyeSize - 5, eyeY, eyeSize, eyeSize);
+            } else {
+                g.fillOval(x + 5, eyeY, eyeSize, eyeSize);
+            }
+        }
     }
 
     @Override

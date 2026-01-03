@@ -263,14 +263,14 @@ public abstract class Characters {
 
     public void moveLeft(double speedMod) {
         if (!stunned) {
-            velocityX = -baseSpeed * speedMod;
+            velocityX = -baseSpeed;
             facingRight = false;
         }
     }
 
     public void moveRight(double speedMod) {
         if (!stunned) {
-            velocityX = baseSpeed * speedMod;
+            velocityX = baseSpeed;
             facingRight = true;
         }
     }

@@ -60,13 +60,15 @@ public abstract class Boss extends Characters {
     }
 
     public void updateAI(Platform[] platforms, double gravityMod, double speedMod) {
-        super.update(platforms, gravityMod, speedMod);
-
-        if (stunned || target == null) return;
+        if (stunned || target == null) {
+            super.update(platforms, gravityMod, speedMod);
+            return;
+        }
 
         updateSpecialAttack();
         
         // Use the new AI Behavior Strategy pattern for professional OOP design
+        // IMPORTANT: Set velocities BEFORE applying physics
         if (aiBehavior != null) {
             aiBehavior.update(this, target, targetList, platforms, speedMod);
         } else {
@@ -74,6 +76,9 @@ public abstract class Boss extends Characters {
             updateMovement(speedMod);
             updateCombat();
         }
+        
+        // Apply physics and movement AFTER AI decisions
+        super.update(platforms, gravityMod, speedMod);
     }
 
     protected void updateSpecialAttack() {

@@ -40,18 +40,18 @@ public class DefensiveAIBehavior implements AIBehavior {
         
         // Maintain optimal distance
         if (distance < minDistance) {
-            // Too close, back away
+            // Too close, back away (move in SAME direction as distX to increase distance)
             if (distX > 0) {
-                boss.moveLeft(speedMod);
+                boss.moveRight(speedMod);  // Target is right, move right to back away
             } else {
-                boss.moveRight(speedMod);
+                boss.moveLeft(speedMod);   // Target is left, move left to back away
             }
         } else if (distance > maxDistance) {
-            // Too far, move closer
+            // Too far, move closer (move in OPPOSITE direction to decrease distance)
             if (distX > 0) {
-                boss.moveRight(speedMod);
+                boss.moveRight(speedMod);  // Target is right, move right to get closer
             } else {
-                boss.moveLeft(speedMod);
+                boss.moveLeft(speedMod);   // Target is left, move left to get closer
             }
         } else {
             // Good distance, stop and face target

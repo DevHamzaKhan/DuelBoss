@@ -127,8 +127,8 @@ public class Game extends JPanel implements KeyListener {
         currentMap = getMap(mapSelect);
         platforms = currentMap.getPlatforms();
         background = currentMap.getBackground();
-        player1 = createPlayer(p1CharSelect, 100, 340, 1);
-        player2 = createPlayer(p2CharSelect, 800, 340, 2);
+        player1 = createPlayer(p1CharSelect, 100, 100, 1);
+        player2 = createPlayer(p2CharSelect, 600, 100, 2);
 
         pvpTargets.clear();
         pvpTargets.add(player1);
@@ -146,7 +146,7 @@ public class Game extends JPanel implements KeyListener {
         currentMap = getMap(mapSelect);
         platforms = currentMap.getPlatforms();
         background = currentMap.getBackground();
-        player1 = createPlayer(p1CharSelect, 100, 340, 1);
+        player1 = createPlayer(p1CharSelect, 100, 100, 1);
 
         int bossType = mapSelect == 0 ? 0 : mapSelect - 1;
         boss = createBoss(bossType);
@@ -173,12 +173,12 @@ public class Game extends JPanel implements KeyListener {
 
     private Boss createBoss(int type) {
         switch (type) {
-            case 0: return new IceBoss(800, 250);
-            case 1: return new FireBoss(800, 250);
-            case 2: return new WaterBoss(800, 250);
-            case 3: return new LightningBoss(800, 250);
-            case 4: return new EarthBoss(800, 200);
-            default: return new IceBoss(800, 250);
+            case 0: return new IceBoss(600, 100);
+            case 1: return new FireBoss(600, 100);
+            case 2: return new WaterBoss(600, 100);
+            case 3: return new LightningBoss(600, 100);
+            case 4: return new EarthBoss(600, 100);
+            default: return new IceBoss(600, 100);
         }
     }
 
