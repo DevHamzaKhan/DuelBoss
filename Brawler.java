@@ -32,4 +32,34 @@ public class Brawler extends Player {
         rangedAttack = ranged;
         meleeAttack = melee;
     }
+
+    @Override
+    protected void drawCharacter(Graphics2D g) {
+        String animToUse = currentState;
+        if (!animationManager.hasAnimation(currentState)) {
+            animToUse = "idle";
+        }
+        if (animationManager.hasAnimation(animToUse)) {
+            animationManager.setAnimation(animToUse);
+            // Brawler sprites are positioned higher in frame (not at bottom)
+            animationManager.drawWithRatio(g, x, y, width, height, facingRight, 4.0 / 36.0, 5.0 / 16.0, 0.95);
+        } else if (sprite != null) {
+            if (facingRight) {
+                g.drawImage(sprite, x, y, width, height, null);
+            } else {
+                g.drawImage(sprite, x + width, y, -width, height, null);
+            }
+        } else {
+            g.setColor(characterColor);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.BLACK);
+            int eyeY = y + height / 4;
+            int eyeSize = Math.max(width / 5, 6);
+            if (facingRight) {
+                g.fillOval(x + width - eyeSize - 5, eyeY, eyeSize, eyeSize);
+            } else {
+                g.fillOval(x + 5, eyeY, eyeSize, eyeSize);
+            }
+        }
+    }
 }

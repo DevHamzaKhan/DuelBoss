@@ -16,28 +16,28 @@ public class IceBoss extends Boss {
         initializeAttacks();
         initializeSpecialAttack();
     }
-    
+
     /**
      * Load all Ice Boss sprite animations (Frost Guardian)
      */
     private void loadSprites() {
         String basePath = "IceBoss/PNG files/";
-        
+
         // Load idle animation (6 frames)
         animationManager.loadAnimation("idle", basePath + "idle/idle_", 6, 4);
-        
+
         // Load walk animation (10 frames)
         animationManager.loadAnimation("run", basePath + "walk/walk_", 10, 3);
-        
+
         // Load attack animation (14 frames)
         animationManager.loadAnimation("attack1", basePath + "1_atk/1_atk_", 14, 2);
-        
+
         // Load take hit animation (7 frames)
         animationManager.loadAnimation("take_hit", basePath + "take_hit/take_hit_", 7, 3);
-        
+
         // Load death animation (16 frames)
         animationManager.loadAnimation("death", basePath + "death/death_", 16, 3);
-        
+
         // Set default animation
         animationManager.setAnimation("idle");
     }
@@ -49,7 +49,7 @@ public class IceBoss extends Boss {
 
         MeleeAttack melee = new MeleeAttack(18, 50, 60, 20, new Color(173, 216, 230));
         attackManager.setPrimaryMelee(melee);
-        
+
         // Keep backwards compatibility
         rangedAttack = iceRanged;
         meleeAttack = melee;
@@ -60,6 +60,36 @@ public class IceBoss extends Boss {
         specialAttack = new GlobalAttack(0, 300, 180, GlobalAttack.EFFECT_STUN, Color.CYAN);
         attackManager.setSpecialAttack(specialAttack);
         specialCooldown = 300;
+    }
+
+    @Override
+    protected void drawCharacter(Graphics2D g) {
+        String animToUse = currentState;
+        if (!animationManager.hasAnimation(currentState)) {
+            animToUse = "idle";
+        }
+        if (animationManager.hasAnimation(animToUse)) {
+            animationManager.setAnimation(animToUse);
+            // Ice boss sprites are positioned higher in frame (not at bottom)
+            animationManager.drawWithRatio(g, x, y, width, height, facingRight, 12.0 / 36.0, 0.6, 0.6);
+        } else if (sprite != null) {
+            if (facingRight) {
+                g.drawImage(sprite, x, y, width, height, null);
+            } else {
+                g.drawImage(sprite, x + width, y, -width, height, null);
+            }
+        } else {
+            g.setColor(characterColor);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.BLACK);
+            int eyeY = y + height / 4;
+            int eyeSize = Math.max(width / 5, 6);
+            if (facingRight) {
+                g.fillOval(x + width - eyeSize - 5, eyeY, eyeSize, eyeSize);
+            } else {
+                g.fillOval(x + 5, eyeY, eyeSize, eyeSize);
+            }
+        }
     }
 
     /**

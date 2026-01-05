@@ -3,7 +3,8 @@ import java.util.ArrayList;
 
 /**
  * EarthBoss - Defensive tank with earthquake area attack
- * Demonstrates proper OOP: uses DefensiveAIBehavior, composition, and custom attacks
+ * Demonstrates proper OOP: uses DefensiveAIBehavior, composition, and custom
+ * attacks
  */
 public class EarthBoss extends Boss {
     private AreaAttack earthquake;
@@ -16,22 +17,22 @@ public class EarthBoss extends Boss {
         initializeAttacks();
         initializeSpecialAttack();
     }
-    
+
     /**
      * Load all Earth Boss sprite animations (Minotaur)
      */
     private void loadSprites() {
         String basePath = "EarthBoss/animations/";
-        
+
         // Load idle animation (16 frames)
         animationManager.loadAnimation("idle", basePath + "idle/idle_", 16, 4);
-        
+
         // Load walk animation (12 frames)
         animationManager.loadAnimation("run", basePath + "walk/walk_", 12, 3);
-        
+
         // Load attack animation (16 frames)
         animationManager.loadAnimation("attack1", basePath + "atk_1/atk_1_", 16, 2);
-        
+
         // Set default animation
         animationManager.setAnimation("idle");
     }
@@ -45,7 +46,7 @@ public class EarthBoss extends Boss {
         if (animationManager.hasAnimation(animToUse)) {
             animationManager.setAnimation(animToUse);
             // Earth boss sprites are facing opposite direction, so invert facingRight
-            animationManager.drawWithRatio(g, x, y, width, height, !facingRight, 12.0/36.0, 0.6);
+            animationManager.drawWithRatio(g, x, y, width, height, !facingRight, 12.0 / 36.0, 0.6, 0.75);
         } else if (sprite != null) {
             if (!facingRight) {
                 g.drawImage(sprite, x, y, width, height, null);
@@ -72,7 +73,8 @@ public class EarthBoss extends Boss {
         ProjectileAttack ranged = new ProjectileAttack(25, 90, 5.0, new Color(139, 90, 43)) {
             @Override
             public void execute(ArrayList<Characters> targets) {
-                if (!canUse() || owner == null) return;
+                if (!canUse() || owner == null)
+                    return;
 
                 int projX = owner.isFacingRight() ? owner.getX() + owner.getWidth() : owner.getX() - 20;
                 int projY = owner.getY() + owner.getHeight() / 2;
@@ -85,7 +87,7 @@ public class EarthBoss extends Boss {
 
         MeleeAttack melee = new MeleeAttack(35, 60, 70, 25, new Color(101, 67, 33));
         attackManager.setPrimaryMelee(melee);
-        
+
         // Keep backwards compatibility
         rangedAttack = ranged;
         meleeAttack = melee;

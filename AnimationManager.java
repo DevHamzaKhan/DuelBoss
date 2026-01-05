@@ -123,6 +123,17 @@ public class AnimationManager {
      */
     public void drawWithRatio(Graphics2D g, int x, int y, int width, int height, boolean facingRight,
                               double spriteWidthRatio, double spriteHeightRatio) {
+        drawWithRatio(g, x, y, width, height, facingRight, spriteWidthRatio, spriteHeightRatio, 1.0);
+    }
+
+    /**
+     * Draw current frame with custom sprite ratios and vertical anchor
+     * @param spriteWidthRatio The ratio of actual sprite width to frame width
+     * @param spriteHeightRatio The ratio of actual sprite height to frame height
+     * @param verticalAnchor Vertical position of sprite in frame (0.0=top, 0.5=center, 1.0=bottom)
+     */
+    public void drawWithRatio(Graphics2D g, int x, int y, int width, int height, boolean facingRight,
+                              double spriteWidthRatio, double spriteHeightRatio, double verticalAnchor) {
         this.facingRight = facingRight;
         Animation anim = animations.get(currentAnimation);
         if (anim != null) {
@@ -130,19 +141,19 @@ public class AnimationManager {
             if (frame != null) {
                 int frameWidth = frame.getWidth();
                 int frameHeight = frame.getHeight();
-                
+
                 // Calculate how much to scale the frame to make sprite match hitbox
                 double scaleX = width / (frameWidth * spriteWidthRatio);
                 double scaleY = height / (frameHeight * spriteHeightRatio);
-                
+
                 int scaledFrameWidth = (int)(frameWidth * scaleX);
                 int scaledFrameHeight = (int)(frameHeight * scaleY);
-                
-                // Sprite is centered horizontally in frame, at bottom vertically
-                // Offset to align sprite with hitbox position
+
+                // Sprite is centered horizontally in frame
+                // Vertical position depends on verticalAnchor (1.0=bottom, 0.5=center, 0.0=top)
                 int offsetX = (scaledFrameWidth - width) / 2;
-                int offsetY = scaledFrameHeight - height;
-                
+                int offsetY = (int)(scaledFrameHeight - height - (scaledFrameHeight - height) * (1.0 - verticalAnchor));
+
                 if (facingRight) {
                     g.drawImage(frame, x - offsetX, y - offsetY, scaledFrameWidth, scaledFrameHeight, null);
                 } else {

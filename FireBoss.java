@@ -43,6 +43,36 @@ public class FireBoss extends Boss {
     }
 
     @Override
+    protected void drawCharacter(Graphics2D g) {
+        String animToUse = currentState;
+        if (!animationManager.hasAnimation(currentState)) {
+            animToUse = "idle";
+        }
+        if (animationManager.hasAnimation(animToUse)) {
+            animationManager.setAnimation(animToUse);
+            // Fire boss sprites are facing opposite direction, so invert facingRight
+            animationManager.drawWithRatio(g, x, y, width, height, !facingRight, 12.0/36.0, 0.6);
+        } else if (sprite != null) {
+            if (!facingRight) {
+                g.drawImage(sprite, x, y, width, height, null);
+            } else {
+                g.drawImage(sprite, x + width, y, -width, height, null);
+            }
+        } else {
+            g.setColor(characterColor);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.BLACK);
+            int eyeY = y + height / 4;
+            int eyeSize = Math.max(width / 5, 6);
+            if (!facingRight) {
+                g.fillOval(x + width - eyeSize - 5, eyeY, eyeSize, eyeSize);
+            } else {
+                g.fillOval(x + 5, eyeY, eyeSize, eyeSize);
+            }
+        }
+    }
+
+    @Override
     protected void initializeAttacks() {
         // Use the new AttackManager for professional OOP design
         ProjectileAttack ranged = new ProjectileAttack(15, 50, 7.0, Color.ORANGE);
@@ -53,7 +83,7 @@ public class FireBoss extends Boss {
 
         homingAttack = new ProjectileAttack(20, 200, 10.0, Color.RED);
         attackManager.registerAttack("homing", homingAttack);
-        
+
         // Keep backwards compatibility
         rangedAttack = ranged;
         meleeAttack = melee;
