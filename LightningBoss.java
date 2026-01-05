@@ -9,7 +9,7 @@ public class LightningBoss extends Boss {
     private ArrayList<TargetedStrikeAttack> lightningStrikes;
 
     public LightningBoss(int x, int y) {
-        super(x, y, 150, 7.0, "Lightning Boss", new Color(255, 255, 0));
+        super(x, y, 80, 96, 150, 7.0, "Lightning Boss", new Color(255, 255, 0));
         lightningStrikes = new ArrayList<>();
         // Very aggressive AI - suits fast lightning element
         setAIBehavior(new AggressiveAIBehavior(600, 350, 120));

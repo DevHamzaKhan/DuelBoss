@@ -22,7 +22,11 @@ public abstract class Boss extends Characters {
     protected double preferredDistance;
 
     public Boss(int x, int y, int maxHealth, double baseSpeed, String name, Color color) {
-        super(x, y, 159, 192, maxHealth);
+        this(x, y, 159, 192, maxHealth, baseSpeed, name, color);
+    }
+
+    public Boss(int x, int y, int width, int height, int maxHealth, double baseSpeed, String name, Color color) {
+        super(x, y, width, height, maxHealth);
         this.name = name;
         this.characterColor = color;
         this.baseSpeed = baseSpeed;
@@ -36,7 +40,7 @@ public abstract class Boss extends Characters {
         this.aggroRange = 500;
         this.attackRange = 300;
         this.preferredDistance = 150;
-        
+
         // Default to aggressive AI behavior
         this.aiBehavior = new AggressiveAIBehavior();
     }

@@ -10,7 +10,7 @@ public class WaterBoss extends Boss {
     private WaterProjectileAttack waterRanged;
 
     public WaterBoss(int x, int y) {
-        super(x, y, 200, 5.5, "Water Boss", new Color(0, 105, 148));
+        super(x, y, 80, 96, 200, 5.5, "Water Boss", new Color(0, 105, 148));
         // Use defensive AI - water boss prefers zoning
         setAIBehavior(new DefensiveAIBehavior(500, 350, 180, 230));
         loadSprites();
