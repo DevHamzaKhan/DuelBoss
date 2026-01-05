@@ -95,6 +95,19 @@ public class AnimationManager {
             }
         }
     }
+
+    /**
+     * Set the current animation and force reset even if it's already playing
+     */
+    public void setAnimationForced(String name) {
+        if (animations.containsKey(name)) {
+            currentAnimation = name;
+            Animation anim = animations.get(name);
+            if (anim != null) {
+                anim.reset();
+            }
+        }
+    }
     
     /**
      * Update animation (advance frame if needed)
@@ -170,6 +183,39 @@ public class AnimationManager {
     public String getCurrentAnimation() {
         return currentAnimation;
     }
+
+    /**
+     * Get the current frame number of the active animation (0-indexed)
+     */
+    public int getCurrentFrameNumber() {
+        Animation anim = animations.get(currentAnimation);
+        if (anim != null) {
+            return anim.getCurrentFrameNumber();
+        }
+        return 0;
+    }
+
+    /**
+     * Get total number of frames in current animation
+     */
+    public int getTotalFrames() {
+        Animation anim = animations.get(currentAnimation);
+        if (anim != null) {
+            return anim.getTotalFrames();
+        }
+        return 0;
+    }
+
+    /**
+     * Check if animation has completed a full cycle
+     */
+    public boolean isAnimationComplete() {
+        Animation anim = animations.get(currentAnimation);
+        if (anim != null) {
+            return anim.isComplete();
+        }
+        return false;
+    }
     
     /**
      * Check if animation exists and has frames loaded
@@ -187,36 +233,57 @@ public class AnimationManager {
         private int currentFrame;
         private int frameDelay;
         private int frameCounter;
-        
+        private boolean complete;
+
         public Animation(int frameDelay) {
             this.frames = new ArrayList<>();
             this.currentFrame = 0;
             this.frameDelay = frameDelay;
             this.frameCounter = 0;
+            this.complete = false;
         }
-        
+
         public void addFrame(BufferedImage frame) {
             frames.add(frame);
         }
-        
+
         public void update() {
             if (frames.isEmpty()) return;
-            
+
             frameCounter++;
             if (frameCounter >= frameDelay) {
                 frameCounter = 0;
+                int previousFrame = currentFrame;
                 currentFrame = (currentFrame + 1) % frames.size();
+
+                // Mark as complete when animation loops back to frame 0
+                if (previousFrame == frames.size() - 1 && currentFrame == 0) {
+                    complete = true;
+                }
             }
         }
-        
+
         public BufferedImage getCurrentFrame() {
             if (frames.isEmpty()) return null;
             return frames.get(currentFrame);
         }
-        
+
+        public int getCurrentFrameNumber() {
+            return currentFrame;
+        }
+
+        public int getTotalFrames() {
+            return frames.size();
+        }
+
+        public boolean isComplete() {
+            return complete;
+        }
+
         public void reset() {
             currentFrame = 0;
             frameCounter = 0;
+            complete = false;
         }
 
         public boolean hasFrames() {

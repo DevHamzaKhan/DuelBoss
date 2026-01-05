@@ -2,17 +2,24 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * EarthBoss - Defensive tank with earthquake area attack
+ * EarthBoss - Defensive tank with powerful melee area attacks
  * Demonstrates proper OOP: uses DefensiveAIBehavior, composition, and custom
  * attacks
  */
 public class EarthBoss extends Boss {
-    private AreaAttack earthquake;
+    private boolean isAttacking;
+    private boolean hasDealtDamageFrame1; // Track if damage dealt on frame 5
+    private boolean hasDealtDamageFrame2; // Track if damage dealt on frame 11
+    private ArrayList<Characters> attackTargets;
 
     public EarthBoss(int x, int y) {
         super(x, y, 400, 2.0, "Earth Boss", new Color(139, 90, 43));
-        // Use aggressive AI behavior like other bosses
-        setAIBehavior(new AggressiveAIBehavior(500, 300, 100));
+        // Use custom AI behavior that attacks when target is within 200-pixel area attack radius
+        setAIBehavior(new EarthBossAIBehavior());
+        this.isAttacking = false;
+        this.hasDealtDamageFrame1 = false;
+        this.hasDealtDamageFrame2 = false;
+        this.attackTargets = new ArrayList<>();
         loadSprites();
         initializeAttacks();
         initializeSpecialAttack();
@@ -85,7 +92,9 @@ public class EarthBoss extends Boss {
         };
         attackManager.setPrimaryRanged(ranged);
 
-        MeleeAttack melee = new MeleeAttack(35, 60, 70, 25, new Color(101, 67, 33));
+        // Large area melee attack (replaces earthquake special attack)
+        // 200 radius circular area damage (same as old earthquake)
+        MeleeAttack melee = new MeleeAttack(30, 60, 200, 25, new Color(101, 67, 33));
         attackManager.setPrimaryMelee(melee);
 
         // Keep backwards compatibility
@@ -95,34 +104,113 @@ public class EarthBoss extends Boss {
 
     @Override
     protected void initializeSpecialAttack() {
-        earthquake = new AreaAttack(30, 350, 200, 40, new Color(139, 90, 43));
-        attackManager.registerAttack("earthquake", earthquake);
-        specialCooldown = 350;
+        // No special attack - Earth Boss relies on powerful melee attacks
+        specialCooldown = 0;
     }
 
     @Override
     protected void executeSpecialAttack() {
-        if (earthquake.canUse()) {
-            earthquake.execute(targetList);
-            for (Characters t : targetList) {
-                t.stun(60);
-            }
+        // Perform melee attack instead of special attack
+        if (meleeAttack != null && meleeAttack.canUse() && !stunned && !isAttacking) {
+            performMeleeAttack(targetList);
         }
     }
 
     @Override
     protected void updateSpecialAttack() {
+        // Use melee attack as special attack with longer cooldown
         specialTimer--;
         if (specialTimer <= 0) {
             executeSpecialAttack();
-            specialTimer = specialCooldown;
+            specialTimer = 120; // Cooldown between special melee attacks
         }
-        earthquake.update();
     }
 
     @Override
-    public void draw(Graphics2D g) {
-        super.draw(g);
-        earthquake.draw(g);
+    public void performMeleeAttack(ArrayList<Characters> targets) {
+        if (meleeAttack != null && meleeAttack.canUse() && !stunned && !isAttacking) {
+            // Start attack animation instead of dealing damage immediately
+            isAttacking = true;
+            hasDealtDamageFrame1 = false;
+            hasDealtDamageFrame2 = false;
+            attackTargets.clear();
+            attackTargets.addAll(targets);
+            meleeAttack.startCooldown(); // Start cooldown when attack begins
+            animationManager.setAnimationForced("attack1"); // Force reset to restart animation
+        }
+    }
+
+    @Override
+    protected void updateAnimationState() {
+        if (isAttacking) {
+            // Keep attack animation playing
+            currentState = "attack1";
+            animationManager.setAnimation(currentState);
+
+            // Get current frame (0-indexed, so frame 5 is index 4, frame 11 is index 10)
+            int currentFrame = animationManager.getCurrentFrameNumber();
+
+            // Deal damage on frame 5 (index 4)
+            if (currentFrame == 4 && !hasDealtDamageFrame1) {
+                dealMeleeDamage();
+                hasDealtDamageFrame1 = true;
+            }
+
+            // Deal damage on frame 11 (index 10)
+            if (currentFrame == 10 && !hasDealtDamageFrame2) {
+                dealMeleeDamage();
+                hasDealtDamageFrame2 = true;
+            }
+
+            // Check if animation is complete
+            if (animationManager.isAnimationComplete()) {
+                isAttacking = false;
+                hasDealtDamageFrame1 = false;
+                hasDealtDamageFrame2 = false;
+                attackTargets.clear();
+            }
+        } else {
+            // Default animation state logic
+            super.updateAnimationState();
+        }
+    }
+
+    /**
+     * Deal melee damage to all targets in range
+     * Circular area attack identical to the old earthquake
+     */
+    private void dealMeleeDamage() {
+        if (meleeAttack == null || attackTargets.isEmpty()) return;
+
+        // Calculate center of boss
+        int centerX = x + width / 2;
+        int centerY = y + height / 2;
+        int radius = 200; // Same radius as old earthquake
+
+        // Deal damage to all targets within circular radius
+        for (Characters target : attackTargets) {
+            if (target != this) {
+                // Calculate center of target
+                int tx = target.getX() + target.getWidth() / 2;
+                int ty = target.getY() + target.getHeight() / 2;
+
+                // Calculate distance from boss center to target center
+                double dist = Math.sqrt(Math.pow(tx - centerX, 2) + Math.pow(ty - centerY, 2));
+
+                // Deal damage if within radius
+                if (dist <= radius) {
+                    target.takeDamage(meleeAttack.getDamage());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void reset(int newX, int newY) {
+        super.reset(newX, newY);
+        isAttacking = false;
+        hasDealtDamageFrame1 = false;
+        hasDealtDamageFrame2 = false;
+        attackTargets.clear();
     }
 }

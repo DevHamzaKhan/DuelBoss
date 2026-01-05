@@ -2,16 +2,22 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * IceBoss - Balanced boss with freezing/stunning attacks
+ * IceBoss - Balanced boss with freezing/stunning area attacks
  * Demonstrates proper OOP: custom attack subclass with special behavior
  */
 public class IceBoss extends Boss {
     private IceProjectileAttack iceRanged;
+    private boolean isAttacking;
+    private boolean hasDealtDamage; // Track if damage dealt on frame 7
+    private ArrayList<Characters> attackTargets;
 
     public IceBoss(int x, int y) {
         super(x, y, 200, 4.0, "Ice Boss", new Color(135, 206, 250));
-        // Use aggressive AI - ice boss is moderately aggressive
-        setAIBehavior(new AggressiveAIBehavior(500, 300, 150));
+        // Use custom AI behavior that attacks when target is within 200-pixel area attack radius
+        setAIBehavior(new IceBossAIBehavior());
+        this.isAttacking = false;
+        this.hasDealtDamage = false;
+        this.attackTargets = new ArrayList<>();
         loadSprites();
         initializeAttacks();
         initializeSpecialAttack();
@@ -47,7 +53,9 @@ public class IceBoss extends Boss {
         iceRanged = new IceProjectileAttack(12, 60, 8.0, Color.CYAN);
         attackManager.setPrimaryRanged(iceRanged);
 
-        MeleeAttack melee = new MeleeAttack(18, 50, 60, 20, new Color(173, 216, 230));
+        // Large area melee attack with freezing effect
+        // 200 radius circular area damage (same as Earth Boss)
+        MeleeAttack melee = new MeleeAttack(25, 60, 200, 20, new Color(173, 216, 230));
         attackManager.setPrimaryMelee(melee);
 
         // Keep backwards compatibility
@@ -57,9 +65,26 @@ public class IceBoss extends Boss {
 
     @Override
     protected void initializeSpecialAttack() {
-        specialAttack = new GlobalAttack(0, 300, 180, GlobalAttack.EFFECT_STUN, Color.CYAN);
-        attackManager.setSpecialAttack(specialAttack);
-        specialCooldown = 300;
+        // No special attack - Ice Boss relies on powerful freezing melee attacks
+        specialCooldown = 0;
+    }
+
+    @Override
+    protected void executeSpecialAttack() {
+        // Perform melee attack instead of special attack
+        if (meleeAttack != null && meleeAttack.canUse() && !stunned && !isAttacking) {
+            performMeleeAttack(targetList);
+        }
+    }
+
+    @Override
+    protected void updateSpecialAttack() {
+        // Use melee attack as special attack with longer cooldown
+        specialTimer--;
+        if (specialTimer <= 0) {
+            executeSpecialAttack();
+            specialTimer = 120; // Cooldown between special melee attacks
+        }
     }
 
     @Override
@@ -70,8 +95,8 @@ public class IceBoss extends Boss {
         }
         if (animationManager.hasAnimation(animToUse)) {
             animationManager.setAnimation(animToUse);
-            // Ice boss sprites are positioned higher in frame (not at bottom)
-            animationManager.drawWithRatio(g, x, y, width, height, facingRight, 12.0 / 36.0, 0.6, 0.6);
+            // Ice boss sprites are facing opposite direction, so invert facingRight
+            animationManager.drawWithRatio(g, x, y, width, height, !facingRight, 12.0 / 36.0, 0.6, 0.6);
         } else if (sprite != null) {
             if (facingRight) {
                 g.drawImage(sprite, x, y, width, height, null);
@@ -90,6 +115,87 @@ public class IceBoss extends Boss {
                 g.fillOval(x + 5, eyeY, eyeSize, eyeSize);
             }
         }
+    }
+
+    @Override
+    public void performMeleeAttack(ArrayList<Characters> targets) {
+        if (meleeAttack != null && meleeAttack.canUse() && !stunned && !isAttacking) {
+            // Start attack animation instead of dealing damage immediately
+            isAttacking = true;
+            hasDealtDamage = false;
+            attackTargets.clear();
+            attackTargets.addAll(targets);
+            meleeAttack.startCooldown(); // Start cooldown when attack begins
+            animationManager.setAnimationForced("attack1"); // Force reset to restart animation
+        }
+    }
+
+    @Override
+    protected void updateAnimationState() {
+        if (isAttacking) {
+            // Keep attack animation playing
+            currentState = "attack1";
+            animationManager.setAnimation(currentState);
+
+            // Get current frame (0-indexed, so frame 7 is index 6)
+            int currentFrame = animationManager.getCurrentFrameNumber();
+
+            // Deal damage on frame 7 (index 6)
+            if (currentFrame == 6 && !hasDealtDamage) {
+                dealMeleeDamage();
+                hasDealtDamage = true;
+            }
+
+            // Check if animation is complete
+            if (animationManager.isAnimationComplete()) {
+                isAttacking = false;
+                hasDealtDamage = false;
+                attackTargets.clear();
+            }
+        } else {
+            // Default animation state logic
+            super.updateAnimationState();
+        }
+    }
+
+    /**
+     * Deal melee damage to all targets in range with freezing effect
+     * Circular area attack identical to Earth Boss
+     */
+    private void dealMeleeDamage() {
+        if (meleeAttack == null || attackTargets.isEmpty()) return;
+
+        // Calculate center of boss
+        int centerX = x + width / 2;
+        int centerY = y + height / 2;
+        int radius = 200; // Same radius as Earth Boss
+
+        // Deal damage to all targets within circular radius
+        for (Characters target : attackTargets) {
+            if (target != this) {
+                // Calculate center of target
+                int tx = target.getX() + target.getWidth() / 2;
+                int ty = target.getY() + target.getHeight() / 2;
+
+                // Calculate distance from boss center to target center
+                double dist = Math.sqrt(Math.pow(tx - centerX, 2) + Math.pow(ty - centerY, 2));
+
+                // Deal damage if within radius
+                if (dist <= radius) {
+                    target.takeDamage(meleeAttack.getDamage());
+                    // Add freezing effect - stun for a short duration
+                    target.stun(30);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void reset(int newX, int newY) {
+        super.reset(newX, newY);
+        isAttacking = false;
+        hasDealtDamage = false;
+        attackTargets.clear();
     }
 
     /**

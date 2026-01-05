@@ -7,12 +7,18 @@ import java.util.ArrayList;
  */
 public class LightningBoss extends Boss {
     private ArrayList<TargetedStrikeAttack> lightningStrikes;
+    private boolean isAttacking;
+    private boolean hasDealtDamage; // Track if damage dealt on frame 4
+    private ArrayList<Characters> attackTargets;
 
     public LightningBoss(int x, int y) {
         super(x, y, 80, 96, 150, 7.0, "Lightning Boss", new Color(255, 255, 0));
         lightningStrikes = new ArrayList<>();
-        // Very aggressive AI - suits fast lightning element
-        setAIBehavior(new AggressiveAIBehavior(600, 350, 120));
+        this.isAttacking = false;
+        this.hasDealtDamage = false;
+        this.attackTargets = new ArrayList<>();
+        // Use custom aggressive melee AI
+        setAIBehavior(new LightningBossAIBehavior());
         loadSprites();
         initializeAttacks();
         initializeSpecialAttack();
@@ -56,9 +62,10 @@ public class LightningBoss extends Boss {
         ProjectileAttack ranged = new ProjectileAttack(18, 30, 10.5, Color.YELLOW);
         attackManager.setPrimaryRanged(ranged);
 
-        MeleeAttack melee = new MeleeAttack(12, 20, 45, 8, new Color(255, 255, 100));
+        // Large area melee attack (200 radius circular area damage like Fire/Earth/Ice Boss)
+        MeleeAttack melee = new MeleeAttack(25, 35, 200, 15, new Color(255, 255, 100));
         attackManager.setPrimaryMelee(melee);
-        
+
         // Keep backwards compatibility
         rangedAttack = ranged;
         meleeAttack = melee;
@@ -103,5 +110,84 @@ public class LightningBoss extends Boss {
         for (TargetedStrikeAttack strike : lightningStrikes) {
             strike.draw(g);
         }
+    }
+
+    @Override
+    public void performMeleeAttack(ArrayList<Characters> targets) {
+        if (meleeAttack != null && meleeAttack.canUse() && !stunned && !isAttacking) {
+            // Start attack animation instead of dealing damage immediately
+            isAttacking = true;
+            hasDealtDamage = false;
+            attackTargets.clear();
+            attackTargets.addAll(targets);
+            meleeAttack.startCooldown(); // Start cooldown when attack begins
+            animationManager.setAnimationForced("attack1"); // Force reset to restart animation
+        }
+    }
+
+    @Override
+    protected void updateAnimationState() {
+        if (isAttacking) {
+            // Keep attack animation playing
+            currentState = "attack1";
+            animationManager.setAnimation(currentState);
+
+            // Get current frame (0-indexed, so frame 4 is index 3)
+            int currentFrame = animationManager.getCurrentFrameNumber();
+
+            // Deal damage on frame 4 (index 3)
+            if (currentFrame == 3 && !hasDealtDamage) {
+                dealMeleeDamage();
+                hasDealtDamage = true;
+            }
+
+            // Check if animation is complete
+            if (animationManager.isAnimationComplete()) {
+                isAttacking = false;
+                hasDealtDamage = false;
+                attackTargets.clear();
+            }
+        } else {
+            // Default animation state logic
+            super.updateAnimationState();
+        }
+    }
+
+    /**
+     * Deal melee damage to all targets in range
+     * Circular area attack identical to Fire/Earth/Ice Boss
+     */
+    private void dealMeleeDamage() {
+        if (meleeAttack == null || attackTargets.isEmpty()) return;
+
+        // Calculate center of boss
+        int centerX = x + width / 2;
+        int centerY = y + height / 2;
+        int radius = 200; // Same radius as other melee bosses
+
+        // Deal damage to all targets within circular radius
+        for (Characters target : attackTargets) {
+            if (target != this) {
+                // Calculate center of target
+                int tx = target.getX() + target.getWidth() / 2;
+                int ty = target.getY() + target.getHeight() / 2;
+
+                // Calculate distance from boss center to target center
+                double dist = Math.sqrt(Math.pow(tx - centerX, 2) + Math.pow(ty - centerY, 2));
+
+                // Deal damage if within radius
+                if (dist <= radius) {
+                    target.takeDamage(meleeAttack.getDamage());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void reset(int newX, int newY) {
+        super.reset(newX, newY);
+        isAttacking = false;
+        hasDealtDamage = false;
+        attackTargets.clear();
     }
 }

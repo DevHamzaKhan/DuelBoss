@@ -2,17 +2,23 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * WaterBoss - Defensive boss with area control via whirlpool
+ * WaterBoss - Defensive zoner with ranged attacks
  * Demonstrates proper OOP: composition, custom attacks, and defensive AI
  */
 public class WaterBoss extends Boss {
     private PersistentAreaAttack whirlpool;
     private WaterProjectileAttack waterRanged;
+    private boolean isAttacking;
+    private boolean hasLaunchedProjectile; // Track if projectile launched on frame 4
+    private ArrayList<Characters> attackTargets;
 
     public WaterBoss(int x, int y) {
         super(x, y, 80, 96, 200, 5.5, "Water Boss", new Color(0, 105, 148));
-        // Use defensive AI - water boss prefers zoning
-        setAIBehavior(new DefensiveAIBehavior(500, 350, 180, 230));
+        // Use custom defensive AI - water boss maintains distance and uses ranged attacks
+        setAIBehavior(new WaterBossAIBehavior());
+        this.isAttacking = false;
+        this.hasLaunchedProjectile = false;
+        this.attackTargets = new ArrayList<>();
         loadSprites();
         initializeAttacks();
         initializeSpecialAttack();
@@ -87,18 +93,88 @@ public class WaterBoss extends Boss {
         }
     }
 
+    @Override
+    public void performRangedAttack(ArrayList<Characters> targets) {
+        if (rangedAttack != null && rangedAttack.canUse() && !stunned && !isAttacking) {
+            // Start attack animation instead of launching projectile immediately
+            isAttacking = true;
+            hasLaunchedProjectile = false;
+            attackTargets.clear();
+            attackTargets.addAll(targets);
+            rangedAttack.startCooldown(); // Start cooldown when attack begins
+            animationManager.setAnimationForced("attack1"); // Force reset to restart animation
+        }
+    }
+
+    @Override
+    protected void updateAnimationState() {
+        if (isAttacking) {
+            // Keep attack animation playing
+            currentState = "attack1";
+            animationManager.setAnimation(currentState);
+
+            // Get current frame (0-indexed, so frame 4 is index 3)
+            int currentFrame = animationManager.getCurrentFrameNumber();
+
+            // Launch projectile on frame 4 (index 3)
+            if (currentFrame == 3 && !hasLaunchedProjectile) {
+                launchRangedProjectile();
+                hasLaunchedProjectile = true;
+            }
+
+            // Check if animation is complete
+            if (animationManager.isAnimationComplete()) {
+                isAttacking = false;
+                hasLaunchedProjectile = false;
+                attackTargets.clear();
+            }
+        } else {
+            // Default animation state logic
+            super.updateAnimationState();
+        }
+    }
+
+    /**
+     * Launch water projectile at targets
+     */
+    private void launchRangedProjectile() {
+        if (waterRanged == null || attackTargets.isEmpty()) return;
+
+        // Launch projectile in facing direction
+        int projX = facingRight ? x + width : x - 20;
+        int projY = y + height / 2;
+        double velX = facingRight ? waterRanged.getSpeed() : -waterRanged.getSpeed();
+
+        waterRanged.spawnProjectile(projX, projY, velX, 0);
+    }
+
+    @Override
+    public void reset(int newX, int newY) {
+        super.reset(newX, newY);
+        isAttacking = false;
+        hasLaunchedProjectile = false;
+        attackTargets.clear();
+    }
+
     /**
      * Custom water projectile that pushes enemies back on hit
      * Demonstrates proper OOP: polymorphism through method overriding
      */
     private class WaterProjectileAttack extends ProjectileAttack {
+        private double projectileSpeed;
+
         public WaterProjectileAttack(int damage, int cooldown, double speed, Color color) {
             super(damage, cooldown, speed, color);
+            this.projectileSpeed = speed;
         }
 
         @Override
         protected void onHit(Characters target, Projectile p) {
             target.pushBack(p.getVelocityX() > 0 ? 5 : -5);
+        }
+
+        public double getSpeed() {
+            return projectileSpeed;
         }
     }
 }
