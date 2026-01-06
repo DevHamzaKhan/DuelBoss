@@ -42,7 +42,7 @@ public class Swordsman extends Player {
     protected void initializeAttacks() {
         ProjectileAttack ranged = new ProjectileAttack(15, 40, 6.0, Color.ORANGE);
         attackManager.setPrimaryRanged(ranged);
-        MeleeAttack melee = new MeleeAttack(25, 30, 50, 15, new Color(255, 215, 0));
+        MeleeAttack melee = new MeleeAttack(25, 30, 120, 15, new Color(255, 215, 0));
         attackManager.setPrimaryMelee(melee);
         rangedAttack = ranged;
         meleeAttack = melee;

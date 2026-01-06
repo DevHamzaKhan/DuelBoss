@@ -43,7 +43,7 @@ public class Brawler extends Player {
     protected void initializeAttacks() {
         ProjectileAttack ranged = new ProjectileAttack(10, 20, 8.0, Color.DARK_GRAY);
         attackManager.setPrimaryRanged(ranged);
-        MeleeAttack melee = new MeleeAttack(15, 15, 40, 10, new Color(100, 100, 100));
+        MeleeAttack melee = new MeleeAttack(15, 15, 120, 10, new Color(100, 100, 100));
         attackManager.setPrimaryMelee(melee);
         rangedAttack = ranged;
         meleeAttack = melee;

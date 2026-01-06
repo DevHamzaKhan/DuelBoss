@@ -46,7 +46,7 @@ public class Archer extends Player {
         ProjectileAttack ranged = new ProjectileAttack(20, 50, 12.0, new Color(139, 69, 19));
         attackManager.setPrimaryRanged(ranged);
 
-        MeleeAttack melee = new MeleeAttack(10, 40, 35, 12, new Color(34, 139, 34, 150));
+        MeleeAttack melee = new MeleeAttack(10, 40, 120, 12, new Color(34, 139, 34, 150));
         attackManager.setPrimaryMelee(melee);
 
         // Keep backwards compatibility
