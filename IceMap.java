@@ -10,7 +10,7 @@ public class IceMap extends Map {
             new Platform(100, 200, 760, 10, 1, "newplatform.png"),
             new Platform(280, 100, 400, 10, 1, "newplatform.png")
         };
-        background = new GameImage("IceBackground.png", 0, 0, Main.WIDTH, Main.HEIGHT, false);
+        background = new GameImage("IceBackground.jpg", 0, 0, Main.WIDTH, Main.HEIGHT, false);
     }
 
     public Platform[] getPlatforms() { return platforms; }

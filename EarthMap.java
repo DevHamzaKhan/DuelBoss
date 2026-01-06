@@ -10,7 +10,7 @@ public class EarthMap extends Map {
             new Platform(100, 200, 760, 10, 1, "newplatform.png"),
             new Platform(230, 100, 500, 10, 1, "newplatform.png")
         };
-        background = new GameImage("DefaultBackground.png", 0, 0, Main.WIDTH, Main.HEIGHT, false);
+        background = new GameImage("EarthBackground.png", 0, 0, Main.WIDTH, Main.HEIGHT, false);
     }
 
     public Platform[] getPlatforms() { return platforms; }

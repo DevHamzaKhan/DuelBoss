@@ -12,7 +12,7 @@ public class WaterMap extends Map {
             new Platform(680, 200, 180, 10, 1, "newplatform.png"),
             new Platform(380, 100, 350, 10, 1, "newplatform.png")
         };
-        background = new GameImage("IceBackground.png", 0, 0, Main.WIDTH, Main.HEIGHT, false);
+        background = new GameImage("WaterBackground.png", 0, 0, Main.WIDTH, Main.HEIGHT, false);
     }
 
     public Platform[] getPlatforms() { return platforms; }

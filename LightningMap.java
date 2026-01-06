@@ -17,7 +17,7 @@ public class LightningMap extends Map {
             new Platform(420, 100, 140, 10, 1, "newplatform.png"),
             new Platform(620, 100, 140, 10, 1, "newplatform.png")
         };
-        background = new GameImage("SpaceBackground.png", 0, 0, Main.WIDTH, Main.HEIGHT, false);
+        background = new GameImage("LightningBackground.png", 0, 0, Main.WIDTH, Main.HEIGHT, false);
     }
 
     public Platform[] getPlatforms() { return platforms; }
