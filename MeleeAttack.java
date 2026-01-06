@@ -26,6 +26,8 @@ public class MeleeAttack extends BasicAttack {
 
         updateHitbox();
 
+        SoundManager.playAttack();
+
         for (Characters target : targets) {
             if (target != owner && hitbox.intersects(target.getBounds())) {
                 target.takeDamage(damage);

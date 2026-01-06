@@ -121,6 +121,8 @@ public class Swordsman extends Player {
     private void dealMeleeDamage() {
         if (meleeAttack == null || attackTargets.isEmpty()) return;
 
+        SoundManager.playAttack();
+
         for (Characters target : attackTargets) {
             if (target != this) {
                 int distX = Math.abs(target.getX() - x);
@@ -138,6 +140,8 @@ public class Swordsman extends Player {
      */
     private void launchRangedProjectile() {
         if (rangedAttack == null || attackTargets.isEmpty()) return;
+
+        SoundManager.playShot();
 
         // Launch projectile in facing direction
         int projX = facingRight ? x + width : x - 20;

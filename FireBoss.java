@@ -169,6 +169,8 @@ public class FireBoss extends Boss {
     private void dealMeleeDamage() {
         if (meleeAttack == null || attackTargets.isEmpty()) return;
 
+        SoundManager.playAttack();
+
         // Calculate center of boss
         int centerX = x + width / 2;
         int centerY = y + height / 2;

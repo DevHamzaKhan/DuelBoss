@@ -23,6 +23,8 @@ public class ProjectileAttack extends BasicAttack {
 
         projectiles.add(new Projectile(projX, projY, velX, 0, damage, color));
         startCooldown();
+
+        SoundManager.playShot();
     }
 
     public void executeDirectional(double velX, double velY) {
@@ -33,6 +35,8 @@ public class ProjectileAttack extends BasicAttack {
 
         projectiles.add(new Projectile(projX, projY, velX, velY, damage, color));
         startCooldown();
+
+        SoundManager.playShot();
     }
 
     public void spawnProjectile(int x, int y, double velX, double velY) {

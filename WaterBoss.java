@@ -140,6 +140,8 @@ public class WaterBoss extends Boss {
     private void launchRangedProjectile() {
         if (waterRanged == null || attackTargets.isEmpty()) return;
 
+        SoundManager.playShot();
+
         // Launch projectile in facing direction
         int projX = facingRight ? x + width : x - 20;
         int projY = y + height / 2;
