@@ -1,13 +1,16 @@
+/*
+Name: ButtonManager.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Manages button state and click detection for all menus. Tracks button rectangles, hover states, and provides click detection. Extracted from MenuRenderer to centralize button logic and fix hover bugs.
+*/
+
 package ui;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Manages button state and click detection for menus.
- * Extracts button management from MenuRenderer.
- */
 public class ButtonManager {
     
     private final List<Rectangle> menuButtonRects;

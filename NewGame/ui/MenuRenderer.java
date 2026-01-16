@@ -1,3 +1,10 @@
+/*
+Name: MenuRenderer.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Renders all menu screens (main menu, how to play, game over, shop) with consistent styling. Uses ButtonManager for button state and hover effects. Draws space-themed backgrounds with deterministic star patterns.
+*/
+
 package ui;
 
 import ui.ButtonManager;

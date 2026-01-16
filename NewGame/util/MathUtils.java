@@ -1,5 +1,12 @@
 package util;
 
+/*
+Name: MathUtils.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Utility class providing common math operations (distance, normalization, clamping) and button rendering helpers used throughout the game.
+*/
+
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.BasicStroke;
@@ -7,37 +14,29 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 
-/**
- * Utility class for common mathematical operations and rendering helpers.
- */
 public final class MathUtils {
 
+    // private constructor prevents instantiation of this utility class
     private MathUtils() {
-        // Prevent instantiation
     }
 
-    /**
-     * Calculates the Euclidean distance between two points.
-     */
+    // calculates euclidean distance between two points using pythagorean theorem
     public static double distance(double x1, double y1, double x2, double y2) {
         double dx = x2 - x1;
         double dy = y2 - y1;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    /**
-     * Calculates the squared distance between two points (faster, avoids sqrt).
-     */
+    // calculates squared distance (faster than distance since it avoids expensive sqrt operation)
+    // useful for distance comparisons where exact distance isn't needed
     public static double distanceSquared(double x1, double y1, double x2, double y2) {
         double dx = x2 - x1;
         double dy = y2 - y1;
         return dx * dx + dy * dy;
     }
 
-    /**
-     * Normalizes a vector and returns it as an array [normalizedX, normalizedY].
-     * Returns [0, 0] if the vector has zero length.
-     */
+    // normalizes a vector to unit length (length = 1), preserving direction
+    // returns [0,0] for zero-length input to avoid division by zero
     public static double[] normalize(double x, double y) {
         double length = Math.sqrt(x * x + y * y);
         if (length == 0) {
@@ -46,10 +45,8 @@ public final class MathUtils {
         return new double[]{x / length, y / length};
     }
 
-    /**
-     * Normalizes a vector, returning a default direction if zero length.
-     * Use this when you need a valid direction even for zero-length input (e.g., bullets).
-     */
+    // normalizes a vector but uses a default direction when input is zero-length
+    // essential for bullets - prevents crash when mouse is exactly on player position
     public static double[] normalizeWithDefault(double x, double y, double defaultX, double defaultY) {
         double length = Math.sqrt(x * x + y * y);
         if (length == 0) {
@@ -58,25 +55,21 @@ public final class MathUtils {
         return new double[]{x / length, y / length};
     }
 
-    /**
-     * Clamps a value between min and max.
-     */
+    // constrains a value to lie within a specified range [min, max]
     public static double clamp(double value, double min, double max) {
         return Math.max(min, Math.min(max, value));
     }
 
-    /**
-     * Clamps an integer value between min and max.
-     */
+    // integer overload of clamp for whole number constraints
     public static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
 
-    /**
-     * Draws a styled button with hover effect.
-     */
+    // renders a styled rectangular button with rounded corners and hover effect
+    // used by menu renderer for consistent button appearance across all menus
     public static void drawButton(Graphics2D g2, Rectangle bounds, String text,
                                    boolean isHovered, Color baseColor, Color hoverColor) {
+        // darker background and thicker border when hovered for visual feedback
         Color bgColor = isHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
         Color borderColor = isHovered ? hoverColor : baseColor;
 

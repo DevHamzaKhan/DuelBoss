@@ -1,9 +1,12 @@
+/*
+Name: GameStateManager.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Manages game state transitions and state-dependent behavior. Tracks current state (menu, playing, game over, how to play), shop visibility, and pause state. Extracted from GamePanel to centralize state logic.
+*/
+
 package manager;
 
-/**
- * Manages game state transitions and state-dependent behavior.
- * Extracts state management responsibilities from GamePanel.
- */
 public class GameStateManager {
     
     public enum GameState {

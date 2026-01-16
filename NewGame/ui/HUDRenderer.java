@@ -1,3 +1,10 @@
+/*
+Name: HUDRenderer.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Renders HUD elements including score panel (score, currency, player stats) and beam ability cooldown bar. Extracted from GamePanel to follow SRP and reduce rendering complexity.
+*/
+
 package ui;
 
 import entity.Character;
@@ -8,10 +15,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 
-/**
- * Renders the HUD (Heads-Up Display) including score, stats, and beam cooldown.
- * Extracts rendering responsibilities from GamePanel.
- */
 public class HUDRenderer {
     
     // Beam cooldown bar constants

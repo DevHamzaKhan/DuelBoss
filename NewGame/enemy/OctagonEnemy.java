@@ -1,5 +1,12 @@
 package enemy;
 
+/*
+Name: OctagonEnemy.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: High-value tanky enemy with simple chase behavior. Offers substantial score reward (50 points) for defeating. Used in testing round 0 and as elite encounters in later waves.
+*/
+
 import entity.Character;
 import entity.Bullet;
 

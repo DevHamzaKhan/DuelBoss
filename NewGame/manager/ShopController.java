@@ -1,12 +1,14 @@
+/*
+Name: ShopController.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Manages upgrade shop logic and purchases. Validates purchase attempts, applies upgrades to player character, and handles special purchases (health, score conversion). Works with ScoreManager for currency validation.
+*/
+
 package manager;
 
 import entity.Character;
 
-/**
- * Manages upgrade shop logic and purchases.
- * Extracts shop responsibilities from GamePanel.
- * Works with ScoreManager for currency management.
- */
 public class ShopController {
     
     private static final int MAX_UPGRADE_LEVEL = 10;

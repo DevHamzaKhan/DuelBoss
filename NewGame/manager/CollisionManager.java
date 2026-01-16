@@ -1,3 +1,10 @@
+/*
+Name: CollisionManager.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Handles collision detection and resolution for all entity interactions. Uses circle-based collision with separating axis for enemy-enemy collisions to prevent overlap. Optimized with distance squared comparisons.
+*/
+
 package manager;
 
 import entity.Bullet;

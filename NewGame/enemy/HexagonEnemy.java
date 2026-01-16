@@ -1,5 +1,12 @@
 package enemy;
 
+/*
+Name: HexagonEnemy.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Special enemy that splits into 6 triangles on death. Worth no direct score but generates 60 points through splits. Creates dangerous situations by multiplying threats when destroyed.
+*/
+
 import entity.Character;
 import entity.Bullet;
 
@@ -10,7 +17,7 @@ import java.util.List;
 
 public class HexagonEnemy extends Enemy {
 
-    // Hexagon gives no direct score (splits into triangles on death)
+    // hexagon gives no direct score (splits into triangles on death)
     private static final int SCORE_VALUE = 0;
     private static final int SIDES = 6;
     private static final Color BODY_COLOR = new Color(120, 200, 120);
@@ -38,14 +45,16 @@ public class HexagonEnemy extends Enemy {
         moveTowards(player.getX(), player.getY(), deltaSeconds, mapWidth, mapHeight);
     }
 
+    // renders regular hexagon using polygon vertices calculated from angles
     @Override
     protected void drawBody(Graphics2D g2) {
         int r = (int) radius;
         int[] xPoints = new int[SIDES];
         int[] yPoints = new int[SIDES];
 
+        // calculate hexagon vertices evenly spaced around circle
         for (int i = 0; i < SIDES; i++) {
-            double angle = -Math.PI / 2 + i * 2 * Math.PI / SIDES;
+            double angle = -Math.PI / 2 + i * 2 * Math.PI / SIDES; // start at top
             xPoints[i] = (int) (Math.cos(angle) * r);
             yPoints[i] = (int) (Math.sin(angle) * r);
         }

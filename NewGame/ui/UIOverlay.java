@@ -1,3 +1,10 @@
+/*
+Name: UIOverlay.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Renders in-game overlay elements including health bar, wave timer, wave number, and enemy counter. Provides visual feedback during gameplay without cluttering main render loop.
+*/
+
 package ui;
 
 import entity.Character;

@@ -1,3 +1,10 @@
+/*
+Name: BeamAbility.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Ultimate beam ability that traces an optimized path through enemies over 3 seconds. Uses TSP solver to find efficient route, then animates beam traveling along path and killing enemies when beam reaches them. Provides satisfying visual feedback for room-clearing ultimate.
+*/
+
 package ability;
 
 import enemy.Enemy;
@@ -9,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BeamAbility {
-    private static final double BEAM_DURATION_SECONDS = 3.0;
+    private static final double BEAM_DURATION_SECONDS = 3.0; // beam travels for 3 seconds
     private static final double BEAM_WIDTH = 8.0;
-    private static final Color BEAM_COLOR = new Color(255, 100, 0, 200);
-    private static final double KILL_RADIUS = 30.0;
+    private static final Color BEAM_COLOR = new Color(255, 100, 0, 200); // orange semi-transparent
+    private static final double KILL_RADIUS = 30.0; // how close beam must be to kill enemy
     
     private boolean isActive = false;
     private long startTime;

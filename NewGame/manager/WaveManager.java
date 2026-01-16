@@ -1,3 +1,10 @@
+/*
+Name: WaveManager.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Controls enemy wave spawning with difficulty scaling. Manages spawn timing, enemy type selection based on wave number, and spatial distribution. Includes dev mode round 0 for testing all enemy types simultaneously.
+*/
+
 package manager;
 
 import enemy.Enemy;

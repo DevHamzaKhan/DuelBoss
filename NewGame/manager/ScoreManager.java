@@ -1,11 +1,14 @@
+/*
+Name: ScoreManager.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Manages game scoring, currency, and high score tracking. Provides methods for adding/spending currency, recording kills, and persisting high scores. Extracted from GamePanel to follow SRP.
+*/
+
 package manager;
 
 import enemy.Enemy;
 
-/**
- * Manages game scoring, currency, and high score tracking.
- * Extracted from GamePanel to follow Single Responsibility Principle.
- */
 public class ScoreManager {
 
     private int score;

@@ -1,3 +1,10 @@
+/*
+Name: GamePanel.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Core game loop and rendering engine for Polygon Wars. Manages game states (menu, playing, shop, paused, game over), orchestrates updates for all entities/managers, and renders starfield background with game elements. Uses delegation pattern with managers for collision, waves, particles, score, state, and shop functionality.
+*/
+
 package core;
 
 import entity.Character;
@@ -45,21 +52,22 @@ import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener {
 
-    // DEV MODE: Set to true to enable round 0 for testing all enemy types
+    // dev mode spawns all enemy types in round 0 for quick testing
     private static final boolean DEV_MODE = false;
 
     public static final int MAP_WIDTH = 2000;
     public static final int MAP_HEIGHT = 2000;
 
-    // Timing constants
+    // 60 fps game loop (16ms per frame)
     private static final int FRAME_DELAY_MS = 16;
     private static final double DELTA_SECONDS = FRAME_DELAY_MS / 1000.0;
 
-    // Background rendering constants
+    // background rendering constants for starfield effect
     private static final int SMALL_STAR_COUNT = 300;
     private static final int LARGE_STAR_COUNT = 50;
     private static final int NEBULA_SIZE = 400;
     private static final int BORDER_WIDTH = 8;
+    // deterministic random for consistent star positions across frames
     private static final Random STAR_RANDOM_1 = new Random(12345);
     private static final Random STAR_RANDOM_2 = new Random(54321);
     private static final Color BACKGROUND_COLOR = new Color(10, 10, 30);
@@ -77,7 +85,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private static final int SCORE_Y = 70;
     private static final int STATS_LINE_HEIGHT = 28;
 
-    // Hexagon split constants
+    // when hexagon enemy is killed, it spawns 6 triangles in a circle
     private static final int HEX_SPLIT_COUNT = 6;
     private static final double HEX_SPLIT_TRIANGLE_RADIUS = 14;
     private static final double HEX_SPLIT_TRIANGLE_HEALTH = 40;

@@ -1,3 +1,10 @@
+/*
+Name: Camera.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Simple camera system that centers viewport on target position (usually player). Converts world coordinates to screen coordinates by subtracting camera offset.
+*/
+
 package ui;
 
 public class Camera {

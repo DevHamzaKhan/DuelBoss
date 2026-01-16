@@ -1,5 +1,12 @@
 package enemy;
 
+/*
+Name: SquareEnemy.java
+Authors: Hamza Khan & Alec Li
+Date: January 16, 2026
+Description: Agile enemy that dodges player bullets within detection radius. Moves perpendicular to bullet trajectory, forcing player to predict movement or use overwhelming firepower.
+*/
+
 import entity.Character;
 import entity.Bullet;
 import util.MathUtils;
@@ -37,9 +44,11 @@ public class SquareEnemy extends Enemy {
             int mapWidth,
             int mapHeight) {
 
+        // check for nearby bullets to dodge
         Bullet closestBullet = findClosestBulletInRange(bullets);
-        faceTowards(player.getX(), player.getY());
+        faceTowards(player.getX(), player.getY()); // always face player
 
+        // prioritize dodging over chasing
         if (closestBullet != null) {
             dodgeBullet(closestBullet, deltaSeconds, mapWidth, mapHeight);
         } else {
@@ -62,10 +71,12 @@ public class SquareEnemy extends Enemy {
         return closest;
     }
 
+    // moves perpendicular to bullet trajectory using vector rotation
+    // rotates bullet direction 90 degrees to get perpendicular dodge direction
     private void dodgeBullet(Bullet bullet, double deltaSeconds, int mapWidth, int mapHeight) {
         double[] normalized = MathUtils.normalize(bullet.getVx(), bullet.getVy());
         if (normalized[0] != 0 || normalized[1] != 0) {
-            // Move perpendicular to bullet trajectory
+            // rotate velocity 90 degrees: (x,y) -> (-y,x) gives perpendicular vector
             double dodgeX = -normalized[1];
             double dodgeY = normalized[0];
             moveWithDirection(dodgeX, dodgeY, deltaSeconds, mapWidth, mapHeight);
