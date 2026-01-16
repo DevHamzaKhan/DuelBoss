@@ -4,7 +4,7 @@ package enemy;
 Name: SquareEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Agile enemy that dodges player bullets within detection radius. Moves perpendicular to bullet trajectory, forcing player to predict movement or use overwhelming firepower.
+Description: Square enemy that dodges player bullets.
 */
 
 import entity.Character;
@@ -13,6 +13,7 @@ import util.MathUtils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.List;
 
 public class SquareEnemy extends Enemy {
 
@@ -40,7 +41,7 @@ public class SquareEnemy extends Enemy {
     @Override
     public void update(double deltaSeconds,
             Character player,
-            java.util.List<Bullet> bullets,
+            List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
 
@@ -56,7 +57,7 @@ public class SquareEnemy extends Enemy {
         }
     }
 
-    private Bullet findClosestBulletInRange(java.util.List<Bullet> bullets) {
+    private Bullet findClosestBulletInRange(List<Bullet> bullets) {
         Bullet closest = null;
         double closestDistSq = Double.MAX_VALUE;
         double dodgeRadiusSq = dodgeRadius * dodgeRadius;
