@@ -1,29 +1,15 @@
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 public class Character extends Entity {
 
     private static final int CHARACTER_RADIUS = 20;
-
-    private BufferedImage sprite;
-    private double angle = -Math.PI / 2; // Default facing up
-
-    // Core stats
-    private double bodyDamage = 10;
-    private double bulletSpeed = 1200;
-    private double bulletDamage = 20;
-    private double fireRate = 3;
-    private double movementSpeed = 500;
-
-    // Upgrade levels (1-10 scale)
-    private int maxHealthLevel = 1;
-    private int bulletSpeedLevel = 1;
-    private int fireRateLevel = 1;
-    private int movementSpeedLevel = 1;
-    private int bulletDamageLevel = 1;
+    private static final String SPRITE_PATH = "/Images/player.png";
+    private static final String SPRITE_PATH_FALLBACK = "Images/player.png";
 
     // Base stats for scaling
     private static final double BASE_MAX_HEALTH = 200;
@@ -31,6 +17,33 @@ public class Character extends Entity {
     private static final double BASE_FIRE_RATE = 1;
     private static final double BASE_MOVEMENT_SPEED = 340;
     private static final double BASE_BULLET_DAMAGE = 20;
+
+    // Upgrade multipliers per level
+    private static final double HEALTH_MULTIPLIER_PER_LEVEL = 0.2;
+    private static final double BULLET_SPEED_MULTIPLIER_PER_LEVEL = 0.15;
+    private static final double FIRE_RATE_MULTIPLIER_PER_LEVEL = 0.2;
+    private static final double MOVEMENT_SPEED_MULTIPLIER_PER_LEVEL = 0.15;
+    private static final double BULLET_DAMAGE_MULTIPLIER_PER_LEVEL = 0.15;
+
+    private static final int MAX_UPGRADE_LEVEL = 10;
+    private static final double HEALTH_BUY_AMOUNT = 20;
+    private static final double BODY_DAMAGE = 10;
+
+    private BufferedImage sprite;
+    private double angle = -Math.PI / 2;
+
+    // Current stats (calculated from upgrades)
+    private double bulletSpeed;
+    private double bulletDamage;
+    private double fireRate;
+    private double movementSpeed;
+
+    // Upgrade levels (1-10 scale)
+    private int maxHealthLevel = 1;
+    private int bulletSpeedLevel = 1;
+    private int fireRateLevel = 1;
+    private int movementSpeedLevel = 1;
+    private int bulletDamageLevel = 1;
 
     public Character(double startX, double startY) {
         super(startX, startY, CHARACTER_RADIUS, BASE_MAX_HEALTH);
@@ -40,10 +53,23 @@ public class Character extends Entity {
     }
 
     private void loadSprite() {
+        // Try loading from classpath first (works when packaged as JAR)
+        InputStream stream = getClass().getResourceAsStream(SPRITE_PATH);
+        if (stream != null) {
+            try {
+                sprite = ImageIO.read(stream);
+                return;
+            } catch (IOException e) {
+                System.err.println("Failed to load sprite from classpath: " + e.getMessage());
+            }
+        }
+
+        // Fallback to file system (works during development)
         try {
-            sprite = ImageIO.read(new File("Images/player.png"));
-        } catch (Exception e) {
-            e.printStackTrace();
+            sprite = ImageIO.read(new java.io.File(SPRITE_PATH_FALLBACK));
+        } catch (IOException e) {
+            System.err.println("Warning: Could not load player sprite from " + SPRITE_PATH_FALLBACK);
+            System.err.println("Player will not be visible. Ensure the image file exists.");
         }
     }
 
@@ -54,15 +80,15 @@ public class Character extends Entity {
     }
 
     private void applyUpgrades() {
-        maxHealth = BASE_MAX_HEALTH * (1 + (maxHealthLevel - 1) * 0.2);
-        bulletSpeed = BASE_BULLET_SPEED * (1 + (bulletSpeedLevel - 1) * 0.15);
-        fireRate = BASE_FIRE_RATE * (1 + (fireRateLevel - 1) * 0.2);
-        movementSpeed = BASE_MOVEMENT_SPEED * (1 + (movementSpeedLevel - 1) * 0.15);
-        bulletDamage = BASE_BULLET_DAMAGE * (1 + (bulletDamageLevel - 1) * 0.15);
+        maxHealth = BASE_MAX_HEALTH * (1 + (maxHealthLevel - 1) * HEALTH_MULTIPLIER_PER_LEVEL);
+        bulletSpeed = BASE_BULLET_SPEED * (1 + (bulletSpeedLevel - 1) * BULLET_SPEED_MULTIPLIER_PER_LEVEL);
+        fireRate = BASE_FIRE_RATE * (1 + (fireRateLevel - 1) * FIRE_RATE_MULTIPLIER_PER_LEVEL);
+        movementSpeed = BASE_MOVEMENT_SPEED * (1 + (movementSpeedLevel - 1) * MOVEMENT_SPEED_MULTIPLIER_PER_LEVEL);
+        bulletDamage = BASE_BULLET_DAMAGE * (1 + (bulletDamageLevel - 1) * BULLET_DAMAGE_MULTIPLIER_PER_LEVEL);
     }
 
     public void upgradeMaxHealth() {
-        if (maxHealthLevel < 10) {
+        if (maxHealthLevel < MAX_UPGRADE_LEVEL) {
             maxHealthLevel++;
             double currentPercent = healthLeft / maxHealth;
             applyUpgrades();
@@ -71,35 +97,59 @@ public class Character extends Entity {
     }
 
     public void upgradeBulletSpeed() {
-        if (bulletSpeedLevel < 10) {
+        if (bulletSpeedLevel < MAX_UPGRADE_LEVEL) {
             bulletSpeedLevel++;
             applyUpgrades();
         }
     }
 
     public void upgradeFireRate() {
-        if (fireRateLevel < 10) {
+        if (fireRateLevel < MAX_UPGRADE_LEVEL) {
             fireRateLevel++;
             applyUpgrades();
         }
     }
 
     public void upgradeMovementSpeed() {
-        if (movementSpeedLevel < 10) {
+        if (movementSpeedLevel < MAX_UPGRADE_LEVEL) {
             movementSpeedLevel++;
             applyUpgrades();
         }
     }
 
     public void upgradeBulletDamage() {
-        if (bulletDamageLevel < 10) {
+        if (bulletDamageLevel < MAX_UPGRADE_LEVEL) {
             bulletDamageLevel++;
             applyUpgrades();
         }
     }
 
     public void buyHealth() {
-        healthLeft = Math.min(maxHealth, healthLeft + 20);
+        healthLeft = Math.min(maxHealth, healthLeft + HEALTH_BUY_AMOUNT);
+    }
+
+    public void update(double dirX, double dirY, double deltaSeconds, int mapWidth, int mapHeight) {
+        double[] normalized = MathUtils.normalize(dirX, dirY);
+        x += normalized[0] * movementSpeed * deltaSeconds;
+        y += normalized[1] * movementSpeed * deltaSeconds;
+        clampToMap(mapWidth, mapHeight);
+    }
+
+    @Override
+    public void draw(Graphics2D g2) {
+        if (sprite == null) {
+            return;
+        }
+
+        AffineTransform oldTransform = g2.getTransform();
+        g2.translate(x, y);
+        g2.rotate(angle + Math.PI / 2);
+
+        int width = sprite.getWidth();
+        int height = sprite.getHeight();
+        g2.drawImage(sprite, -width / 2, -height / 2, null);
+
+        g2.setTransform(oldTransform);
     }
 
     // Getters for upgrade levels
@@ -123,40 +173,9 @@ public class Character extends Entity {
         return bulletDamageLevel;
     }
 
-    public void update(double dirX, double dirY, double deltaSeconds, int mapWidth, int mapHeight) {
-        double len = Math.sqrt(dirX * dirX + dirY * dirY);
-        if (len > 0) {
-            dirX /= len;
-            dirY /= len;
-        }
-
-        x += dirX * movementSpeed * deltaSeconds;
-        y += dirY * movementSpeed * deltaSeconds;
-
-        clampToMap(mapWidth, mapHeight);
-    }
-
-    @Override
-    public void draw(Graphics2D g2) {
-        if (sprite == null)
-            return;
-
-        AffineTransform old = g2.getTransform();
-
-        // Move to player position, rotate (add PI/2 because sprite tip faces up)
-        g2.translate(x, y);
-        g2.rotate(angle + Math.PI / 2);
-
-        // Draw sprite centered
-        int w = sprite.getWidth();
-        int h = sprite.getHeight();
-        g2.drawImage(sprite, -w / 2, -h / 2, null);
-
-        g2.setTransform(old);
-    }
-
+    // Getters for stats
     public double getBodyDamage() {
-        return bodyDamage;
+        return BODY_DAMAGE;
     }
 
     public double getBulletSpeed() {

@@ -3,7 +3,11 @@ import java.awt.Graphics2D;
 
 public class CircleEnemy extends Enemy {
 
-    // Radius of the force field around the enemy (larger than the body radius)
+    private static final int SCORE_VALUE = 20;
+    private static final Color FORCE_FIELD_FILL = new Color(150, 150, 255, 40);
+    private static final Color FORCE_FIELD_BORDER = new Color(120, 120, 255, 120);
+    private static final Color BODY_COLOR = new Color(120, 120, 255);
+
     private final double forceFieldRadius;
 
     public CircleEnemy(double x,
@@ -18,51 +22,50 @@ public class CircleEnemy extends Enemy {
     }
 
     @Override
+    public int getScoreValue() {
+        return SCORE_VALUE;
+    }
+
+    @Override
     public void update(double deltaSeconds,
             Character player,
             java.util.List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
-        // If player enters the force field, explode immediately
         double dx = player.getX() - x;
         double dy = player.getY() - y;
-        double distanceSq = dx * dx + dy * dy;
+        double distanceSq = MathUtils.distanceSquared(x, y, player.getX(), player.getY());
         double triggerRadius = forceFieldRadius + player.getRadius();
 
         if (distanceSq <= triggerRadius * triggerRadius) {
-            // Explode: damage player and kill self
             player.takeDamage(bodyDamage);
             healthLeft = 0;
             return;
         }
 
-        // Otherwise, move slowly toward the player
         faceTowards(player.getX(), player.getY());
         moveWithDirection(dx, dy, deltaSeconds, mapWidth, mapHeight);
     }
 
     @Override
     public void draw(Graphics2D g2) {
-        int cx = (int) x;
-        int cy = (int) y;
-        int bodyR = (int) radius;
+        int centerX = (int) x;
+        int centerY = (int) y;
+        int bodyRadius = (int) radius;
+        int fieldRadius = (int) forceFieldRadius;
 
-        // Draw the force field (larger, faint circle)
-        int ffR = (int) forceFieldRadius;
-        g2.setColor(new Color(150, 150, 255, 40));
-        g2.fillOval(cx - ffR, cy - ffR, ffR * 2, ffR * 2);
+        // Draw force field
+        g2.setColor(FORCE_FIELD_FILL);
+        g2.fillOval(centerX - fieldRadius, centerY - fieldRadius, fieldRadius * 2, fieldRadius * 2);
+        g2.setColor(FORCE_FIELD_BORDER);
+        g2.drawOval(centerX - fieldRadius, centerY - fieldRadius, fieldRadius * 2, fieldRadius * 2);
 
-        g2.setColor(new Color(120, 120, 255, 120));
-        g2.drawOval(cx - ffR, cy - ffR, ffR * 2, ffR * 2);
-
-        // Draw the main body
-        g2.setColor(new Color(120, 120, 255));
-        g2.fillOval(cx - bodyR, cy - bodyR, bodyR * 2, bodyR * 2);
-
+        // Draw main body
+        g2.setColor(BODY_COLOR);
+        g2.fillOval(centerX - bodyRadius, centerY - bodyRadius, bodyRadius * 2, bodyRadius * 2);
         g2.setColor(Color.WHITE);
-        g2.drawOval(cx - bodyR, cy - bodyR, bodyR * 2, bodyR * 2);
+        g2.drawOval(centerX - bodyRadius, centerY - bodyRadius, bodyRadius * 2, bodyRadius * 2);
 
-        // Health bar above enemy
         drawHealthBar(g2);
     }
 

@@ -1,5 +1,8 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -8,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -18,6 +22,39 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public static final int MAP_WIDTH = 2000;
     public static final int MAP_HEIGHT = 2000;
+
+    // Timing constants
+    private static final int FRAME_DELAY_MS = 16;
+    private static final double DELTA_SECONDS = FRAME_DELAY_MS / 1000.0;
+
+    // Background rendering constants
+    private static final int SMALL_STAR_COUNT = 300;
+    private static final int LARGE_STAR_COUNT = 50;
+    private static final int NEBULA_SIZE = 400;
+    private static final int BORDER_WIDTH = 8;
+    private static final Random STAR_RANDOM_1 = new Random(12345);
+    private static final Random STAR_RANDOM_2 = new Random(54321);
+    private static final Color BACKGROUND_COLOR = new Color(10, 10, 30);
+    private static final Color STAR_COLOR_DIM = new Color(255, 255, 255, 200);
+    private static final Color STAR_COLOR_BRIGHT = new Color(255, 255, 255, 255);
+    private static final Color BORDER_COLOR = new Color(60, 60, 100);
+
+    // Beam cooldown bar constants
+    private static final int BEAM_BAR_WIDTH = 200;
+    private static final int BEAM_BAR_HEIGHT = 20;
+    private static final int BEAM_BAR_MARGIN = 20;
+
+    // Score panel constants
+    private static final int SCORE_X = 20;
+    private static final int SCORE_Y = 70;
+    private static final int STATS_LINE_HEIGHT = 28;
+
+    // Hexagon split constants
+    private static final int HEX_SPLIT_COUNT = 6;
+    private static final double HEX_SPLIT_TRIANGLE_RADIUS = 14;
+    private static final double HEX_SPLIT_TRIANGLE_HEALTH = 40;
+    private static final double HEX_SPLIT_TRIANGLE_DAMAGE = 5;
+    private static final double HEX_SPLIT_TRIANGLE_SPEED = 280;
 
     private final int screenWidth;
     private final int screenHeight;
@@ -152,12 +189,10 @@ public class GamePanel extends JPanel implements ActionListener {
     
     private Enemy findEnemyAt(double worldX, double worldY) {
         for (Enemy enemy : enemies) {
-            if (!enemy.isAlive()) continue;
-            
-            double dx = worldX - enemy.getX();
-            double dy = worldY - enemy.getY();
-            double distance = Math.sqrt(dx * dx + dy * dy);
-            
+            if (!enemy.isAlive()) {
+                continue;
+            }
+            double distance = MathUtils.distance(worldX, worldY, enemy.getX(), enemy.getY());
             if (distance <= enemy.getRadius()) {
                 return enemy;
             }
@@ -256,44 +291,43 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void drawGridBackground(Graphics2D g2) {
-        // Space background - dark blue/purple gradient
-        g2.setColor(new Color(10, 10, 30));
+        g2.setColor(BACKGROUND_COLOR);
         g2.fillRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
 
-        // Add stars (small white dots)
-        g2.setColor(new Color(255, 255, 255, 200));
-        java.util.Random rand = new java.util.Random(12345); // Fixed seed for consistent star positions
-        for (int i = 0; i < 300; i++) {
-            int x = rand.nextInt(MAP_WIDTH);
-            int y = rand.nextInt(MAP_HEIGHT);
-            int size = rand.nextInt(3) + 1;
-            g2.fillOval(x, y, size, size);
+        // Draw small stars (using static Random with fixed seed for consistency)
+        STAR_RANDOM_1.setSeed(12345);
+        g2.setColor(STAR_COLOR_DIM);
+        for (int i = 0; i < SMALL_STAR_COUNT; i++) {
+            int starX = STAR_RANDOM_1.nextInt(MAP_WIDTH);
+            int starY = STAR_RANDOM_1.nextInt(MAP_HEIGHT);
+            int size = STAR_RANDOM_1.nextInt(3) + 1;
+            g2.fillOval(starX, starY, size, size);
         }
 
-        // Add some larger, brighter stars
-        g2.setColor(new Color(255, 255, 255, 255));
-        rand = new java.util.Random(54321);
-        for (int i = 0; i < 50; i++) {
-            int x = rand.nextInt(MAP_WIDTH);
-            int y = rand.nextInt(MAP_HEIGHT);
-            g2.fillOval(x, y, 2, 2);
+        // Draw larger, brighter stars
+        STAR_RANDOM_2.setSeed(54321);
+        g2.setColor(STAR_COLOR_BRIGHT);
+        for (int i = 0; i < LARGE_STAR_COUNT; i++) {
+            int starX = STAR_RANDOM_2.nextInt(MAP_WIDTH);
+            int starY = STAR_RANDOM_2.nextInt(MAP_HEIGHT);
+            g2.fillOval(starX, starY, 2, 2);
         }
 
-        // Corner nebula effects (purple/blue haze)
+        // Corner nebula effects
         g2.setColor(new Color(80, 60, 140, 40));
-        g2.fillRect(0, 0, 400, 400);
+        g2.fillRect(0, 0, NEBULA_SIZE, NEBULA_SIZE);
         g2.setColor(new Color(60, 80, 160, 40));
-        g2.fillRect(MAP_WIDTH - 400, 0, 400, 400);
+        g2.fillRect(MAP_WIDTH - NEBULA_SIZE, 0, NEBULA_SIZE, NEBULA_SIZE);
         g2.setColor(new Color(100, 60, 120, 40));
-        g2.fillRect(0, MAP_HEIGHT - 400, 400, 400);
+        g2.fillRect(0, MAP_HEIGHT - NEBULA_SIZE, NEBULA_SIZE, NEBULA_SIZE);
         g2.setColor(new Color(70, 70, 150, 40));
-        g2.fillRect(MAP_WIDTH - 400, MAP_HEIGHT - 400, 400, 400);
+        g2.fillRect(MAP_WIDTH - NEBULA_SIZE, MAP_HEIGHT - NEBULA_SIZE, NEBULA_SIZE, NEBULA_SIZE);
 
         // Border
-        g2.setStroke(new java.awt.BasicStroke(8));
-        g2.setColor(new Color(60, 60, 100));
+        g2.setStroke(new BasicStroke(BORDER_WIDTH));
+        g2.setColor(BORDER_COLOR);
         g2.drawRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
-        g2.setStroke(new java.awt.BasicStroke(1));
+        g2.setStroke(new BasicStroke(1));
     }
 
     private void drawHUD(Graphics2D g2) {
@@ -308,42 +342,39 @@ public class GamePanel extends JPanel implements ActionListener {
     
     private void drawBeamCooldown(Graphics2D g2, long currentTime) {
         long timeSinceLastUltimate = currentTime - lastUltimateTime;
-        double cooldownProgress = Math.min(1.0, (double)timeSinceLastUltimate / ULTIMATE_COOLDOWN_MS);
-        
-        int barWidth = 200;
-        int barHeight = 20;
-        int x = screenWidth - barWidth - 20;
-        int y = screenHeight - barHeight - 20;
-        
+        double cooldownProgress = Math.min(1.0, (double) timeSinceLastUltimate / ULTIMATE_COOLDOWN_MS);
+
+        int barX = screenWidth - BEAM_BAR_WIDTH - BEAM_BAR_MARGIN;
+        int barY = screenHeight - BEAM_BAR_HEIGHT - BEAM_BAR_MARGIN;
+
         // Background
         g2.setColor(new Color(40, 40, 40, 220));
-        g2.fillRoundRect(x - 3, y - 3, barWidth + 6, barHeight + 6, 8, 8);
-        
+        g2.fillRoundRect(barX - 3, barY - 3, BEAM_BAR_WIDTH + 6, BEAM_BAR_HEIGHT + 6, 8, 8);
+
         // Cooldown background
         g2.setColor(new Color(60, 0, 0));
-        g2.fillRoundRect(x, y, barWidth, barHeight, 6, 6);
-        
+        g2.fillRoundRect(barX, barY, BEAM_BAR_WIDTH, BEAM_BAR_HEIGHT, 6, 6);
+
         // Progress fill
-        int filledWidth = (int)(barWidth * cooldownProgress);
+        int filledWidth = (int) (BEAM_BAR_WIDTH * cooldownProgress);
         if (filledWidth > 0) {
-            Color fillColor = cooldownProgress >= 1.0 ? 
-                new Color(0, 200, 0) : new Color(255, 150, 0);
+            Color fillColor = cooldownProgress >= 1.0 ? new Color(0, 200, 0) : new Color(255, 150, 0);
             g2.setColor(fillColor);
-            g2.fillRoundRect(x, y, filledWidth, barHeight, 6, 6);
+            g2.fillRoundRect(barX, barY, filledWidth, BEAM_BAR_HEIGHT, 6, 6);
         }
-        
+
         // Border
         g2.setColor(Color.WHITE);
-        g2.drawRoundRect(x, y, barWidth, barHeight, 6, 6);
-        
+        g2.drawRoundRect(barX, barY, BEAM_BAR_WIDTH, BEAM_BAR_HEIGHT, 6, 6);
+
         // Text
-        String text = cooldownProgress >= 1.0 ? "BEAM READY" : 
-                      String.format("BEAM: %.1fs", (ULTIMATE_COOLDOWN_MS - timeSinceLastUltimate) / 1000.0);
-        g2.setFont(g2.getFont().deriveFont(java.awt.Font.BOLD, 12f));
-        java.awt.FontMetrics fm = g2.getFontMetrics();
-        int textX = x + (barWidth - fm.stringWidth(text)) / 2;
-        int textY = y + (barHeight + fm.getAscent()) / 2 - 2;
-        
+        String text = cooldownProgress >= 1.0 ? "BEAM READY"
+                : String.format("BEAM: %.1fs", (ULTIMATE_COOLDOWN_MS - timeSinceLastUltimate) / 1000.0);
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 12f));
+        FontMetrics fm = g2.getFontMetrics();
+        int textX = barX + (BEAM_BAR_WIDTH - fm.stringWidth(text)) / 2;
+        int textY = barY + (BEAM_BAR_HEIGHT + fm.getAscent()) / 2 - 2;
+
         g2.setColor(Color.BLACK);
         g2.drawString(text, textX + 1, textY + 1);
         g2.setColor(Color.WHITE);
@@ -351,17 +382,17 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void drawScore(Graphics2D g2) {
-        g2.setFont(g2.getFont().deriveFont(java.awt.Font.BOLD, 16f));
-        java.awt.FontMetrics fm = g2.getFontMetrics();
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 16f));
+        FontMetrics fm = g2.getFontMetrics();
         String scoreText = "Score: " + score;
-        int x = 20, y = 70;
 
         g2.setColor(new Color(0, 0, 0, 180));
-        g2.fillRoundRect(x - 10, y - fm.getAscent() - 5, fm.stringWidth(scoreText) + 20, fm.getHeight() + 10, 10, 10);
+        g2.fillRoundRect(SCORE_X - 10, SCORE_Y - fm.getAscent() - 5,
+                fm.stringWidth(scoreText) + 20, fm.getHeight() + 10, 10, 10);
         g2.setColor(Color.WHITE);
-        g2.drawString(scoreText, x, y);
+        g2.drawString(scoreText, SCORE_X, SCORE_Y);
 
-        int statsY = y + 40;
+        int statsStartY = SCORE_Y + 40;
         String[] stats = {
                 "Currency: " + currency + " points",
                 "Max Health: " + (int) player.getMaxHealth() + " (Lv " + player.getMaxHealthLevel() + ")",
@@ -371,14 +402,15 @@ public class GamePanel extends JPanel implements ActionListener {
                 "Bullet Damage: Lv " + player.getBulletDamageLevel()
         };
 
-        g2.setFont(g2.getFont().deriveFont(java.awt.Font.PLAIN, 12f));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 12f));
         fm = g2.getFontMetrics();
         for (int i = 0; i < stats.length; i++) {
+            int lineY = statsStartY + i * STATS_LINE_HEIGHT;
             g2.setColor(new Color(0, 0, 0, 150));
-            g2.fillRoundRect(x - 10, statsY + i * 28 - fm.getAscent() - 2, fm.stringWidth(stats[i]) + 20,
-                    fm.getHeight() + 4, 5, 5);
+            g2.fillRoundRect(SCORE_X - 10, lineY - fm.getAscent() - 2,
+                    fm.stringWidth(stats[i]) + 20, fm.getHeight() + 4, 5, 5);
             g2.setColor(new Color(200, 200, 200));
-            g2.drawString(stats[i], x, statsY + i * 28);
+            g2.drawString(stats[i], SCORE_X, lineY);
         }
     }
 
@@ -398,7 +430,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void updateGame() {
-        double deltaSeconds = 16 / 1000.0;
+        double deltaSeconds = DELTA_SECONDS;
         
         // Update beam ability (always update, even when paused)
         boolean beamWasActive = beamAbility.isActive();
@@ -454,8 +486,9 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void updateShooting() {
-        if (showingUpgradeShop)
+        if (showingUpgradeShop) {
             return;
+        }
 
         long now = System.currentTimeMillis();
         long fireInterval = (long) (1000 / player.getFireRate());
@@ -466,19 +499,12 @@ public class GamePanel extends JPanel implements ActionListener {
             int targetX = inputHandler.getMouseX() + camera.getX();
             int targetY = inputHandler.getMouseY() + camera.getY();
 
-            double dx = targetX - originX;
-            double dy = targetY - originY;
-            double len = Math.sqrt(dx * dx + dy * dy);
-            if (len == 0) {
-                dx = 1;
-                dy = 0;
-                len = 1;
-            }
+            double[] direction = MathUtils.normalizeWithDefault(targetX - originX, targetY - originY, 1, 0);
+            double velocityX = direction[0] * player.getBulletSpeed();
+            double velocityY = direction[1] * player.getBulletSpeed();
 
-            double vx = (dx / len) * player.getBulletSpeed();
-            double vy = (dy / len) * player.getBulletSpeed();
-
-            bullets.add(new Bullet(originX, originY, vx, vy, player.getBulletSpeed(), player.getBulletDamage(), true));
+            bullets.add(new Bullet(originX, originY, velocityX, velocityY,
+                    player.getBulletSpeed(), player.getBulletDamage(), true));
             lastShotTime = now;
         }
     }
@@ -569,26 +595,21 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void awardScoreForEnemy(Enemy enemy) {
-        if (enemy instanceof TriangleEnemy)
-            score += 10;
-        else if (enemy instanceof CircleEnemy || enemy instanceof SquareEnemy)
-            score += 20;
-        else if (enemy instanceof ShooterEnemy)
-            score += 30;
-        else if (enemy instanceof SpawnerEnemy)
-            score += 40;
-        else if (enemy instanceof OctagonEnemy)
-            score += 50;
+        score += enemy.getScoreValue();
     }
 
     private void spawnHexSplit(HexagonEnemy hex, List<Enemy> collector) {
-        double centerX = hex.getX(), centerY = hex.getY();
+        double centerX = hex.getX();
+        double centerY = hex.getY();
         double spawnDistance = hex.getRadius();
-        for (int i = 0; i < 6; i++) {
-            double angle = i * (2 * Math.PI / 6.0);
-            double x = centerX + Math.cos(angle) * spawnDistance;
-            double y = centerY + Math.sin(angle) * spawnDistance;
-            collector.add(new TriangleEnemy(x, y, 14, 40, 5, 280));
+
+        for (int i = 0; i < HEX_SPLIT_COUNT; i++) {
+            double angle = i * (2 * Math.PI / HEX_SPLIT_COUNT);
+            double spawnX = centerX + Math.cos(angle) * spawnDistance;
+            double spawnY = centerY + Math.sin(angle) * spawnDistance;
+            collector.add(new TriangleEnemy(spawnX, spawnY,
+                    HEX_SPLIT_TRIANGLE_RADIUS, HEX_SPLIT_TRIANGLE_HEALTH,
+                    HEX_SPLIT_TRIANGLE_DAMAGE, HEX_SPLIT_TRIANGLE_SPEED));
         }
     }
 

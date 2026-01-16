@@ -2,6 +2,8 @@ import java.util.List;
 
 public class CollisionManager {
 
+    private static final double COLLISION_PUSH_FACTOR = 0.5;
+
     private final int mapWidth;
     private final int mapHeight;
 
@@ -11,17 +13,15 @@ public class CollisionManager {
     }
 
     public boolean bulletHitsEnemy(Bullet bullet, Enemy enemy) {
-        double dx = bullet.getX() - enemy.getX();
-        double dy = bullet.getY() - enemy.getY();
-        double distanceSq = dx * dx + dy * dy;
+        double distanceSq = MathUtils.distanceSquared(bullet.getX(), bullet.getY(),
+                enemy.getX(), enemy.getY());
         double radiusSum = bullet.getRadius() + enemy.getRadius();
         return distanceSq <= radiusSum * radiusSum;
     }
 
     public boolean bulletHitsPlayer(Bullet bullet, Character player) {
-        double dx = bullet.getX() - player.getX();
-        double dy = bullet.getY() - player.getY();
-        double distanceSq = dx * dx + dy * dy;
+        double distanceSq = MathUtils.distanceSquared(bullet.getX(), bullet.getY(),
+                player.getX(), player.getY());
         double radiusSum = bullet.getRadius() + player.getRadius();
         return distanceSq <= radiusSum * radiusSum;
     }
@@ -29,46 +29,45 @@ public class CollisionManager {
     public void resolveEnemyCollisions(Enemy currentEnemy, List<Enemy> enemies, int currentIndex) {
         for (int i = currentIndex + 1; i < enemies.size(); i++) {
             Enemy other = enemies.get(i);
-            if (!other.isAlive()) continue;
-
-            double dx = currentEnemy.getX() - other.getX();
-            double dy = currentEnemy.getY() - other.getY();
-            double distanceSq = dx * dx + dy * dy;
-            double minDistance = currentEnemy.getRadius() + other.getRadius();
-            double minDistanceSq = minDistance * minDistance;
-
-            if (distanceSq < minDistanceSq && distanceSq > 0) {
-                double distance = Math.sqrt(distanceSq);
-                double nx = dx / distance;
-                double ny = dy / distance;
-                double overlap = minDistance - distance;
-                double pushX = nx * overlap * 0.5;
-                double pushY = ny * overlap * 0.5;
-
-                double newX1 = clampX(currentEnemy.getX() + pushX, currentEnemy.getRadius());
-                double newY1 = clampY(currentEnemy.getY() + pushY, currentEnemy.getRadius());
-                double newX2 = clampX(other.getX() - pushX, other.getRadius());
-                double newY2 = clampY(other.getY() - pushY, other.getRadius());
-
-                currentEnemy.setPosition(newX1, newY1);
-                other.setPosition(newX2, newY2);
+            if (!other.isAlive()) {
+                continue;
             }
+
+            resolveCollisionBetween(currentEnemy, other);
         }
     }
 
-    private double clampX(double x, double radius) {
-        double minX = radius;
-        double maxX = mapWidth - radius;
-        if (x < minX) return minX;
-        if (x > maxX) return maxX;
-        return x;
+    private void resolveCollisionBetween(Enemy enemyA, Enemy enemyB) {
+        double deltaX = enemyA.getX() - enemyB.getX();
+        double deltaY = enemyA.getY() - enemyB.getY();
+        double distanceSq = deltaX * deltaX + deltaY * deltaY;
+        double minDistance = enemyA.getRadius() + enemyB.getRadius();
+        double minDistanceSq = minDistance * minDistance;
+
+        if (distanceSq >= minDistanceSq || distanceSq == 0) {
+            return;
+        }
+
+        double distance = Math.sqrt(distanceSq);
+        double normalX = deltaX / distance;
+        double normalY = deltaY / distance;
+        double overlap = minDistance - distance;
+        double pushAmount = overlap * COLLISION_PUSH_FACTOR;
+
+        double newX1 = clampX(enemyA.getX() + normalX * pushAmount, enemyA.getRadius());
+        double newY1 = clampY(enemyA.getY() + normalY * pushAmount, enemyA.getRadius());
+        double newX2 = clampX(enemyB.getX() - normalX * pushAmount, enemyB.getRadius());
+        double newY2 = clampY(enemyB.getY() - normalY * pushAmount, enemyB.getRadius());
+
+        enemyA.setPosition(newX1, newY1);
+        enemyB.setPosition(newX2, newY2);
     }
 
-    private double clampY(double y, double radius) {
-        double minY = radius;
-        double maxY = mapHeight - radius;
-        if (y < minY) return minY;
-        if (y > maxY) return maxY;
-        return y;
+    private double clampX(double xPos, double radius) {
+        return MathUtils.clamp(xPos, radius, mapWidth - radius);
+    }
+
+    private double clampY(double yPos, double radius) {
+        return MathUtils.clamp(yPos, radius, mapHeight - radius);
     }
 }
