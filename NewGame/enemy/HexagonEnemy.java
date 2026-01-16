@@ -4,7 +4,7 @@ package enemy;
 Name: HexagonEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Special enemy that splits into 6 triangles on death. Worth no direct score but generates 60 points through splits. Creates dangerous situations by multiplying threats when destroyed.
+Description: Special enemy that splits into 6 triangles on death.
 */
 
 import entity.Character;
