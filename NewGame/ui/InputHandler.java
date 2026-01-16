@@ -2,7 +2,7 @@
 Name: InputHandler.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Handles keyboard (WASD movement) and mouse motion input. Implements KeyListener and MouseMotionListener to track input state. Extracted from GamePanel for cleaner separation of concerns.
+Description: Handles keyboard and mouse input.
 */
 
 package ui;
