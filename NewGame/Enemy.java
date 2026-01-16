@@ -7,6 +7,7 @@ public abstract class Enemy extends Entity {
     protected double bodyDamage;
     protected double movementSpeed;
     protected Color customColor = null;
+    protected double angle = -Math.PI / 2; // Default facing up
 
     public Enemy(double x,
                  double y,
@@ -32,6 +33,9 @@ public abstract class Enemy extends Entity {
                                int mapHeight) {
         double dx = targetX - x;
         double dy = targetY - y;
+        if (dx != 0 || dy != 0) {
+            angle = Math.atan2(dy, dx);
+        }
         moveWithDirection(dx, dy, deltaSeconds, mapWidth, mapHeight);
     }
 
@@ -44,6 +48,7 @@ public abstract class Enemy extends Entity {
         if (len > 0) {
             dx /= len;
             dy /= len;
+            angle = Math.atan2(dy, dx);
 
             x += dx * movementSpeed * deltaSeconds;
             y += dy * movementSpeed * deltaSeconds;

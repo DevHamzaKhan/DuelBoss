@@ -66,9 +66,11 @@ public class SquareEnemy extends Enemy {
 
     @Override
     public void draw(Graphics2D g2) {
+        java.awt.geom.AffineTransform old = g2.getTransform();
+        g2.translate(x, y);
+        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
+
         int half = (int) radius;
-        int left = (int) (x - half);
-        int top = (int) (y - half);
         int size = half * 2;
 
         // Use custom color if set, otherwise use default orange
@@ -77,11 +79,13 @@ public class SquareEnemy extends Enemy {
         } else {
             g2.setColor(new Color(255, 150, 80));
         }
-        g2.fillRect(left, top, size, size);
+        g2.fillRect(-half, -half, size, size);
 
-        g2.setColor(Color.DARK_GRAY);
-        g2.drawRect(left, top, size, size);
+        g2.setColor(Color.BLACK);
+        g2.drawRect(-half, -half, size, size);
 
+        g2.setTransform(old);
+        
         // Health bar above enemy
         drawHealthBar(g2);
     }

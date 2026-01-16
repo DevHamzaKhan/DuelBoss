@@ -26,17 +26,19 @@ public class HexagonEnemy extends Enemy {
 
     @Override
     public void draw(Graphics2D g2) {
-        int cx = (int) x;
-        int cy = (int) y;
+        java.awt.geom.AffineTransform old = g2.getTransform();
+        g2.translate(x, y);
+        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
+
         int r = (int) radius;
 
         int sides = 6;
         int[] xs = new int[sides];
         int[] ys = new int[sides];
         for (int i = 0; i < sides; i++) {
-            double angle = -Math.PI / 2 + i * 2 * Math.PI / sides;
-            xs[i] = cx + (int) (Math.cos(angle) * r);
-            ys[i] = cy + (int) (Math.sin(angle) * r);
+            double ang = -Math.PI / 2 + i * 2 * Math.PI / sides;
+            xs[i] = (int) (Math.cos(ang) * r);
+            ys[i] = (int) (Math.sin(ang) * r);
         }
 
         Polygon hex = new Polygon(xs, ys, sides);
@@ -46,6 +48,8 @@ public class HexagonEnemy extends Enemy {
 
         g2.setColor(Color.DARK_GRAY);
         g2.drawPolygon(hex);
+
+        g2.setTransform(old);
 
         // Health bar above enemy
         drawHealthBar(g2);

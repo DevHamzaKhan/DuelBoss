@@ -25,8 +25,10 @@ public class OctagonEnemy extends Enemy {
 
     @Override
     public void draw(Graphics2D g2) {
-        int cx = (int) x;
-        int cy = (int) y;
+        java.awt.geom.AffineTransform old = g2.getTransform();
+        g2.translate(x, y);
+        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
+
         int r = (int) radius;
 
         // Draw a regular octagon (8 sides)
@@ -35,9 +37,9 @@ public class OctagonEnemy extends Enemy {
         int[] ys = new int[sides];
         
         for (int i = 0; i < sides; i++) {
-            double angle = i * (2 * Math.PI / sides) - Math.PI / 2.0; // Start from top
-            xs[i] = cx + (int)(Math.cos(angle) * r);
-            ys[i] = cy + (int)(Math.sin(angle) * r);
+            double ang = i * (2 * Math.PI / sides) - Math.PI / 2.0; // Start from top
+            xs[i] = (int)(Math.cos(ang) * r);
+            ys[i] = (int)(Math.sin(ang) * r);
         }
         
         Polygon octagon = new Polygon(xs, ys, sides);
@@ -52,6 +54,8 @@ public class OctagonEnemy extends Enemy {
 
         g2.setColor(Color.DARK_GRAY);
         g2.drawPolygon(octagon);
+
+        g2.setTransform(old);
 
         // Health bar above enemy
         drawHealthBar(g2);
