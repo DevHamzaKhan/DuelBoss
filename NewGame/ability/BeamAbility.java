@@ -10,6 +10,7 @@ package ability;
 import enemy.Enemy;
 import manager.ParticleManager;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -156,8 +157,8 @@ public class BeamAbility {
         // first pass: draw the full path as a faint outline showing where the beam will
         // travel
         g2.setColor(new Color(BEAM_COLOR.getRed(), BEAM_COLOR.getGreen(), BEAM_COLOR.getBlue(), 60));
-        g2.setStroke(new java.awt.BasicStroke((float) (BEAM_WIDTH * 0.4f),
-                java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
+        g2.setStroke(new BasicStroke((float) (BEAM_WIDTH * 0.4f),
+                BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         for (int i = 0; i < path.size() - 1; i++) {
             double[] p1 = path.get(i), p2 = path.get(i + 1);
             g2.drawLine((int) p1[0], (int) p1[1], (int) p2[0], (int) p2[1]);
@@ -166,8 +167,8 @@ public class BeamAbility {
         // second pass: draw the bright beam only for the part that's been traveled so
         // far
         g2.setColor(BEAM_COLOR);
-        g2.setStroke(new java.awt.BasicStroke((float) BEAM_WIDTH,
-                java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
+        g2.setStroke(new BasicStroke((float) BEAM_WIDTH,
+                BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
         double[] currentPos = getCurrentPosition();
         double cumDist = 0;
