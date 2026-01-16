@@ -105,7 +105,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private Camera camera;
     private UIOverlay uiOverlay;
 
-    // extracted managers
+    // managers
     private final InputHandler inputHandler;
     private final WaveManager waveManager;
     private final CollisionManager collisionManager;
