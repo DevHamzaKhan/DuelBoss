@@ -12,11 +12,11 @@ public class TriangleEnemy extends Enemy {
     private double explodeSpeed = 0.0;
 
     public TriangleEnemy(double x,
-                         double y,
-                         double radius,
-                         double maxHealth,
-                         double bodyDamage,
-                         double movementSpeed) {
+            double y,
+            double radius,
+            double maxHealth,
+            double bodyDamage,
+            double movementSpeed) {
         super(x, y, radius, maxHealth, bodyDamage, movementSpeed);
     }
 
@@ -39,10 +39,10 @@ public class TriangleEnemy extends Enemy {
 
     @Override
     public void update(double deltaSeconds,
-                       Character player,
-                       java.util.List<Bullet> bullets,
-                       int mapWidth,
-                       int mapHeight) {
+            Character player,
+            java.util.List<Bullet> bullets,
+            int mapWidth,
+            int mapHeight) {
         if (explodeTimeRemaining > 0) {
             // Move straight outwards for the explosion phase
             double moveX = explodeDirX * explodeSpeed;
@@ -60,8 +60,8 @@ public class TriangleEnemy extends Enemy {
         int r = (int) radius;
 
         // Triangle pointing up (will rotate to face movement direction)
-        int[] xs = {0, -r, r};
-        int[] ys = {-r, r, r};
+        int[] xs = { 0, -r, r };
+        int[] ys = { -r, r, r };
 
         Polygon triangle = new Polygon(xs, ys, 3);
 
@@ -77,5 +77,3 @@ public class TriangleEnemy extends Enemy {
         g2.drawPolygon(triangle);
     }
 }
-
-

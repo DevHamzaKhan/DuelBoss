@@ -35,7 +35,10 @@ public class GamePanel extends JPanel implements ActionListener {
     private final ParticleManager particleManager;
 
     // Game state
-    private enum GameState { MAIN_MENU, HOW_TO_PLAY, PLAYING, GAME_OVER }
+    private enum GameState {
+        MAIN_MENU, HOW_TO_PLAY, PLAYING, GAME_OVER
+    }
+
     private GameState gameState = GameState.MAIN_MENU;
     private int score = 0;
     private int currency = 0;
@@ -138,8 +141,11 @@ public class GamePanel extends JPanel implements ActionListener {
     private void drawGameWorld(Graphics2D g2) {
         drawGridBackground(g2);
         player.draw(g2);
-        for (Bullet bullet : bullets) bullet.draw(g2);
-        for (Enemy enemy : enemies) if (enemy.isAlive()) enemy.draw(g2);
+        for (Bullet bullet : bullets)
+            bullet.draw(g2);
+        for (Enemy enemy : enemies)
+            if (enemy.isAlive())
+                enemy.draw(g2);
         particleManager.draw(g2);
     }
 
@@ -206,15 +212,16 @@ public class GamePanel extends JPanel implements ActionListener {
 
         int statsY = y + 40;
         String[] stats = {
-            "Currency: " + currency + " points",
-            "Max Health: " + (int)player.getMaxHealth() + " (Lv " + player.getMaxHealthLevel() + ")"
+                "Currency: " + currency + " points",
+                "Max Health: " + (int) player.getMaxHealth() + " (Lv " + player.getMaxHealthLevel() + ")"
         };
 
         g2.setFont(g2.getFont().deriveFont(java.awt.Font.PLAIN, 12f));
         fm = g2.getFontMetrics();
         for (int i = 0; i < stats.length; i++) {
             g2.setColor(new Color(0, 0, 0, 150));
-            g2.fillRoundRect(x - 10, statsY + i * 28 - fm.getAscent() - 2, fm.stringWidth(stats[i]) + 20, fm.getHeight() + 4, 5, 5);
+            g2.fillRoundRect(x - 10, statsY + i * 28 - fm.getAscent() - 2, fm.stringWidth(stats[i]) + 20,
+                    fm.getHeight() + 4, 5, 5);
             g2.setColor(new Color(200, 200, 200));
             g2.drawString(stats[i], x, statsY + i * 28);
         }
@@ -223,12 +230,14 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // Update hover state for menus
-        boolean isMenu = gameState == GameState.MAIN_MENU || gameState == GameState.GAME_OVER || gameState == GameState.HOW_TO_PLAY;
+        boolean isMenu = gameState == GameState.MAIN_MENU || gameState == GameState.GAME_OVER
+                || gameState == GameState.HOW_TO_PLAY;
         menuRenderer.updateHover(inputHandler.getMouseX(), inputHandler.getMouseY(), isMenu, showingUpgradeShop);
 
         if (gameState == GameState.PLAYING) {
             updateGame();
-            if (player.getHealthLeft() <= 0) gameOver();
+            if (player.getHealthLeft() <= 0)
+                gameOver();
         }
         repaint();
     }
@@ -247,13 +256,18 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void updatePlayer(double deltaSeconds) {
-        if (showingUpgradeShop) return;
+        if (showingUpgradeShop)
+            return;
 
         double dx = 0, dy = 0;
-        if (inputHandler.isUpPressed()) dy -= 1;
-        if (inputHandler.isDownPressed()) dy += 1;
-        if (inputHandler.isLeftPressed()) dx -= 1;
-        if (inputHandler.isRightPressed()) dx += 1;
+        if (inputHandler.isUpPressed())
+            dy -= 1;
+        if (inputHandler.isDownPressed())
+            dy += 1;
+        if (inputHandler.isLeftPressed())
+            dx -= 1;
+        if (inputHandler.isRightPressed())
+            dx += 1;
 
         player.update(dx, dy, deltaSeconds, MAP_WIDTH, MAP_HEIGHT);
 
@@ -267,7 +281,8 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void updateShooting() {
-        if (showingUpgradeShop) return;
+        if (showingUpgradeShop)
+            return;
 
         long now = System.currentTimeMillis();
         long fireInterval = (long) (1000 / player.getFireRate());
@@ -281,7 +296,11 @@ public class GamePanel extends JPanel implements ActionListener {
             double dx = targetX - originX;
             double dy = targetY - originY;
             double len = Math.sqrt(dx * dx + dy * dy);
-            if (len == 0) { dx = 1; dy = 0; len = 1; }
+            if (len == 0) {
+                dx = 1;
+                dy = 0;
+                len = 1;
+            }
 
             double vx = (dx / len) * player.getBulletSpeed();
             double vy = (dy / len) * player.getBulletSpeed();
@@ -313,7 +332,8 @@ public class GamePanel extends JPanel implements ActionListener {
                 remove = true;
             }
 
-            if (remove) iterator.remove();
+            if (remove)
+                iterator.remove();
         }
     }
 
@@ -328,7 +348,8 @@ public class GamePanel extends JPanel implements ActionListener {
             if (!enemy.isAlive()) {
                 awardScoreForEnemy(enemy);
                 particleManager.spawnDeathEffect(enemy);
-                if (enemy instanceof HexagonEnemy) spawnHexSplit((HexagonEnemy) enemy, spawnedFromDeaths);
+                if (enemy instanceof HexagonEnemy)
+                    spawnHexSplit((HexagonEnemy) enemy, spawnedFromDeaths);
                 iterator.remove();
                 continue;
             }
@@ -345,7 +366,8 @@ public class GamePanel extends JPanel implements ActionListener {
                 enemy.onCollideWithPlayer(player);
                 awardScoreForEnemy(enemy);
                 particleManager.spawnDeathEffect(enemy);
-                if (enemy instanceof HexagonEnemy) spawnHexSplit((HexagonEnemy) enemy, spawnedFromDeaths);
+                if (enemy instanceof HexagonEnemy)
+                    spawnHexSplit((HexagonEnemy) enemy, spawnedFromDeaths);
                 iterator.remove();
             }
             index++;
@@ -364,7 +386,8 @@ public class GamePanel extends JPanel implements ActionListener {
             return;
         }
 
-        if (!waveManager.isSpawningComplete()) return;
+        if (!waveManager.isSpawningComplete())
+            return;
 
         if (enemies.isEmpty() && !showingUpgradeShop) {
             currency += waveManager.getWaveNumber() * 2;
@@ -373,11 +396,16 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void awardScoreForEnemy(Enemy enemy) {
-        if (enemy instanceof TriangleEnemy) score += 10;
-        else if (enemy instanceof CircleEnemy || enemy instanceof SquareEnemy) score += 20;
-        else if (enemy instanceof ShooterEnemy) score += 30;
-        else if (enemy instanceof SpawnerEnemy) score += 40;
-        else if (enemy instanceof OctagonEnemy) score += 50;
+        if (enemy instanceof TriangleEnemy)
+            score += 10;
+        else if (enemy instanceof CircleEnemy || enemy instanceof SquareEnemy)
+            score += 20;
+        else if (enemy instanceof ShooterEnemy)
+            score += 30;
+        else if (enemy instanceof SpawnerEnemy)
+            score += 40;
+        else if (enemy instanceof OctagonEnemy)
+            score += 50;
     }
 
     private void spawnHexSplit(HexagonEnemy hex, List<Enemy> collector) {
@@ -393,30 +421,38 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void gameOver() {
         gameState = GameState.GAME_OVER;
-        if (score > highScore) highScore = score;
+        if (score > highScore)
+            highScore = score;
     }
 
     // Click handlers
     private void handleMainMenuClick(int x, int y) {
         int btn = menuRenderer.getClickedMenuButton(x, y);
-        if (btn == 0) startNewGame();
-        else if (btn == 1) gameState = GameState.HOW_TO_PLAY;
-        else if (btn == 2) System.exit(0);
+        if (btn == 0)
+            startNewGame();
+        else if (btn == 1)
+            gameState = GameState.HOW_TO_PLAY;
+        else if (btn == 2)
+            System.exit(0);
     }
 
     private void handleGameOverClick(int x, int y) {
         int btn = menuRenderer.getClickedMenuButton(x, y);
-        if (btn == 0) gameState = GameState.MAIN_MENU;
-        else if (btn == 1) startNewGame();
+        if (btn == 0)
+            gameState = GameState.MAIN_MENU;
+        else if (btn == 1)
+            startNewGame();
     }
 
     private void handleHowToPlayClick(int x, int y) {
-        if (menuRenderer.getClickedMenuButton(x, y) == 0) gameState = GameState.MAIN_MENU;
+        if (menuRenderer.getClickedMenuButton(x, y) == 0)
+            gameState = GameState.MAIN_MENU;
     }
 
     private void handleShopClick(int x, int y) {
         int btn = menuRenderer.getClickedShopButton(x, y);
-        if (btn == -1) return;
+        if (btn == -1)
+            return;
 
         if (btn == 7) { // Continue button
             showingUpgradeShop = false;
@@ -425,14 +461,30 @@ public class GamePanel extends JPanel implements ActionListener {
             return;
         }
 
-        if (currency <= 0) return;
+        if (currency <= 0)
+            return;
 
-        if (btn == 0 && player.getMaxHealthLevel() < 10) { player.upgradeMaxHealth(); currency--; }
-        else if (btn == 1 && player.getBulletSpeedLevel() < 10) { player.upgradeBulletSpeed(); currency--; }
-        else if (btn == 2 && player.getFireRateLevel() < 10) { player.upgradeFireRate(); currency--; }
-        else if (btn == 3 && player.getMovementSpeedLevel() < 10) { player.upgradeMovementSpeed(); currency--; }
-        else if (btn == 4 && player.getBulletDamageLevel() < 10) { player.upgradeBulletDamage(); currency--; }
-        else if (btn == 5) { player.buyHealth(); currency--; }
-        else if (btn == 6) { score += 10; currency--; }
+        if (btn == 0 && player.getMaxHealthLevel() < 10) {
+            player.upgradeMaxHealth();
+            currency--;
+        } else if (btn == 1 && player.getBulletSpeedLevel() < 10) {
+            player.upgradeBulletSpeed();
+            currency--;
+        } else if (btn == 2 && player.getFireRateLevel() < 10) {
+            player.upgradeFireRate();
+            currency--;
+        } else if (btn == 3 && player.getMovementSpeedLevel() < 10) {
+            player.upgradeMovementSpeed();
+            currency--;
+        } else if (btn == 4 && player.getBulletDamageLevel() < 10) {
+            player.upgradeBulletDamage();
+            currency--;
+        } else if (btn == 5) {
+            player.buyHealth();
+            currency--;
+        } else if (btn == 6) {
+            score += 10;
+            currency--;
+        }
     }
 }

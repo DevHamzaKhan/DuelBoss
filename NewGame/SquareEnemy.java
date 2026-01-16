@@ -7,22 +7,22 @@ public class SquareEnemy extends Enemy {
     private final double dodgeRadius;
 
     public SquareEnemy(double x,
-                       double y,
-                       double halfSize,
-                       double maxHealth,
-                       double bodyDamage,
-                       double movementSpeed,
-                       double dodgeRadius) {
+            double y,
+            double halfSize,
+            double maxHealth,
+            double bodyDamage,
+            double movementSpeed,
+            double dodgeRadius) {
         super(x, y, halfSize, maxHealth, bodyDamage, movementSpeed);
         this.dodgeRadius = dodgeRadius;
     }
 
     @Override
     public void update(double deltaSeconds,
-                       Character player,
-                       java.util.List<Bullet> bullets,
-                       int mapWidth,
-                       int mapHeight) {
+            Character player,
+            java.util.List<Bullet> bullets,
+            int mapWidth,
+            int mapHeight) {
 
         // Find closest bullet within dodgeRadius
         Bullet closest = null;

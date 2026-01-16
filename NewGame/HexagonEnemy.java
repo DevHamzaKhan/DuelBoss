@@ -6,20 +6,20 @@ import java.util.List;
 public class HexagonEnemy extends Enemy {
 
     public HexagonEnemy(double x,
-                        double y,
-                        double radius,
-                        double maxHealth,
-                        double bodyDamage,
-                        double movementSpeed) {
+            double y,
+            double radius,
+            double maxHealth,
+            double bodyDamage,
+            double movementSpeed) {
         super(x, y, radius, maxHealth, bodyDamage, movementSpeed);
     }
 
     @Override
     public void update(double deltaSeconds,
-                       Character player,
-                       List<Bullet> bullets,
-                       int mapWidth,
-                       int mapHeight) {
+            Character player,
+            List<Bullet> bullets,
+            int mapWidth,
+            int mapHeight) {
         // Tanky chaser: just move toward the player
         moveTowards(player.getX(), player.getY(), deltaSeconds, mapWidth, mapHeight);
     }
@@ -46,5 +46,3 @@ public class HexagonEnemy extends Enemy {
         g2.drawPolygon(hex);
     }
 }
-
-

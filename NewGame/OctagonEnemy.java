@@ -5,20 +5,20 @@ import java.awt.Polygon;
 public class OctagonEnemy extends Enemy {
 
     public OctagonEnemy(double x,
-                        double y,
-                        double radius,
-                        double maxHealth,
-                        double bodyDamage,
-                        double movementSpeed) {
+            double y,
+            double radius,
+            double maxHealth,
+            double bodyDamage,
+            double movementSpeed) {
         super(x, y, radius, maxHealth, bodyDamage, movementSpeed);
     }
 
     @Override
     public void update(double deltaSeconds,
-                       Character player,
-                       java.util.List<Bullet> bullets,
-                       int mapWidth,
-                       int mapHeight) {
+            Character player,
+            java.util.List<Bullet> bullets,
+            int mapWidth,
+            int mapHeight) {
         // Just move towards the player (tanky and slow)
         moveTowards(player.getX(), player.getY(), deltaSeconds, mapWidth, mapHeight);
     }
@@ -31,16 +31,17 @@ public class OctagonEnemy extends Enemy {
         int sides = 8;
         int[] xs = new int[sides];
         int[] ys = new int[sides];
-        
+
         for (int i = 0; i < sides; i++) {
             double ang = i * (2 * Math.PI / sides) - Math.PI / 2.0; // Start from top
-            xs[i] = (int)(Math.cos(ang) * r);
-            ys[i] = (int)(Math.sin(ang) * r);
+            xs[i] = (int) (Math.cos(ang) * r);
+            ys[i] = (int) (Math.sin(ang) * r);
         }
-        
+
         Polygon octagon = new Polygon(xs, ys, sides);
 
-        // Use custom color if set, otherwise use default color (purple/blue for octagon)
+        // Use custom color if set, otherwise use default color (purple/blue for
+        // octagon)
         if (customColor != null) {
             g2.setColor(customColor);
         } else {
@@ -52,4 +53,3 @@ public class OctagonEnemy extends Enemy {
         g2.drawPolygon(octagon);
     }
 }
-

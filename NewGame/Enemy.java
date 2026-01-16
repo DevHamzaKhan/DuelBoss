@@ -10,27 +10,27 @@ public abstract class Enemy extends Entity {
     protected double angle = -Math.PI / 2; // Default facing up
 
     public Enemy(double x,
-                 double y,
-                 double radius,
-                 double maxHealth,
-                 double bodyDamage,
-                 double movementSpeed) {
+            double y,
+            double radius,
+            double maxHealth,
+            double bodyDamage,
+            double movementSpeed) {
         super(x, y, radius, maxHealth);
         this.bodyDamage = bodyDamage;
         this.movementSpeed = movementSpeed;
     }
 
     public abstract void update(double deltaSeconds,
-                                Character player,
-                                List<Bullet> bullets,
-                                int mapWidth,
-                                int mapHeight);
+            Character player,
+            List<Bullet> bullets,
+            int mapWidth,
+            int mapHeight);
 
     protected void moveTowards(double targetX,
-                               double targetY,
-                               double deltaSeconds,
-                               int mapWidth,
-                               int mapHeight) {
+            double targetY,
+            double deltaSeconds,
+            int mapWidth,
+            int mapHeight) {
         double dx = targetX - x;
         double dy = targetY - y;
         if (dx != 0 || dy != 0) {
@@ -40,10 +40,10 @@ public abstract class Enemy extends Entity {
     }
 
     protected void moveWithDirection(double dx,
-                                     double dy,
-                                     double deltaSeconds,
-                                     int mapWidth,
-                                     int mapHeight) {
+            double dy,
+            double deltaSeconds,
+            int mapWidth,
+            int mapHeight) {
         double len = Math.sqrt(dx * dx + dy * dy);
         if (len > 0) {
             dx /= len;
@@ -96,8 +96,10 @@ public abstract class Enemy extends Entity {
         int barHeight = 6;
 
         double hpPercent = healthLeft / maxHealth;
-        if (hpPercent < 0) hpPercent = 0;
-        if (hpPercent > 1) hpPercent = 1;
+        if (hpPercent < 0)
+            hpPercent = 0;
+        if (hpPercent > 1)
+            hpPercent = 1;
 
         int xLeft = (int) (x - barWidth / 2.0);
         int yTop = (int) (y - radius - 12);

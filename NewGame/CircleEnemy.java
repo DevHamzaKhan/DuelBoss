@@ -7,22 +7,22 @@ public class CircleEnemy extends Enemy {
     private final double forceFieldRadius;
 
     public CircleEnemy(double x,
-                       double y,
-                       double radius,
-                       double maxHealth,
-                       double explosionDamage,
-                       double movementSpeed,
-                       double forceFieldRadius) {
+            double y,
+            double radius,
+            double maxHealth,
+            double explosionDamage,
+            double movementSpeed,
+            double forceFieldRadius) {
         super(x, y, radius, maxHealth, explosionDamage, movementSpeed);
         this.forceFieldRadius = forceFieldRadius;
     }
 
     @Override
     public void update(double deltaSeconds,
-                       Character player,
-                       java.util.List<Bullet> bullets,
-                       int mapWidth,
-                       int mapHeight) {
+            Character player,
+            java.util.List<Bullet> bullets,
+            int mapWidth,
+            int mapHeight) {
         // If player enters the force field, explode immediately
         double dx = player.getX() - x;
         double dy = player.getY() - y;
@@ -71,5 +71,3 @@ public class CircleEnemy extends Enemy {
         // Not used - CircleEnemy overrides draw() completely
     }
 }
-
-

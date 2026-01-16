@@ -13,20 +13,20 @@ public class ShooterEnemy extends Enemy {
     private final double bulletDamage = 5; // half damage: 10 -> 5
 
     public ShooterEnemy(double x,
-                        double y,
-                        double radius,
-                        double maxHealth,
-                        double bodyDamage,
-                        double movementSpeed) {
+            double y,
+            double radius,
+            double maxHealth,
+            double bodyDamage,
+            double movementSpeed) {
         super(x, y, radius, maxHealth, bodyDamage, movementSpeed);
     }
 
     @Override
     public void update(double deltaSeconds,
-                       Character player,
-                       List<Bullet> bullets,
-                       int mapWidth,
-                       int mapHeight) {
+            Character player,
+            List<Bullet> bullets,
+            int mapWidth,
+            int mapHeight) {
 
         double dx = player.getX() - x;
         double dy = player.getY() - y;
@@ -92,5 +92,3 @@ public class ShooterEnemy extends Enemy {
         g2.drawPolygon(pentagon);
     }
 }
-
-
