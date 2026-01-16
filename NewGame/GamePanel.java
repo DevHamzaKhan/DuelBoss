@@ -177,14 +177,14 @@ public class GamePanel extends JPanel implements ActionListener {
         g2.setFont(g2.getFont().deriveFont(java.awt.Font.BOLD, 16f));
         java.awt.FontMetrics fm = g2.getFontMetrics();
         String scoreText = "Score: " + score;
-        int x = 20, y = 80;
+        int x = 20, y = 70;
 
         g2.setColor(new Color(0, 0, 0, 180));
         g2.fillRoundRect(x - 10, y - fm.getAscent() - 5, fm.stringWidth(scoreText) + 20, fm.getHeight() + 10, 10, 10);
         g2.setColor(Color.WHITE);
         g2.drawString(scoreText, x, y);
 
-        int statsY = y + 30;
+        int statsY = y + 40;
         String[] stats = {
             "Currency: " + currency + " points",
             "Max Health: " + (int)player.getMaxHealth() + " (Lv " + player.getMaxHealthLevel() + ")"
@@ -194,9 +194,9 @@ public class GamePanel extends JPanel implements ActionListener {
         fm = g2.getFontMetrics();
         for (int i = 0; i < stats.length; i++) {
             g2.setColor(new Color(0, 0, 0, 150));
-            g2.fillRoundRect(x - 5, statsY + i * 18 - fm.getAscent() - 2, fm.stringWidth(stats[i]) + 10, fm.getHeight() + 4, 5, 5);
+            g2.fillRoundRect(x - 10, statsY + i * 28 - fm.getAscent() - 2, fm.stringWidth(stats[i]) + 20, fm.getHeight() + 4, 5, 5);
             g2.setColor(new Color(200, 200, 200));
-            g2.drawString(stats[i], x, statsY + i * 18);
+            g2.drawString(stats[i], x, statsY + i * 28);
         }
     }
 

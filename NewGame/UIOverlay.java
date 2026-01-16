@@ -20,13 +20,18 @@ public class UIOverlay {
                      int enemiesRemaining,
                      String waveStatusText) {
 
-        drawHealthBar(g2, 20, 20, 300, 24);
+        drawHealthBar(g2, screenWidth, screenHeight);
         drawTimerTopLeft(g2, waveStartTime, currentTime);
         drawWaveInfo(g2, screenWidth, waveNumber, waveStatusText);
         drawEnemyCounter(g2, screenWidth, enemiesRemaining);
     }
 
-    private void drawHealthBar(Graphics2D g2, int x, int y, int width, int height) {
+    private void drawHealthBar(Graphics2D g2, int screenWidth, int screenHeight) {
+        int width = 400;
+        int height = 30;
+        int x = (screenWidth - width) / 2;
+        int y = screenHeight - height - 100;
+        
         double healthPercent = player.getHealthLeft() / player.getMaxHealth();
         healthPercent = Math.max(0, Math.min(1, healthPercent));
 
@@ -44,7 +49,7 @@ public class UIOverlay {
         g2.drawRoundRect(x, y, width, height, 8, 8);
 
         String text = (int) player.getHealthLeft() + " / " + (int) player.getMaxHealth();
-        Font font = g2.getFont().deriveFont(Font.BOLD, 14f);
+        Font font = g2.getFont().deriveFont(Font.BOLD, 16f);
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
         int tx = x + (width - fm.stringWidth(text)) / 2;
@@ -87,8 +92,8 @@ public class UIOverlay {
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
 
-        int x = 24;
-        int y = 60;
+        int x = 20;
+        int y = 30;
         int textWidth = fm.stringWidth(text);
 
         g2.setColor(new Color(0, 0, 0, 180));
