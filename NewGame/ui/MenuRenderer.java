@@ -383,13 +383,6 @@ public class MenuRenderer {
             new EnemyInfo("Pentagon", "Shoots from distance", 3)
         };
         currentY = drawEnemyRow(g2, leftSectionX, currentY, leftSectionWidth, row2, 2, enemySize);
-        currentY += rowSpacing;
-
-        // Row 3: 1 enemy (Hexagon)
-        EnemyInfo[] row3 = {
-            new EnemyInfo("Hexagon", "Splits into triangles", 4)
-        };
-        drawEnemyRow(g2, leftSectionX, currentY, leftSectionWidth, row3, 1, enemySize);
 
         // RIGHT SECTION: Bosses
         // Bosses heading
@@ -405,9 +398,9 @@ public class MenuRenderer {
         // Calculate center position based on heading
         int bossCenterX = bossesHeadingX + fm.stringWidth(bossesHeading) / 2;
 
-        // Row 1: 1 enemy (Octagon)
+        // Row 1: 1 enemy (Hexagon)
         EnemyInfo[] bossRow1 = {
-            new EnemyInfo("Octagon", "Tanky chaser", 5)
+            new EnemyInfo("Hexagon", "Splits into triangles", 4)
         };
         currentY = drawEnemyRowCentered(g2, bossCenterX, currentY, enemySize, bossRow1[0]);
         currentY += rowSpacing;
