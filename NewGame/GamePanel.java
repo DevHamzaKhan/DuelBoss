@@ -494,6 +494,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         if (rightPressed) dx += 1;
 
         player.update(dx, dy, deltaSeconds, MAP_WIDTH, MAP_HEIGHT);
+
+        // Update player angle to face mouse
+        double targetX = mouseX + camera.getX();
+        double targetY = mouseY + camera.getY();
+        player.setAngleToward(targetX, targetY);
     }
 
     private void updateCamera() {

@@ -2,17 +2,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.List;
 
-public abstract class Enemy {
+public abstract class Enemy extends Entity {
 
-    protected double maxHealth;
-    protected double healthLeft;
     protected double bodyDamage;
     protected double movementSpeed;
-
-    protected double x;
-    protected double y;
-    protected double radius;
-    protected Color customColor = null; // If set, use this color instead of default
+    protected Color customColor = null;
 
     public Enemy(double x,
                  double y,
@@ -20,11 +14,7 @@ public abstract class Enemy {
                  double maxHealth,
                  double bodyDamage,
                  double movementSpeed) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.maxHealth = maxHealth;
-        this.healthLeft = maxHealth;
+        super(x, y, radius, maxHealth);
         this.bodyDamage = bodyDamage;
         this.movementSpeed = movementSpeed;
     }
@@ -34,8 +24,6 @@ public abstract class Enemy {
                                 List<Bullet> bullets,
                                 int mapWidth,
                                 int mapHeight);
-
-    public abstract void draw(Graphics2D g2);
 
     protected void moveTowards(double targetX,
                                double targetY,
@@ -61,27 +49,7 @@ public abstract class Enemy {
             y += dy * movementSpeed * deltaSeconds;
         }
 
-        // Clamp inside map
-        double minX = radius;
-        double maxX = mapWidth - radius;
-        double minY = radius;
-        double maxY = mapHeight - radius;
-
-        if (x < minX) x = minX;
-        if (x > maxX) x = maxX;
-        if (y < minY) y = minY;
-        if (y > maxY) y = maxY;
-    }
-
-    public boolean isAlive() {
-        return healthLeft > 0;
-    }
-
-    public void takeDamage(double amount) {
-        healthLeft -= amount;
-        if (healthLeft < 0) {
-            healthLeft = 0;
-        }
+        clampToMap(mapWidth, mapHeight);
     }
 
     public boolean collidesWith(Character player) {
@@ -96,31 +64,6 @@ public abstract class Enemy {
         player.takeDamage(bodyDamage);
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getRadius() {
-        return radius;
-    }
-
-    public double getMaxHealth() {
-        return maxHealth;
-    }
-
-    public double getHealthLeft() {
-        return healthLeft;
-    }
-    
-    public void setPosition(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-
     protected void drawHealthBar(Graphics2D g2) {
         int barWidth = 40;
         int barHeight = 6;
@@ -132,19 +75,14 @@ public abstract class Enemy {
         int xLeft = (int) (x - barWidth / 2.0);
         int yTop = (int) (y - radius - 12);
 
-        // Background
         g2.setColor(new Color(40, 40, 40, 220));
         g2.fillRect(xLeft - 1, yTop - 1, barWidth + 2, barHeight + 2);
 
-        // Empty bar
         g2.setColor(new Color(90, 0, 0));
         g2.fillRect(xLeft, yTop, barWidth, barHeight);
 
-        // Filled portion
         int filled = (int) (barWidth * hpPercent);
         g2.setColor(new Color(0, 220, 0));
         g2.fillRect(xLeft, yTop, filled, barHeight);
     }
 }
-
-
