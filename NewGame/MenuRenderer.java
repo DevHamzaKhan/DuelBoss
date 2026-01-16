@@ -1,11 +1,15 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.BasicStroke;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 public class MenuRenderer {
 
@@ -16,6 +20,7 @@ public class MenuRenderer {
     private List<Rectangle> shopButtonRects = new ArrayList<>();
     private int hoveredButtonIndex = -1;
     private int hoveredShopButtonIndex = -1;
+    private BufferedImage playerImage = null;
 
     private static void drawSpaceBackground(Graphics2D g2, int width, int height) {
         g2.setColor(new Color(10, 10, 30));
@@ -42,6 +47,15 @@ public class MenuRenderer {
     public MenuRenderer(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        loadPlayerImage();
+    }
+
+    private void loadPlayerImage() {
+        try {
+            playerImage = ImageIO.read(new File("Images/player.png"));
+        } catch (Exception e) {
+            // Image not found, will draw placeholder
+        }
     }
 
     public void updateHover(int mouseX, int mouseY, boolean isMenu, boolean isShop) {
@@ -148,58 +162,56 @@ public class MenuRenderer {
     public void drawHowToPlay(Graphics2D g2) {
         drawSpaceBackground(g2, screenWidth, screenHeight);
 
+        // Title
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48f));
         FontMetrics fm = g2.getFontMetrics();
         String title = "How to Play";
         int titleX = (screenWidth - fm.stringWidth(title)) / 2;
-        g2.setColor(new Color(0, 255, 255));
-        g2.drawString(title, titleX, 60);
+        g2.setColor(Color.WHITE);
+        g2.drawString(title, titleX, 50);
 
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 18f));
+        // Objective paragraph at top
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
         fm = g2.getFontMetrics();
-        String[] instructions = {
-                "CONTROLS:",
-                "WASD - Move character",
-                "Mouse - Aim and shoot automatically",
-                "",
-                "OBJECTIVE:",
-                "Survive waves of enemies",
-                "Clear all enemies to advance to the next wave",
-                "Earn currency to upgrade your character",
-                "",
-                "ENEMIES:",
-                "Triangle - Chases you",
-                "Square - Chases you and dodges bullets",
-                "Circle - Explodes when you're in its force field",
-                "Pentagon - Shoots at you from distance",
-                "Hexagon - Splits into 6 triangles when destroyed"
-        };
+        String objective = "OBJECTIVE: Level up your character in this endless game mode. Survive waves of enemies, " +
+                          "earn currency, and upgrade your abilities to last as long as possible!";
+        int objY = 90;
+        int objWidth = screenWidth - 100;
+        int objX = 50;
+        drawWrappedText(g2, objective, objX, objY, objWidth, fm);
 
-        int y = 120;
-        int lineHeight = fm.getHeight() + 5;
-        int maxY = screenHeight - 120;
+        // Split screen into left and right sections with boxes
+        int startY = 140;
+        int boxSpacing = 20;
+        int leftBoxWidth = (screenWidth - boxSpacing * 3) / 3; // Left takes 1/3
+        int rightBoxWidth = (screenWidth - boxSpacing * 3) * 2 / 3; // Right takes 2/3
+        int boxHeight = screenHeight - startY - 100; // Leave space for back button
+        int leftBoxX = boxSpacing;
+        int rightBoxX = leftBoxX + leftBoxWidth + boxSpacing;
+        int boxY = startY;
+        int cornerRadius = 20;
 
-        for (String line : instructions) {
-            if (y + lineHeight > maxY)
-                break;
+        // LEFT SIDE: Character section box
+        g2.setColor(new Color(30, 30, 50, 220));
+        g2.fillRoundRect(leftBoxX, boxY, leftBoxWidth, boxHeight, cornerRadius, cornerRadius);
+        g2.setColor(new Color(0, 200, 255));
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(leftBoxX, boxY, leftBoxWidth, boxHeight, cornerRadius, cornerRadius);
+        drawCharacterSection(g2, leftBoxX + 20, boxY, leftBoxWidth - 40, boxHeight);
 
-            if (line.endsWith(":") && !line.isEmpty()) {
-                g2.setColor(new Color(0, 255, 255));
-                g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20f));
-            } else {
-                g2.setColor(Color.WHITE);
-                g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
-            }
-            fm = g2.getFontMetrics();
-            int x = (screenWidth - fm.stringWidth(line)) / 2;
-            g2.drawString(line, x, y);
-            y += (line.isEmpty() ? lineHeight / 2 : lineHeight);
-        }
+        // RIGHT SIDE: Enemy types section box
+        g2.setColor(new Color(30, 30, 50, 220));
+        g2.fillRoundRect(rightBoxX, boxY, rightBoxWidth, boxHeight, cornerRadius, cornerRadius);
+        g2.setColor(new Color(0, 200, 255));
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(rightBoxX, boxY, rightBoxWidth, boxHeight, cornerRadius, cornerRadius);
+        drawEnemySection(g2, rightBoxX + 20, boxY, rightBoxWidth - 40, boxHeight);
 
-        int buttonWidth = 300;
-        int buttonHeight = 60;
+        // Back button (smaller)
+        int buttonWidth = 250;
+        int buttonHeight = 50;
         int buttonX = (screenWidth - buttonWidth) / 2;
-        int buttonY = screenHeight - buttonHeight - 60;
+        int buttonY = screenHeight - buttonHeight - 40;
 
         menuButtonRects.clear();
 
@@ -213,7 +225,7 @@ public class MenuRenderer {
         g2.setStroke(new BasicStroke(isBackHovered ? 4 : 3));
         g2.drawRoundRect(buttonX, buttonY, buttonWidth, buttonHeight, 15, 15);
 
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 28f));
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 24f));
         fm = g2.getFontMetrics();
         String backText = "Back to Main Menu";
         int textX = buttonX + (buttonWidth - fm.stringWidth(backText)) / 2;
@@ -222,6 +234,366 @@ public class MenuRenderer {
         g2.drawString(backText, textX, textY);
 
         menuButtonRects.add(new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight));
+    }
+
+    private void drawWrappedText(Graphics2D g2, String text, int x, int y, int maxWidth, FontMetrics fm) {
+        String[] words = text.split(" ");
+        String line = "";
+        int currentY = y;
+
+        for (String word : words) {
+            String testLine = line + (line.isEmpty() ? "" : " ") + word;
+            int width = fm.stringWidth(testLine);
+            if (width > maxWidth && !line.isEmpty()) {
+                g2.drawString(line, x, currentY);
+                line = word;
+                currentY += fm.getHeight() + 5;
+            } else {
+                line = testLine;
+            }
+        }
+        if (!line.isEmpty()) {
+            g2.drawString(line, x, currentY);
+        }
+    }
+
+    private void drawCharacterSection(Graphics2D g2, int x, int y, int width, int height) {
+        // Heading centered at top
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32f));
+        FontMetrics fm = g2.getFontMetrics();
+        String heading = "Character";
+        int headingX = x + (width - fm.stringWidth(heading)) / 2;
+        g2.setColor(Color.WHITE);
+        g2.drawString(heading, headingX, y + 35);
+
+        int currentY = y + 60;
+
+        // Draw character image
+        int imageSize = 80;
+        int imageX = x + (width - imageSize) / 2;
+        int imageY = currentY;
+        if (playerImage != null) {
+            g2.drawImage(playerImage, imageX, imageY, imageSize, imageSize, null);
+        } else {
+            // Draw placeholder circle if image not found
+            g2.setColor(new Color(100, 150, 255));
+            g2.fillOval(imageX, imageY, imageSize, imageSize);
+        }
+        currentY += imageSize + 20;
+
+        // Controls
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20f));
+        g2.setColor(Color.WHITE);
+        g2.drawString("Controls:", x, currentY);
+        currentY += 30;
+
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
+        FontMetrics fmControls = g2.getFontMetrics();
+        g2.setColor(Color.WHITE);
+
+        // WASD keys in T-shape: W on top, A-S-D below (W above S)
+        int keySize = 35;
+        int keySpacing = 10;
+        int keysCenterX = x + width / 2;
+        int keysY = currentY;
+        
+        // Draw W centered on top
+        drawKey(g2, "W", keysCenterX - keySize / 2, keysY, keySize);
+        // Draw A, S, D in a row below (S centered, A left, D right)
+        int bottomRowY = keysY + keySize + keySpacing;
+        drawKey(g2, "A", keysCenterX - keySize - keySpacing - keySize / 2, bottomRowY, keySize);
+        drawKey(g2, "S", keysCenterX - keySize / 2, bottomRowY, keySize);
+        drawKey(g2, "D", keysCenterX + keySpacing + keySize / 2, bottomRowY, keySize);
+        
+        g2.drawString("Move", keysCenterX - fmControls.stringWidth("Move") / 2, bottomRowY + keySize + 20);
+        currentY += (keySize + keySpacing) * 2 + 40;
+
+        // Auto shoot
+        g2.drawString("Auto shoot in direction of mouse", x, currentY);
+        currentY += 25;
+
+        // Right click for laser beam
+        g2.drawString("Right click for laser beam attack", x, currentY);
+        currentY += 40;
+
+        // Upgrading options
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
+        g2.setColor(Color.WHITE);
+        g2.drawString("Upgrading Options:", x, currentY);
+        currentY += 30;
+
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 18f));
+        g2.setColor(Color.WHITE);
+        String[] upgrades = {
+            "Max Health",
+            "Bullet Speed",
+            "Fire Rate",
+            "Movement Speed",
+            "Bullet Damage"
+        };
+        for (String upgrade : upgrades) {
+            g2.drawString(upgrade, x, currentY);
+            currentY += 30;
+        }
+    }
+
+    private void drawKey(Graphics2D g2, String key, int x, int y, int size) {
+        g2.setColor(new Color(60, 60, 80));
+        g2.fillRoundRect(x, y, size, size, 5, 5);
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(2));
+        g2.drawRoundRect(x, y, size, size, 5, 5);
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 14f));
+        FontMetrics fm = g2.getFontMetrics();
+        int textX = x + (size - fm.stringWidth(key)) / 2;
+        int textY = y + (size + fm.getAscent()) / 2 - 2;
+        g2.drawString(key, textX, textY);
+    }
+
+    private void drawEnemySection(Graphics2D g2, int x, int y, int width, int height) {
+        // Heading centered at top
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32f));
+        FontMetrics fm = g2.getFontMetrics();
+        String heading = "Enemies";
+        int headingX = x + (width - fm.stringWidth(heading)) / 2;
+        g2.setColor(Color.WHITE);
+        g2.drawString(heading, headingX, y + 35);
+
+        int startY = y + 70;
+        int sectionSpacing = 20;
+        int leftSectionWidth = (width - sectionSpacing) / 2;
+        int rightSectionWidth = (width - sectionSpacing) / 2;
+        int leftSectionX = x + 40; // Shift regular enemies right
+        int rightSectionX = x + leftSectionWidth + sectionSpacing;
+        int enemySize = 90; // Bigger enemy sizes
+        int rowSpacing = 130;
+
+        // LEFT SECTION: Regular Enemies
+        // Regular Enemies heading
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 22f));
+        fm = g2.getFontMetrics();
+        String regularHeading = "Regular Enemy";
+        int regularHeadingX = leftSectionX + (leftSectionWidth - fm.stringWidth(regularHeading)) / 2;
+        g2.setColor(Color.WHITE);
+        g2.drawString(regularHeading, regularHeadingX, startY);
+
+        int currentY = startY + 35;
+
+        // Row 1: 2 enemies (Triangle, Square)
+        EnemyInfo[] row1 = {
+            new EnemyInfo("Triangle", "Chases you", 0),
+            new EnemyInfo("Square", "Dodges bullets", 1)
+        };
+        currentY = drawEnemyRow(g2, leftSectionX, currentY, leftSectionWidth, row1, 2, enemySize);
+        currentY += rowSpacing;
+
+        // Row 2: 2 enemies (Circle, Pentagon)
+        EnemyInfo[] row2 = {
+            new EnemyInfo("Circle", "Explodes in force field", 2),
+            new EnemyInfo("Pentagon", "Shoots from distance", 3)
+        };
+        currentY = drawEnemyRow(g2, leftSectionX, currentY, leftSectionWidth, row2, 2, enemySize);
+        currentY += rowSpacing;
+
+        // Row 3: 1 enemy (Hexagon)
+        EnemyInfo[] row3 = {
+            new EnemyInfo("Hexagon", "Splits into triangles", 4)
+        };
+        drawEnemyRow(g2, leftSectionX, currentY, leftSectionWidth, row3, 1, enemySize);
+
+        // RIGHT SECTION: Bosses
+        // Bosses heading
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 22f));
+        fm = g2.getFontMetrics();
+        String bossesHeading = "Bosses";
+        int bossesHeadingX = rightSectionX + (rightSectionWidth - fm.stringWidth(bossesHeading)) / 2;
+        g2.setColor(Color.WHITE);
+        g2.drawString(bossesHeading, bossesHeadingX, startY);
+
+        currentY = startY + 35;
+
+        // Calculate center position based on heading
+        int bossCenterX = bossesHeadingX + fm.stringWidth(bossesHeading) / 2;
+
+        // Row 1: 1 enemy (Octagon)
+        EnemyInfo[] bossRow1 = {
+            new EnemyInfo("Octagon", "Tanky chaser", 5)
+        };
+        currentY = drawEnemyRowCentered(g2, bossCenterX, currentY, enemySize, bossRow1[0]);
+        currentY += rowSpacing;
+
+        // Row 2: 1 enemy (Star)
+        EnemyInfo[] bossRow2 = {
+            new EnemyInfo("Star", "Spawns enemies", 6)
+        };
+        drawEnemyRowCentered(g2, bossCenterX, currentY, enemySize, bossRow2[0]);
+    }
+
+    private int drawEnemyRow(Graphics2D g2, int x, int y, int width, EnemyInfo[] enemies, int cols, int enemySize) {
+        int colSpacing = 20;
+        int cellWidth = cols > 1 ? (width - colSpacing * (cols - 1)) / cols : width;
+        int currentY = y;
+
+        for (int i = 0; i < enemies.length; i++) {
+            int col = i % cols;
+            int cellX = x + (cols > 1 ? col * (cellWidth + colSpacing) : (cellWidth - enemySize) / 2);
+            
+            // Center enemy image in cell
+            int enemyX = cellX + (cellWidth - enemySize) / 2;
+            int enemyY = currentY;
+            
+            // Draw enemy shape
+            drawEnemyShape(g2, enemyX, enemyY, enemySize, enemies[i].type);
+            
+            // Draw enemy name and description centered below image
+            int textY = enemyY + enemySize + 20;
+            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
+            FontMetrics fm = g2.getFontMetrics();
+            g2.setColor(Color.WHITE);
+            int nameX = cellX + (cellWidth - fm.stringWidth(enemies[i].name)) / 2;
+            g2.drawString(enemies[i].name, nameX, textY);
+            
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
+            fm = g2.getFontMetrics();
+            g2.setColor(Color.WHITE);
+            int descX = cellX + (cellWidth - fm.stringWidth(enemies[i].description)) / 2;
+            g2.drawString(enemies[i].description, descX, textY + 22);
+        }
+
+        return currentY + 130; // Return next Y position with row spacing
+    }
+
+    private int drawEnemyRowCentered(Graphics2D g2, int centerX, int y, int enemySize, EnemyInfo enemy) {
+        // Center enemy image at centerX
+        int enemyX = centerX - enemySize / 2;
+        int enemyY = y;
+        
+        // Draw enemy shape
+        drawEnemyShape(g2, enemyX, enemyY, enemySize, enemy.type);
+        
+        // Draw enemy name and description centered below image
+        int textY = enemyY + enemySize + 20;
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
+        FontMetrics fm = g2.getFontMetrics();
+        g2.setColor(Color.WHITE);
+        int nameX = centerX - fm.stringWidth(enemy.name) / 2;
+        g2.drawString(enemy.name, nameX, textY);
+        
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 16f));
+        fm = g2.getFontMetrics();
+        g2.setColor(Color.WHITE);
+        int descX = centerX - fm.stringWidth(enemy.description) / 2;
+        g2.drawString(enemy.description, descX, textY + 22);
+        
+        return y + 130;
+    }
+
+    private void drawEnemyShape(Graphics2D g2, int x, int y, int size, int type) {
+        int centerX = x + size / 2;
+        int centerY = y + size / 2;
+        int radius = size / 2 - 5;
+
+        java.awt.geom.AffineTransform old = g2.getTransform();
+        g2.translate(centerX, centerY);
+
+        switch (type) {
+            case 0: // Triangle
+                int[] triX = { 0, -radius, radius };
+                int[] triY = { -radius, radius, radius };
+                Polygon triangle = new Polygon(triX, triY, 3);
+                g2.setColor(new Color(255, 80, 80));
+                g2.fillPolygon(triangle);
+                g2.setColor(Color.DARK_GRAY);
+                g2.drawPolygon(triangle);
+                break;
+            case 1: // Square
+                int half = radius;
+                g2.setColor(new Color(255, 150, 80));
+                g2.fillRect(-half, -half, half * 2, half * 2);
+                g2.setColor(Color.BLACK);
+                g2.drawRect(-half, -half, half * 2, half * 2);
+                break;
+            case 2: // Circle
+                g2.setColor(new Color(120, 120, 255));
+                g2.fillOval(-radius, -radius, radius * 2, radius * 2);
+                g2.setColor(Color.WHITE);
+                g2.drawOval(-radius, -radius, radius * 2, radius * 2);
+                break;
+            case 3: // Pentagon (Shooter)
+                int sides = 5;
+                int[] pentX = new int[sides];
+                int[] pentY = new int[sides];
+                for (int i = 0; i < sides; i++) {
+                    double ang = -Math.PI / 2 + i * 2 * Math.PI / sides;
+                    pentX[i] = (int)(Math.cos(ang) * radius);
+                    pentY[i] = (int)(Math.sin(ang) * radius);
+                }
+                Polygon pentagon = new Polygon(pentX, pentY, sides);
+                g2.setColor(new Color(180, 120, 255));
+                g2.fillPolygon(pentagon);
+                g2.setColor(Color.DARK_GRAY);
+                g2.drawPolygon(pentagon);
+                break;
+            case 4: // Hexagon
+                int hexSides = 6;
+                int[] hexX = new int[hexSides];
+                int[] hexY = new int[hexSides];
+                for (int i = 0; i < hexSides; i++) {
+                    double ang = -Math.PI / 2 + i * 2 * Math.PI / hexSides;
+                    hexX[i] = (int)(Math.cos(ang) * radius);
+                    hexY[i] = (int)(Math.sin(ang) * radius);
+                }
+                Polygon hex = new Polygon(hexX, hexY, hexSides);
+                g2.setColor(new Color(120, 200, 120));
+                g2.fillPolygon(hex);
+                g2.setColor(Color.DARK_GRAY);
+                g2.drawPolygon(hex);
+                break;
+            case 5: // Octagon
+                int octSides = 8;
+                int[] octX = new int[octSides];
+                int[] octY = new int[octSides];
+                for (int i = 0; i < octSides; i++) {
+                    double ang = i * (2 * Math.PI / octSides) - Math.PI / 2.0;
+                    octX[i] = (int)(Math.cos(ang) * radius);
+                    octY[i] = (int)(Math.sin(ang) * radius);
+                }
+                Polygon octagon = new Polygon(octX, octY, octSides);
+                g2.setColor(new Color(150, 80, 200));
+                g2.fillPolygon(octagon);
+                g2.setColor(Color.DARK_GRAY);
+                g2.drawPolygon(octagon);
+                break;
+            case 6: // Star (Spawner)
+                int[] starX = new int[10];
+                int[] starY = new int[10];
+                for (int i = 0; i < 10; i++) {
+                    double ang = i * Math.PI / 5.0 - Math.PI / 2.0;
+                    double dist = (i % 2 == 0) ? radius : radius * 0.4;
+                    starX[i] = (int)(Math.cos(ang) * dist);
+                    starY[i] = (int)(Math.sin(ang) * dist);
+                }
+                Polygon star = new Polygon(starX, starY, 10);
+                g2.setColor(new Color(255, 255, 0));
+                g2.fillPolygon(star);
+                g2.setColor(new Color(200, 200, 0));
+                g2.drawPolygon(star);
+                break;
+        }
+
+        g2.setTransform(old);
+    }
+
+    private static class EnemyInfo {
+        String name;
+        String description;
+        int type;
+
+        EnemyInfo(String name, String description, int type) {
+            this.name = name;
+            this.description = description;
+            this.type = type;
+        }
     }
 
     public void drawGameOver(Graphics2D g2, int score, int waveNumber, int highScore) {
