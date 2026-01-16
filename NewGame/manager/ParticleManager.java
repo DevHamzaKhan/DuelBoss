@@ -27,7 +27,7 @@ public class ParticleManager {
             double angle = i * Math.PI / 3 + Math.random() * 0.3;
             DeathParticle p = new DeathParticle(e.getX(), e.getY(), angle, 300 + Math.random() * 100, c, 0);
             particles.add(p);
-            p.spawnChildren(particles, 2); // recursively spawns all child particles immediately
+            p.spawnChildren(particles, 3); // recursively spawns all child particles immediately
         }
     }
 
