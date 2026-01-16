@@ -1,0 +1,11 @@
+Instructions
+
+Press play to begin game:
+
+Movement: WASD
+
+Shooting: Automatic in mouse direction
+
+Shooting Beam: Right click when charged up
+
+Endless waves, endless upgrades
