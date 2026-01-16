@@ -4,19 +4,31 @@ package core;
 Name: Game.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Main entry point for Polygon Wars. Launches the game window on the Swing event dispatch thread for thread-safe GUI operations.
+Description: Main entry point for Polygon Wars
 */
 
-import javax.swing.SwingUtilities;
+import javax.swing.JFrame;
 
-public class Game {
+public class Game extends JFrame {
 
-    // application entry point - starts the game by creating and displaying the main frame
+    // 16:9 aspect ratio
+    public static final int SCREEN_WIDTH = 1440;
+    public static final int SCREEN_HEIGHT = 810;
+
+    public Game() {
+        super("DuelBoss - New Game");
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+        setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        setLocationRelativeTo(null);
+
+        GamePanel gamePanel = new GamePanel(SCREEN_WIDTH, SCREEN_HEIGHT);
+        setContentPane(gamePanel);
+    }
+
     public static void main(String[] args) {
-        // invokelater ensures gui creation happens on the event dispatch thread (thread-safe)
-        SwingUtilities.invokeLater(() -> {
-            GameFrame frame = new GameFrame();
-            frame.setVisible(true);
-        });
+        Game game = new Game();
+        game.setVisible(true);
     }
 }
