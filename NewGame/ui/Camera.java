@@ -13,6 +13,7 @@ public class Camera {
     private double y;
     private final int screenWidth;
     private final int screenHeight;
+    private static final int RENDER_BUFFER = 200; // render objects slightly off-screen
 
     public Camera(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
@@ -34,7 +35,7 @@ public class Camera {
 
     // check if object is visible in camera viewport
     public boolean isInView(double objX, double objY, double objRadius) {
-        return objX + objRadius >= x && objX - objRadius <= x + screenWidth &&
-               objY + objRadius >= y && objY - objRadius <= y + screenHeight;
+        return objX + objRadius >= x - RENDER_BUFFER && objX - objRadius <= x + screenWidth + RENDER_BUFFER &&
+                objY + objRadius >= y - RENDER_BUFFER && objY - objRadius <= y + screenHeight + RENDER_BUFFER;
     }
 }
