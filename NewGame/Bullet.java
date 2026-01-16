@@ -17,15 +17,19 @@ public class Bullet {
     private double vx;
     private double vy;
 
+    // true if fired by the player, false if fired by enemies
+    private final boolean fromPlayer;
+
     private final int radius = 6;
 
-    public Bullet(double x, double y, double vx, double vy, double speed, double damage) {
+    public Bullet(double x, double y, double vx, double vy, double speed, double damage, boolean fromPlayer) {
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
         this.speed = speed;
         this.damage = damage;
+        this.fromPlayer = fromPlayer;
     }
 
     public void update(double deltaSeconds) {
@@ -48,7 +52,31 @@ public class Bullet {
         return x < minX - radius || x > maxX + radius || y < minY - radius || y > maxY + radius;
     }
 
-    // Getters for stats (for future use)
+    // Getters for position, radius, and stats
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public double getVx() {
+        return vx;
+    }
+
+    public double getVy() {
+        return vy;
+    }
+
+    public boolean isFromPlayer() {
+        return fromPlayer;
+    }
+
     public double getMaxHealth() {
         return maxHealth;
     }

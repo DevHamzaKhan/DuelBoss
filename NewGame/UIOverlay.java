@@ -16,11 +16,14 @@ public class UIOverlay {
                      int screenHeight,
                      int waveNumber,
                      long waveStartTime,
-                     long currentTime) {
+                     long currentTime,
+                     int enemiesRemaining,
+                     String waveStatusText) {
 
         drawHealthBar(g2, 20, 20, 300, 24);
-        drawWaveInfo(g2, screenWidth, waveNumber);
-        drawTimer(g2, screenWidth, waveStartTime, currentTime);
+        drawTimerTopLeft(g2, waveStartTime, currentTime);
+        drawWaveInfo(g2, screenWidth, waveNumber, waveStatusText);
+        drawEnemyCounter(g2, screenWidth, enemiesRemaining);
     }
 
     private void drawHealthBar(Graphics2D g2, int x, int y, int width, int height) {
@@ -53,8 +56,11 @@ public class UIOverlay {
         g2.drawString(text, tx, ty);
     }
 
-    private void drawWaveInfo(Graphics2D g2, int screenWidth, int waveNumber) {
+    private void drawWaveInfo(Graphics2D g2, int screenWidth, int waveNumber, String waveStatusText) {
         String text = "Wave " + waveNumber;
+        if (waveStatusText != null && !waveStatusText.isEmpty()) {
+            text += " - " + waveStatusText;
+        }
         Font font = g2.getFont().deriveFont(Font.BOLD, 22f);
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
@@ -70,13 +76,30 @@ public class UIOverlay {
         g2.drawString(text, x, y);
     }
 
-    private void drawTimer(Graphics2D g2, int screenWidth, long waveStartTime, long currentTime) {
+    private void drawTimerTopLeft(Graphics2D g2, long waveStartTime, long currentTime) {
         long elapsedMs = currentTime - waveStartTime;
         long seconds = elapsedMs / 1000;
         long minutes = seconds / 60;
         seconds = seconds % 60;
 
-        String text = String.format("Time: %02d:%02d", minutes, seconds);
+        String text = String.format("Wave Time: %02d:%02d", minutes, seconds);
+        Font font = g2.getFont().deriveFont(Font.BOLD, 18f);
+        g2.setFont(font);
+        FontMetrics fm = g2.getFontMetrics();
+
+        int x = 24;
+        int y = 60;
+        int textWidth = fm.stringWidth(text);
+
+        g2.setColor(new Color(0, 0, 0, 180));
+        g2.fillRoundRect(x - 10, y - fm.getAscent(), textWidth + 20, fm.getHeight() + 4, 10, 10);
+
+        g2.setColor(Color.WHITE);
+        g2.drawString(text, x, y);
+    }
+
+    private void drawEnemyCounter(Graphics2D g2, int screenWidth, int enemiesRemaining) {
+        String text = "Enemies left: " + enemiesRemaining;
         Font font = g2.getFont().deriveFont(Font.BOLD, 18f);
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();

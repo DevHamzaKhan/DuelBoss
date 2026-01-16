@@ -23,6 +23,12 @@ public class Camera {
         this.y = y;
         clamp();
     }
+    
+    public void setPosition(double x, double y, int extraBottom) {
+        this.x = x;
+        this.y = y;
+        clamp(extraBottom);
+    }
 
     public void move(double dx, double dy) {
         x += dx;
@@ -31,10 +37,16 @@ public class Camera {
     }
 
     private void clamp() {
+        clamp(0);
+    }
+    
+    private void clamp(int extraBottom) {
         if (x < 0) x = 0;
         if (y < 0) y = 0;
         if (x > mapWidth - screenWidth) x = mapWidth - screenWidth;
-        if (y > mapHeight - screenHeight) y = mapHeight - screenHeight;
+        // Allow extra bottom space (50px) to show border when at bottom of map
+        double maxY = mapHeight - screenHeight + extraBottom;
+        if (y > maxY) y = maxY;
     }
 
     public int getX() {
