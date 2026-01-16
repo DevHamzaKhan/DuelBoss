@@ -4,7 +4,7 @@ package enemy;
 Name: Enemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Abstract base class for all enemy types. Provides common functionality including movement, collision detection, health bar rendering, and polymorphic score value system. Each enemy subclass defines unique behavior and appearance.
+Description: Abstract base class for all enemy types.
 */
 
 import entity.Entity;
@@ -14,6 +14,7 @@ import util.MathUtils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.util.List;
 
 public abstract class Enemy extends Entity {
@@ -48,7 +49,7 @@ public abstract class Enemy extends Entity {
     // returns the score value awarded when this enemy is killed
     // subclasses override to provide their specific value based on difficulty
     public abstract int getScoreValue();
-    
+
     // gets the custom color for this enemy, or null if using default
     // used by spawned enemies to inherit spawner's color
     public Color getCustomColor() {
@@ -89,7 +90,8 @@ public abstract class Enemy extends Entity {
         clampToMap(mapWidth, mapHeight); // ensure enemy stays in bounds
     }
 
-    // updates facing direction without moving (used by enemies that strafe or shoot)
+    // updates facing direction without moving (used by enemies that strafe or
+    // shoot)
     protected void faceTowards(double targetX, double targetY) {
         double dx = targetX - x;
         double dy = targetY - y;
@@ -107,7 +109,8 @@ public abstract class Enemy extends Entity {
         return distanceSq <= combinedRadius * combinedRadius; // avoids expensive sqrt
     }
 
-    // called when enemy collides with player - default behavior is to deal body damage
+    // called when enemy collides with player - default behavior is to deal body
+    // damage
     public void onCollideWithPlayer(Character player) {
         player.takeDamage(bodyDamage);
     }
@@ -115,7 +118,7 @@ public abstract class Enemy extends Entity {
     // renders enemy with rotation, delegating body rendering to subclass
     // health bar is rendered in screen space (unrotated)
     public void draw(Graphics2D g2) {
-        java.awt.geom.AffineTransform old = g2.getTransform();
+        AffineTransform old = g2.getTransform();
         g2.translate(x, y);
         g2.rotate(angle + Math.PI / 2); // +pi/2 so "up" is default orientation
 
