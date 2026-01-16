@@ -38,6 +38,9 @@ public class SquareEnemy extends Enemy {
             }
         }
 
+        // Always face the player
+        faceTowards(player.getX(), player.getY());
+
         if (closest != null) {
             // There is at least one nearby bullet: only dodge, don't move toward player.
             double vx = closest.getVx();
@@ -65,11 +68,7 @@ public class SquareEnemy extends Enemy {
     }
 
     @Override
-    public void draw(Graphics2D g2) {
-        java.awt.geom.AffineTransform old = g2.getTransform();
-        g2.translate(x, y);
-        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
-
+    protected void drawBody(Graphics2D g2) {
         int half = (int) radius;
         int size = half * 2;
 
@@ -83,10 +82,5 @@ public class SquareEnemy extends Enemy {
 
         g2.setColor(Color.BLACK);
         g2.drawRect(-half, -half, size, size);
-
-        g2.setTransform(old);
-        
-        // Health bar above enemy
-        drawHealthBar(g2);
     }
 }

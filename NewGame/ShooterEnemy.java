@@ -33,9 +33,7 @@ public class ShooterEnemy extends Enemy {
         double dist = Math.sqrt(dx * dx + dy * dy);
 
         // Always face the player
-        if (dx != 0 || dy != 0) {
-            angle = Math.atan2(dy, dx);
-        }
+        faceTowards(player.getX(), player.getY());
 
         // Movement:
         // - If farther than 500px: move in until we get closer.
@@ -72,11 +70,7 @@ public class ShooterEnemy extends Enemy {
     }
 
     @Override
-    public void draw(Graphics2D g2) {
-        java.awt.geom.AffineTransform old = g2.getTransform();
-        g2.translate(x, y);
-        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
-
+    protected void drawBody(Graphics2D g2) {
         int r = (int) radius;
 
         // Draw a simple regular pentagon
@@ -96,11 +90,6 @@ public class ShooterEnemy extends Enemy {
 
         g2.setColor(Color.DARK_GRAY);
         g2.drawPolygon(pentagon);
-
-        g2.setTransform(old);
-
-        // Health bar above enemy
-        drawHealthBar(g2);
     }
 }
 

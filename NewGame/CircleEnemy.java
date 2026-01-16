@@ -37,6 +37,7 @@ public class CircleEnemy extends Enemy {
         }
 
         // Otherwise, move slowly toward the player
+        faceTowards(player.getX(), player.getY());
         moveWithDirection(dx, dy, deltaSeconds, mapWidth, mapHeight);
     }
 
@@ -63,6 +64,11 @@ public class CircleEnemy extends Enemy {
 
         // Health bar above enemy
         drawHealthBar(g2);
+    }
+
+    @Override
+    protected void drawBody(Graphics2D g2) {
+        // Not used - CircleEnemy overrides draw() completely
     }
 }
 

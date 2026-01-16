@@ -33,9 +33,7 @@ public class SpawnerEnemy extends Enemy {
         double distance = Math.sqrt(dx * dx + dy * dy);
 
         // Always face the player
-        if (dx != 0 || dy != 0) {
-            angle = Math.atan2(dy, dx);
-        }
+        faceTowards(player.getX(), player.getY());
 
         // Only move towards player, but don't chase aggressively
         if (distance > 300) {
@@ -92,11 +90,7 @@ public class SpawnerEnemy extends Enemy {
     }
 
     @Override
-    public void draw(Graphics2D g2) {
-        java.awt.geom.AffineTransform old = g2.getTransform();
-        g2.translate(x, y);
-        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
-
+    protected void drawBody(Graphics2D g2) {
         int r = (int) radius;
 
         // Draw a 5-pointed star (bright yellow)
@@ -119,11 +113,6 @@ public class SpawnerEnemy extends Enemy {
 
         g2.setColor(new Color(200, 200, 0)); // Slightly darker yellow for border
         g2.drawPolygon(star);
-
-        g2.setTransform(old);
-
-        // Health bar above enemy
-        drawHealthBar(g2);
     }
 }
 

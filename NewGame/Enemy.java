@@ -48,13 +48,20 @@ public abstract class Enemy extends Entity {
         if (len > 0) {
             dx /= len;
             dy /= len;
-            angle = Math.atan2(dy, dx);
 
             x += dx * movementSpeed * deltaSeconds;
             y += dy * movementSpeed * deltaSeconds;
         }
 
         clampToMap(mapWidth, mapHeight);
+    }
+
+    protected void faceTowards(double targetX, double targetY) {
+        double dx = targetX - x;
+        double dy = targetY - y;
+        if (dx != 0 || dy != 0) {
+            angle = Math.atan2(dy, dx);
+        }
     }
 
     public boolean collidesWith(Character player) {
@@ -68,6 +75,21 @@ public abstract class Enemy extends Entity {
     public void onCollideWithPlayer(Character player) {
         player.takeDamage(bodyDamage);
     }
+
+    public void draw(Graphics2D g2) {
+        java.awt.geom.AffineTransform old = g2.getTransform();
+        g2.translate(x, y);
+        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
+
+        drawBody(g2);
+
+        g2.setTransform(old);
+
+        // Health bar above enemy
+        drawHealthBar(g2);
+    }
+
+    protected abstract void drawBody(Graphics2D g2);
 
     protected void drawHealthBar(Graphics2D g2) {
         int barWidth = 40;

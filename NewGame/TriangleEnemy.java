@@ -56,11 +56,7 @@ public class TriangleEnemy extends Enemy {
     }
 
     @Override
-    public void draw(Graphics2D g2) {
-        java.awt.geom.AffineTransform old = g2.getTransform();
-        g2.translate(x, y);
-        g2.rotate(angle + Math.PI / 2); // +PI/2 so "up" is default orientation
-
+    protected void drawBody(Graphics2D g2) {
         int r = (int) radius;
 
         // Triangle pointing up (will rotate to face movement direction)
@@ -79,11 +75,6 @@ public class TriangleEnemy extends Enemy {
 
         g2.setColor(Color.DARK_GRAY);
         g2.drawPolygon(triangle);
-
-        g2.setTransform(old);
-
-        // Health bar above enemy
-        drawHealthBar(g2);
     }
 }
 
