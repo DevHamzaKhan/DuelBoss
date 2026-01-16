@@ -45,6 +45,12 @@ public class GamePanel extends JPanel implements ActionListener {
     private int highScore = 0;
     private boolean showingUpgradeShop = false;
     private long lastShotTime;
+    
+    // Ultimate ability system
+    private final BeamAbility beamAbility;
+    private long lastUltimateTime = 0;
+    private static final long ULTIMATE_COOLDOWN_MS = 10_000; // 10 seconds
+    private boolean isGamePaused = false;
 
     public GamePanel(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
@@ -67,6 +73,7 @@ public class GamePanel extends JPanel implements ActionListener {
         collisionManager = new CollisionManager(MAP_WIDTH, MAP_HEIGHT);
         menuRenderer = new MenuRenderer(screenWidth, screenHeight);
         particleManager = new ParticleManager();
+        beamAbility = new BeamAbility();
 
         // Register input listeners
         addKeyListener(inputHandler);
@@ -74,7 +81,12 @@ public class GamePanel extends JPanel implements ActionListener {
         addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
-                handleClick(e.getX(), e.getY());
+                if (e.getButton() == java.awt.event.MouseEvent.BUTTON3) {
+                    // Right click - ultimate ability
+                    handleRightClick(e.getX(), e.getY());
+                } else {
+                    handleClick(e.getX(), e.getY());
+                }
             }
         });
 
@@ -95,6 +107,89 @@ public class GamePanel extends JPanel implements ActionListener {
             handleHowToPlayClick(x, y);
         }
     }
+    
+    private void handleRightClick(int screenX, int screenY) {
+        if (gameState != GameState.PLAYING || showingUpgradeShop || isGamePaused) {
+            return;
+        }
+        
+        // Check cooldown
+        long now = System.currentTimeMillis();
+        if (now - lastUltimateTime < ULTIMATE_COOLDOWN_MS) {
+            return; // Still on cooldown
+        }
+        
+        // Convert screen coordinates to world coordinates
+        double worldX = screenX + camera.getX();
+        double worldY = screenY + camera.getY();
+        
+        // Find enemy at click position
+        Enemy clickedEnemy = findEnemyAt(worldX, worldY);
+        if (clickedEnemy == null || !clickedEnemy.isAlive()) {
+            return;
+        }
+        
+        // Find all enemies of the same type
+        Class<?> enemyType = clickedEnemy.getClass();
+        List<Enemy> enemiesOfType = new ArrayList<>();
+        for (Enemy enemy : enemies) {
+            if (enemy.isAlive() && enemy.getClass() == enemyType) {
+                enemiesOfType.add(enemy);
+            }
+        }
+        
+        if (enemiesOfType.isEmpty()) {
+            return;
+        }
+        
+        // Activate ultimate ability
+        activateUltimateAbility(enemiesOfType);
+        lastUltimateTime = now;
+    }
+    
+    private Enemy findEnemyAt(double worldX, double worldY) {
+        for (Enemy enemy : enemies) {
+            if (!enemy.isAlive()) continue;
+            
+            double dx = worldX - enemy.getX();
+            double dy = worldY - enemy.getY();
+            double distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance <= enemy.getRadius()) {
+                return enemy;
+            }
+        }
+        return null;
+    }
+    
+    private void activateUltimateAbility(List<Enemy> targetEnemies) {
+        if (targetEnemies.isEmpty()) return;
+        
+        // Get player position as start
+        double startX = player.getX();
+        double startY = player.getY();
+        
+        // Build list of points to visit
+        List<double[]> points = new ArrayList<>();
+        for (Enemy enemy : targetEnemies) {
+            if (enemy != null && enemy.isAlive()) {
+                points.add(new double[]{enemy.getX(), enemy.getY()});
+            }
+        }
+        
+        if (points.isEmpty()) return;
+        
+        // Solve TSP to find shortest path
+        List<double[]> path = TSPSolver.solveTSP(startX, startY, points);
+        
+        if (path.isEmpty() || path.size() < 2) return;
+        
+        // Pause the game
+        isGamePaused = true;
+        
+        // Activate beam (pass particleManager for explosions)
+        beamAbility.activate(path, targetEnemies, particleManager);
+    }
 
     private void startNewGame() {
         score = 0;
@@ -109,6 +204,9 @@ public class GamePanel extends JPanel implements ActionListener {
         bullets.clear();
         enemies.clear();
         particleManager.clear();
+        beamAbility.deactivate();
+        isGamePaused = false;
+        lastUltimateTime = 0;
 
         waveManager.setupRoundZero(enemies, bullets);
     }
@@ -147,6 +245,7 @@ public class GamePanel extends JPanel implements ActionListener {
             if (enemy.isAlive())
                 enemy.draw(g2);
         particleManager.draw(g2);
+        beamAbility.draw(g2);
     }
 
     private void drawGridBackground(Graphics2D g2) {
@@ -197,6 +296,51 @@ public class GamePanel extends JPanel implements ActionListener {
         uiOverlay.draw(g2, screenWidth, screenHeight, waveManager.getWaveNumber(),
                 waveManager.getWaveStartTime(), now, enemiesRemaining, status);
         drawScore(g2);
+        drawBeamCooldown(g2, now);
+    }
+    
+    private void drawBeamCooldown(Graphics2D g2, long currentTime) {
+        long timeSinceLastUltimate = currentTime - lastUltimateTime;
+        double cooldownProgress = Math.min(1.0, (double)timeSinceLastUltimate / ULTIMATE_COOLDOWN_MS);
+        
+        int barWidth = 200;
+        int barHeight = 20;
+        int x = screenWidth - barWidth - 20;
+        int y = screenHeight - barHeight - 20;
+        
+        // Background
+        g2.setColor(new Color(40, 40, 40, 220));
+        g2.fillRoundRect(x - 3, y - 3, barWidth + 6, barHeight + 6, 8, 8);
+        
+        // Cooldown background
+        g2.setColor(new Color(60, 0, 0));
+        g2.fillRoundRect(x, y, barWidth, barHeight, 6, 6);
+        
+        // Progress fill
+        int filledWidth = (int)(barWidth * cooldownProgress);
+        if (filledWidth > 0) {
+            Color fillColor = cooldownProgress >= 1.0 ? 
+                new Color(0, 200, 0) : new Color(255, 150, 0);
+            g2.setColor(fillColor);
+            g2.fillRoundRect(x, y, filledWidth, barHeight, 6, 6);
+        }
+        
+        // Border
+        g2.setColor(Color.WHITE);
+        g2.drawRoundRect(x, y, barWidth, barHeight, 6, 6);
+        
+        // Text
+        String text = cooldownProgress >= 1.0 ? "BEAM READY" : 
+                      String.format("BEAM: %.1fs", (ULTIMATE_COOLDOWN_MS - timeSinceLastUltimate) / 1000.0);
+        g2.setFont(g2.getFont().deriveFont(java.awt.Font.BOLD, 12f));
+        java.awt.FontMetrics fm = g2.getFontMetrics();
+        int textX = x + (barWidth - fm.stringWidth(text)) / 2;
+        int textY = y + (barHeight + fm.getAscent()) / 2 - 2;
+        
+        g2.setColor(Color.BLACK);
+        g2.drawString(text, textX + 1, textY + 1);
+        g2.setColor(Color.WHITE);
+        g2.drawString(text, textX, textY);
     }
 
     private void drawScore(Graphics2D g2) {
@@ -244,6 +388,24 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void updateGame() {
         double deltaSeconds = 16 / 1000.0;
+        
+        // Update beam ability (always update, even when paused)
+        boolean beamWasActive = beamAbility.isActive();
+        boolean beamStillActive = beamAbility.update(deltaSeconds);
+        
+        // If beam just finished, unpause game and process dead enemies
+        if (beamWasActive && !beamStillActive) {
+            isGamePaused = false;
+            // Process any enemies that were killed by the beam
+            updateEnemies(0.0); // Small update to clean up dead enemies
+        }
+        
+        // Pause game updates during beam (but still update beam animation)
+        if (isGamePaused && beamAbility.isActive()) {
+            // Only update camera to follow player (visual only)
+            updateCamera();
+            return;
+        }
 
         updatePlayer(deltaSeconds);
         updateCamera();

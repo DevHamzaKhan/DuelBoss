@@ -38,14 +38,16 @@ public class WaveManager {
         for (int corner = 0; corner < 4; corner++) {
             double padding = 30;
             double[] pos = positionInCorner(corner, padding);
-
-            enemies.add(new TriangleEnemy(pos[0], pos[1], 24, 50, 5, 260));
-            enemies.add(new SquareEnemy(pos[0], pos[1], 22, 60, 7.5, 320, 150));
-            enemies.add(new CircleEnemy(pos[0], pos[1], 28, 80, 20, 160, 180));
-            enemies.add(new ShooterEnemy(pos[0], pos[1], 26, 70, 5, 220));
-            enemies.add(new HexagonEnemy(pos[0], pos[1], 30, 140, 10, 220));
-            enemies.add(new SpawnerEnemy(pos[0], pos[1], 28, 100, 5, 200));
-            enemies.add(new OctagonEnemy(pos[0], pos[1], 32, 200, 7.5, 150));
+            // Spawn 4 OctagonEnemies clustered near the corner position, but each with slight random offset
+            double clusterRadius = 40; // distance from central pos to offset points
+            for (int i = 0; i < 4; i++) {
+                double angle = Math.toRadians(i * 90); // 0, 90, 180, 270 degrees
+                double offsetX = Math.cos(angle) * clusterRadius;
+                double offsetY = Math.sin(angle) * clusterRadius;
+                double spawnX = pos[0] + offsetX;
+                double spawnY = pos[1] + offsetY;
+                enemies.add(new OctagonEnemy(spawnX, spawnY, 28, 100, 5, 200));
+            }
         }
     }
 
