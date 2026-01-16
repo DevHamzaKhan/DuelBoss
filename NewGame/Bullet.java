@@ -27,15 +27,9 @@ public class Bullet extends Entity {
 
     @Override
     public void draw(Graphics2D g2) {
-        int drawX = (int) (x - radius);
-        int drawY = (int) (y - radius);
-        int size = (int) (radius * 2);
-
-        g2.setColor(new Color(255, 210, 70));
-        g2.fillOval(drawX, drawY, size, size);
-
-        g2.setColor(Color.ORANGE);
-        g2.drawOval(drawX, drawY, size, size);
+        g2.setColor(fromPlayer ? new Color(100, 200, 255) : new Color(255, 80, 80));
+        g2.setStroke(new java.awt.BasicStroke(3));
+        g2.drawLine((int)(x - vx*0.015), (int)(y - vy*0.015), (int)x, (int)y);
     }
 
     public boolean isOutOfBounds(int minX, int minY, int maxX, int maxY) {
