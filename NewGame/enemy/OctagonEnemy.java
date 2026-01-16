@@ -4,7 +4,7 @@ package enemy;
 Name: OctagonEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: High-value tanky enemy with simple chase behavior. Offers substantial score reward (50 points) for defeating. Used in testing round 0 and as elite encounters in later waves.
+Description: Tanky enemy with simple chasing behavior
 */
 
 import entity.Character;
@@ -13,6 +13,7 @@ import entity.Bullet;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.util.List;
 
 public class OctagonEnemy extends Enemy {
 
@@ -37,7 +38,7 @@ public class OctagonEnemy extends Enemy {
     @Override
     public void update(double deltaSeconds,
             Character player,
-            java.util.List<Bullet> bullets,
+            List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
         moveTowards(player.getX(), player.getY(), deltaSeconds, mapWidth, mapHeight);
@@ -49,6 +50,7 @@ public class OctagonEnemy extends Enemy {
         int[] xPoints = new int[SIDES];
         int[] yPoints = new int[SIDES];
 
+        // calculate octagon vertices evenly spaced around circle
         for (int i = 0; i < SIDES; i++) {
             double angle = i * (2 * Math.PI / SIDES) - Math.PI / 2.0;
             xPoints[i] = (int) (Math.cos(angle) * r);
