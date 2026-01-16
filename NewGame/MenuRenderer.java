@@ -44,14 +44,16 @@ public class MenuRenderer {
 
     public int getClickedMenuButton(int x, int y) {
         for (int i = 0; i < menuButtonRects.size(); i++) {
-            if (menuButtonRects.get(i).contains(x, y)) return i;
+            if (menuButtonRects.get(i).contains(x, y))
+                return i;
         }
         return -1;
     }
 
     public int getClickedShopButton(int x, int y) {
         for (int i = 0; i < shopButtonRects.size(); i++) {
-            if (shopButtonRects.get(i).contains(x, y)) return i;
+            if (shopButtonRects.get(i).contains(x, y))
+                return i;
         }
         return -1;
     }
@@ -62,7 +64,7 @@ public class MenuRenderer {
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 72f));
         FontMetrics fm = g2.getFontMetrics();
-        String title = "GEOMETRY WARS";
+        String title = "POLYGON WARS";
         int titleX = (screenWidth - fm.stringWidth(title)) / 2;
         int titleY = 150;
 
@@ -76,7 +78,7 @@ public class MenuRenderer {
         int buttonWidth = 300;
         int buttonHeight = 60;
         int buttonSpacing = 30;
-        String[] buttonTexts = {"Play", "How to Play", "Quit"};
+        String[] buttonTexts = { "Play", "How to Play", "Quit" };
         int totalButtonHeight = buttonTexts.length * buttonHeight + (buttonTexts.length - 1) * buttonSpacing;
         int startY = (screenHeight - totalButtonHeight - 100) / 2 + 100;
 
@@ -86,7 +88,8 @@ public class MenuRenderer {
             int x = (screenWidth - buttonWidth) / 2;
             int y = startY + i * (buttonHeight + buttonSpacing);
 
-            if (y + buttonHeight > screenHeight - 80) break;
+            if (y + buttonHeight > screenHeight - 80)
+                break;
 
             boolean isHovered = (hoveredButtonIndex == i);
             Color bgColor = isHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
@@ -135,21 +138,21 @@ public class MenuRenderer {
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 18f));
         fm = g2.getFontMetrics();
         String[] instructions = {
-            "CONTROLS:",
-            "• WASD - Move character",
-            "• Mouse - Aim and shoot automatically",
-            "",
-            "OBJECTIVE:",
-            "• Survive waves of enemies",
-            "• Clear all enemies to advance to the next wave",
-            "• Earn currency to upgrade your character",
-            "",
-            "ENEMIES:",
-            "• Triangle - Chases you",
-            "• Square - Chases you and dodges bullets",
-            "• Circle - Explodes when you're in its force field",
-            "• Pentagon - Shoots at you from distance",
-            "• Hexagon - Splits into 6 triangles when destroyed"
+                "CONTROLS:",
+                "• WASD - Move character",
+                "• Mouse - Aim and shoot automatically",
+                "",
+                "OBJECTIVE:",
+                "• Survive waves of enemies",
+                "• Clear all enemies to advance to the next wave",
+                "• Earn currency to upgrade your character",
+                "",
+                "ENEMIES:",
+                "• Triangle - Chases you",
+                "• Square - Chases you and dodges bullets",
+                "• Circle - Explodes when you're in its force field",
+                "• Pentagon - Shoots at you from distance",
+                "• Hexagon - Splits into 6 triangles when destroyed"
         };
 
         int y = 120;
@@ -157,7 +160,8 @@ public class MenuRenderer {
         int maxY = screenHeight - 100;
 
         for (String line : instructions) {
-            if (y + lineHeight > maxY) break;
+            if (y + lineHeight > maxY)
+                break;
 
             if (line.endsWith(":") && !line.isEmpty()) {
                 g2.setColor(new Color(0, 255, 255));
@@ -234,7 +238,7 @@ public class MenuRenderer {
         int buttonWidth = 300;
         int buttonHeight = 60;
         int buttonSpacing = 30;
-        String[] buttonTexts = {"Return to Main Menu", "Play Again"};
+        String[] buttonTexts = { "Return to Main Menu", "Play Again" };
         int totalButtonHeight = buttonTexts.length * buttonHeight + (buttonTexts.length - 1) * buttonSpacing;
         int startY = Math.min(520, screenHeight - totalButtonHeight - 40);
 
@@ -244,7 +248,8 @@ public class MenuRenderer {
             int x = (screenWidth - buttonWidth) / 2;
             int y = startY + i * (buttonHeight + buttonSpacing);
 
-            if (y + buttonHeight > screenHeight - 20) break;
+            if (y + buttonHeight > screenHeight - 20)
+                break;
 
             boolean isHovered = (hoveredButtonIndex == i);
             Color bgColor = isHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
@@ -296,13 +301,13 @@ public class MenuRenderer {
         int progressBarWidth = 200;
         int progressBarHeight = 20;
 
-        String[] statNames = {"Max Health", "Bullet Speed", "Fire Rate", "Movement Speed", "Bullet Damage"};
+        String[] statNames = { "Max Health", "Bullet Speed", "Fire Rate", "Movement Speed", "Bullet Damage" };
         int[] levels = {
-            player.getMaxHealthLevel(),
-            player.getBulletSpeedLevel(),
-            player.getFireRateLevel(),
-            player.getMovementSpeedLevel(),
-            player.getBulletDamageLevel()
+                player.getMaxHealthLevel(),
+                player.getBulletSpeedLevel(),
+                player.getFireRateLevel(),
+                player.getMovementSpeedLevel(),
+                player.getBulletDamageLevel()
         };
 
         shopButtonRects.clear();
@@ -322,7 +327,8 @@ public class MenuRenderer {
             int segmentWidth = progressBarWidth / 10;
             for (int seg = 0; seg < 10; seg++) {
                 g2.setColor(seg < levels[i] ? new Color(0, 200, 0) : new Color(100, 100, 100));
-                g2.fillRoundRect(progX + seg * segmentWidth + 2, progY + 2, segmentWidth - 4, progressBarHeight - 4, 3, 3);
+                g2.fillRoundRect(progX + seg * segmentWidth + 2, progY + 2, segmentWidth - 4, progressBarHeight - 4, 3,
+                        3);
             }
 
             int btnX = panelX + 280;
@@ -390,7 +396,8 @@ public class MenuRenderer {
         int continueButtonWidth = 350;
         int continueButtonHeight = 60;
         int continueButtonX = panelX + (panelWidth - continueButtonWidth) / 2;
-        int continueButtonY = Math.min(panelY + panelHeight - continueButtonHeight - 20, screenHeight - continueButtonHeight - 20);
+        int continueButtonY = Math.min(panelY + panelHeight - continueButtonHeight - 20,
+                screenHeight - continueButtonHeight - 20);
 
         boolean isContinueHovered = (hoveredShopButtonIndex == shopButtonRects.size());
         g2.setColor(isContinueHovered ? new Color(0, 180, 0) : new Color(0, 150, 0));
