@@ -11,10 +11,10 @@ import enemy.Enemy;
 import enemy.TriangleEnemy;
 import enemy.CircleEnemy;
 import enemy.SquareEnemy;
-import enemy.ShooterEnemy;
+import enemy.PentagonEnemy;
 import enemy.HexagonEnemy;
 import enemy.OctagonEnemy;
-import enemy.SpawnerEnemy;
+import enemy.StarEnemy;
 import entity.Bullet;
 
 import java.util.List;
@@ -165,7 +165,7 @@ public class WaveManager {
     private void spawnEnemyForCurrentWave(List<Enemy> enemies) {
         // rounds 1-7: introduce one new enemy type per round
         // round 8+: spawn from all enemy types
-        
+
         if (waveNumber == 1) {
             spawnTriangleEnemy(enemies);
         } else if (waveNumber == 2) {
@@ -173,24 +173,38 @@ public class WaveManager {
         } else if (waveNumber == 3) {
             spawnSquareEnemy(enemies);
         } else if (waveNumber == 4) {
-            spawnShooterEnemy(enemies);
-        } else if (waveNumber == 5) {
+            spawnPentagonEnemy(enemies);
+        } else if (waveNumber >= 4) {
             spawnHexagonEnemy(enemies);
-        } else if (waveNumber == 6) {
-            spawnOctagonEnemy(enemies);
+        } else if (waveNumber >= 3) {
+            spawnStarEnemy(enemies);
         } else if (waveNumber == 7) {
-            spawnSpawnerEnemy(enemies);
+            spawnStarEnemy(enemies);
         } else {
             // wave 8+: random mix of all enemy types
             int enemyType = random.nextInt(7);
             switch (enemyType) {
-                case 0: spawnTriangleEnemy(enemies); break;
-                case 1: spawnCircleEnemy(enemies); break;
-                case 2: spawnSquareEnemy(enemies); break;
-                case 3: spawnShooterEnemy(enemies); break;
-                case 4: spawnHexagonEnemy(enemies); break;
-                case 5: spawnOctagonEnemy(enemies); break;
-                case 6: spawnSpawnerEnemy(enemies); break;
+                case 0:
+                    spawnTriangleEnemy(enemies);
+                    break;
+                case 1:
+                    spawnCircleEnemy(enemies);
+                    break;
+                case 2:
+                    spawnSquareEnemy(enemies);
+                    break;
+                case 3:
+                    spawnPentagonEnemy(enemies);
+                    break;
+                case 4:
+                    spawnHexagonEnemy(enemies);
+                    break;
+                case 5:
+                    spawnOctagonEnemy(enemies);
+                    break;
+                case 6:
+                    spawnStarEnemy(enemies);
+                    break;
             }
         }
     }
@@ -216,9 +230,9 @@ public class WaveManager {
         enemiesSpawnedThisWave++;
     }
 
-    private void spawnShooterEnemy(List<Enemy> enemies) {
+    private void spawnPentagonEnemy(List<Enemy> enemies) {
         double[] position = getNextSpawnPosition(SHOOTER_RADIUS);
-        enemies.add(new ShooterEnemy(position[0], position[1], SHOOTER_RADIUS,
+        enemies.add(new PentagonEnemy(position[0], position[1], SHOOTER_RADIUS,
                 SHOOTER_HEALTH, SHOOTER_DAMAGE, SHOOTER_SPEED));
         enemiesSpawnedThisWave++;
     }
@@ -237,9 +251,9 @@ public class WaveManager {
         enemiesSpawnedThisWave++;
     }
 
-    private void spawnSpawnerEnemy(List<Enemy> enemies) {
+    private void spawnStarEnemy(List<Enemy> enemies) {
         double[] position = getNextSpawnPosition(SPAWNER_RADIUS);
-        enemies.add(new SpawnerEnemy(position[0], position[1], SPAWNER_RADIUS,
+        enemies.add(new StarEnemy(position[0], position[1], SPAWNER_RADIUS,
                 SPAWNER_HEALTH, SPAWNER_DAMAGE, SPAWNER_SPEED));
         enemiesSpawnedThisWave++;
     }
@@ -277,7 +291,7 @@ public class WaveManager {
                 spawnY = mapHeight / 2.0;
         }
 
-        return new double[]{spawnX, spawnY};
+        return new double[] { spawnX, spawnY };
     }
 
     public boolean isSpawningComplete() {

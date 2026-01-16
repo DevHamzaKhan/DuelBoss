@@ -13,10 +13,10 @@ import enemy.Enemy;
 import enemy.TriangleEnemy;
 import enemy.CircleEnemy;
 import enemy.SquareEnemy;
-import enemy.ShooterEnemy;
+import enemy.PentagonEnemy;
 import enemy.HexagonEnemy;
 import enemy.OctagonEnemy;
-import enemy.SpawnerEnemy;
+import enemy.StarEnemy;
 import manager.WaveManager;
 import manager.CollisionManager;
 import manager.ParticleManager;
@@ -197,7 +197,8 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         // convert screen coordinates to world coordinates
-        // screen coords are relative to viewport, world coords are absolute in the 2000x2000 map
+        // screen coords are relative to viewport, world coords are absolute in the
+        // 2000x2000 map
         // we add camera offset to translate from what player sees to actual position
         double worldX = screenX + camera.getX();
         double worldY = screenY + camera.getY();
@@ -210,7 +211,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
         // find all enemies of the same type
         // ultimate targets all enemies that match the clicked enemy's class
-        // so clicking a triangle will target ALL triangles, clicking a circle targets ALL circles, etc
+        // so clicking a triangle will target ALL triangles, clicking a circle targets
+        // ALL circles, etc
         Class<?> enemyType = clickedEnemy.getClass();
         List<Enemy> enemiesOfType = new ArrayList<>();
         for (Enemy enemy : enemies) {
@@ -250,7 +252,8 @@ public class GamePanel extends JPanel implements ActionListener {
         double startY = player.getY();
 
         // build list of points to visit
-        // converts enemy objects into [x, y] coordinate pairs for the pathfinding algorithm
+        // converts enemy objects into [x, y] coordinate pairs for the pathfinding
+        // algorithm
         List<double[]> points = new ArrayList<>();
         for (Enemy enemy : targetEnemies) {
             if (enemy != null && enemy.isAlive()) {
@@ -262,7 +265,8 @@ public class GamePanel extends JPanel implements ActionListener {
             return;
 
         // solve tsp (traveling salesman problem) to find shortest path
-        // this finds the most efficient route to visit all enemies, minimizing total distance traveled
+        // this finds the most efficient route to visit all enemies, minimizing total
+        // distance traveled
         // the beam will follow this optimized path instead of zigzagging randomly
         List<double[]> path = TSPSolver.solveTSP(startX, startY, points);
 
@@ -406,7 +410,8 @@ public class GamePanel extends JPanel implements ActionListener {
         double deltaSeconds = DELTA_SECONDS;
 
         // update beam ability (always update, even when paused)
-        // we need to track if beam was active before and after update to detect when it finishes
+        // we need to track if beam was active before and after update to detect when it
+        // finishes
         boolean beamWasActive = beamAbility.isActive();
         boolean beamStillActive = beamAbility.update(deltaSeconds);
 
@@ -515,7 +520,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void updateEnemies(double deltaSeconds) {
         // keep track of new enemies spawned during this update
-        // we can't add directly to enemies list while iterating or we'd get concurrentmodificationexception
+        // we can't add directly to enemies list while iterating
         List<Enemy> spawnedFromDeaths = new ArrayList<>();
         List<Enemy> spawnedFromSpawners = new ArrayList<>();
 
@@ -536,12 +541,13 @@ public class GamePanel extends JPanel implements ActionListener {
             enemy.update(deltaSeconds, player, bullets, MAP_WIDTH, MAP_HEIGHT);
 
             // spawner enemies periodically create new enemies
-            if (enemy instanceof SpawnerEnemy) {
-                ((SpawnerEnemy) enemy).trySpawn(player, spawnedFromSpawners);
+            if (enemy instanceof StarEnemy) {
+                ((StarEnemy) enemy).trySpawn(player, spawnedFromSpawners);
             }
 
             // push enemies apart if they're overlapping
-            // index tells the collision manager which enemy we're checking against all others
+            // index tells the collision manager which enemy we're checking against all
+            // others
             collisionManager.resolveEnemyCollisions(enemy, enemies, index);
 
             // if enemy touches player, deal damage and remove the enemy

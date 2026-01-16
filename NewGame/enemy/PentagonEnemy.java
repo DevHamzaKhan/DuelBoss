@@ -1,10 +1,10 @@
 package enemy;
 
 /*
-Name: ShooterEnemy.java
+Name: PentagonEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Ranged enemy that maintains distance and fires projectiles. Keeps away from player while shooting, creating need for aggressive positioning. Pentagon-shaped for visual distinction.
+Description: Pentagon-shaped ranged enemy that maintains distance and fires projectiles. Keeps away from player while shooting.
 */
 
 import entity.Character;
@@ -16,7 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.util.List;
 
-public class ShooterEnemy extends Enemy {
+public class PentagonEnemy extends Enemy {
 
     private static final int SCORE_VALUE = 30;
     private static final double FIRE_INTERVAL_SECONDS = 1.5;
@@ -29,7 +29,7 @@ public class ShooterEnemy extends Enemy {
 
     private double timeSinceLastShot = 0; // tracks firing cooldown
 
-    public ShooterEnemy(double x,
+    public PentagonEnemy(double x,
             double y,
             double radius,
             double maxHealth,

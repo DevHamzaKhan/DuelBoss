@@ -50,7 +50,8 @@ public class CircleEnemy extends Enemy {
         double dy = player.getY() - y;
         double distanceSq = MathUtils.distanceSquared(x, y, player.getX(), player.getY());
         // calculate trigger distance accounting for both force field and player radius
-        // this ensures explosion triggers when player's edge touches field edge, not just center
+        // this ensures explosion triggers when player's edge touches field edge, not
+        // just center
         double triggerRadius = forceFieldRadius + player.getRadius();
 
         // check if player has entered the force field - if so, explode

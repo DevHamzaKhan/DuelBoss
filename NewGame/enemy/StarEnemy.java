@@ -1,7 +1,7 @@
 package enemy;
 
 /*
-Name: SpawnerEnemy.java
+Name: StarEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Strategic enemy that generates additional enemies over time. Spawns triangles and squares in pattern, creating escalating threat if not eliminated quickly. Star-shaped for high visibility.
@@ -16,7 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.util.List;
 
-public class SpawnerEnemy extends Enemy {
+public class StarEnemy extends Enemy {
 
     private static final int SCORE_VALUE = 40;
     private static final double SPAWN_INTERVAL_SECONDS = 3.0; // time between spawns
@@ -31,7 +31,7 @@ public class SpawnerEnemy extends Enemy {
     private double timeSinceLastSpawn = 0;
     private int spawnCount = 0; // tracks spawn pattern: triangle, triangle, square, repeat
 
-    public SpawnerEnemy(double x,
+    public StarEnemy(double x,
             double y,
             double radius,
             double maxHealth,
