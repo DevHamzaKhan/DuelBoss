@@ -2,7 +2,7 @@
 Name: ScoreManager.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Manages game scoring, currency, and high score tracking. Provides methods for adding/spending currency, recording kills, and persisting high scores. Extracted from GamePanel to follow SRP.
+Description: Manages game scoring, currency, and high score tracking.
 */
 
 package manager;
@@ -50,16 +50,12 @@ public class ScoreManager {
         }
     }
 
-    /**
-     * Awards score based on enemy type using polymorphism.
-     */
+    // awards score based on enemy type using polymorphism
     public void awardScoreForEnemy(Enemy enemy) {
         addScore(enemy.getScoreValue());
     }
 
-    /**
-     * Awards currency for completing a wave.
-     */
+    // awards currency for completing a wave
     public void awardWaveCurrency(int waveNumber) {
         if (waveNumber == 0) {
             addCurrency(10);
