@@ -3,7 +3,9 @@ import java.awt.Graphics2D;
 
 public class SquareEnemy extends Enemy {
 
-    // How far away it can "see" bullets to dodge (in pixels, from its center)
+    private static final int SCORE_VALUE = 20;
+    private static final Color DEFAULT_COLOR = new Color(255, 150, 80);
+
     private final double dodgeRadius;
 
     public SquareEnemy(double x,
@@ -18,48 +20,49 @@ public class SquareEnemy extends Enemy {
     }
 
     @Override
+    public int getScoreValue() {
+        return SCORE_VALUE;
+    }
+
+    @Override
     public void update(double deltaSeconds,
             Character player,
             java.util.List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
 
-        // Find closest bullet within dodgeRadius
+        Bullet closestBullet = findClosestBulletInRange(bullets);
+        faceTowards(player.getX(), player.getY());
+
+        if (closestBullet != null) {
+            dodgeBullet(closestBullet, deltaSeconds, mapWidth, mapHeight);
+        } else {
+            moveTowards(player.getX(), player.getY(), deltaSeconds, mapWidth, mapHeight);
+        }
+    }
+
+    private Bullet findClosestBulletInRange(java.util.List<Bullet> bullets) {
         Bullet closest = null;
         double closestDistSq = Double.MAX_VALUE;
+        double dodgeRadiusSq = dodgeRadius * dodgeRadius;
 
         for (Bullet bullet : bullets) {
-            double dx = bullet.getX() - x;
-            double dy = bullet.getY() - y;
-            double distSq = dx * dx + dy * dy;
-            if (distSq <= dodgeRadius * dodgeRadius && distSq < closestDistSq) {
+            double distSq = MathUtils.distanceSquared(x, y, bullet.getX(), bullet.getY());
+            if (distSq <= dodgeRadiusSq && distSq < closestDistSq) {
                 closestDistSq = distSq;
                 closest = bullet;
             }
         }
+        return closest;
+    }
 
-        // Always face the player
-        faceTowards(player.getX(), player.getY());
-
-        if (closest != null) {
-            // There is at least one nearby bullet: only dodge, don't move toward player.
-            double vx = closest.getVx();
-            double vy = closest.getVy();
-            double len = Math.sqrt(vx * vx + vy * vy);
-            if (len > 0) {
-                double dirX = vx / len;
-                double dirY = vy / len;
-
-                // Perpendicular direction to the bullet trajectory
-                double dodgeX = -dirY;
-                double dodgeY = dirX;
-
-                moveWithDirection(dodgeX, dodgeY, deltaSeconds, mapWidth, mapHeight);
-            }
-            // If bullet velocity is zero, just don't move this frame.
-        } else {
-            // No bullets close: move straight toward the player.
-            moveTowards(player.getX(), player.getY(), deltaSeconds, mapWidth, mapHeight);
+    private void dodgeBullet(Bullet bullet, double deltaSeconds, int mapWidth, int mapHeight) {
+        double[] normalized = MathUtils.normalize(bullet.getVx(), bullet.getVy());
+        if (normalized[0] != 0 || normalized[1] != 0) {
+            // Move perpendicular to bullet trajectory
+            double dodgeX = -normalized[1];
+            double dodgeY = normalized[0];
+            moveWithDirection(dodgeX, dodgeY, deltaSeconds, mapWidth, mapHeight);
         }
     }
 
@@ -72,12 +75,7 @@ public class SquareEnemy extends Enemy {
         int half = (int) radius;
         int size = half * 2;
 
-        // Use custom color if set, otherwise use default orange
-        if (customColor != null) {
-            g2.setColor(customColor);
-        } else {
-            g2.setColor(new Color(255, 150, 80));
-        }
+        g2.setColor(customColor != null ? customColor : DEFAULT_COLOR);
         g2.fillRect(-half, -half, size, size);
 
         g2.setColor(Color.BLACK);

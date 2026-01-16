@@ -5,12 +5,16 @@ import java.util.List;
 
 public class ShooterEnemy extends Enemy {
 
-    private double timeSinceLastShot = 0;
+    private static final int SCORE_VALUE = 30;
+    private static final double FIRE_INTERVAL_SECONDS = 1.5;
+    private static final double BULLET_SPEED = 900;
+    private static final double BULLET_DAMAGE = 5;
+    private static final double STOP_DISTANCE = 400;
+    private static final double SHOOT_RANGE = 500;
+    private static final int SIDES = 5;
+    private static final Color BODY_COLOR = new Color(180, 120, 255);
 
-    // Shooter-specific stats
-    private final double fireIntervalSeconds = 1.5; // time between shots
-    private final double bulletSpeed = 900;
-    private final double bulletDamage = 5; // half damage: 10 -> 5
+    private double timeSinceLastShot = 0;
 
     public ShooterEnemy(double x,
             double y,
@@ -22,72 +26,55 @@ public class ShooterEnemy extends Enemy {
     }
 
     @Override
+    public int getScoreValue() {
+        return SCORE_VALUE;
+    }
+
+    @Override
     public void update(double deltaSeconds,
             Character player,
             List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
 
-        double dx = player.getX() - x;
-        double dy = player.getY() - y;
-        double dist = Math.sqrt(dx * dx + dy * dy);
-
-        // Always face the player
+        double distance = MathUtils.distance(x, y, player.getX(), player.getY());
         faceTowards(player.getX(), player.getY());
 
-        // Movement:
-        // - If farther than 500px: move in until we get closer.
-        // - If between 500 and 400: move toward the player while also shooting.
-        // - If within 400px: stop moving and just act as a turret.
-        if (dist > 400) {
+        if (distance > STOP_DISTANCE) {
             moveTowards(player.getX(), player.getY(), deltaSeconds, mapWidth, mapHeight);
         }
 
-        // Shooting logic
-        // Can only shoot when within 500px of the character.
-        if (dist <= 500) {
+        if (distance <= SHOOT_RANGE) {
             timeSinceLastShot += deltaSeconds;
-            if (timeSinceLastShot >= fireIntervalSeconds) {
+            if (timeSinceLastShot >= FIRE_INTERVAL_SECONDS) {
+                shootAt(player, bullets);
                 timeSinceLastShot = 0;
-
-                // Recompute direction after any movement this frame
-                double sdx = player.getX() - x;
-                double sdy = player.getY() - y;
-                double len = Math.sqrt(sdx * sdx + sdy * sdy);
-                if (len == 0) {
-                    sdx = 1;
-                    sdy = 0;
-                    len = 1;
-                }
-
-                double vx = (sdx / len) * bulletSpeed;
-                double vy = (sdy / len) * bulletSpeed;
-
-                Bullet bullet = new Bullet(x, y, vx, vy, bulletSpeed, bulletDamage, false);
-                bullets.add(bullet);
             }
         }
+    }
+
+    private void shootAt(Character player, List<Bullet> bullets) {
+        double[] direction = MathUtils.normalize(player.getX() - x, player.getY() - y);
+        double velocityX = direction[0] * BULLET_SPEED;
+        double velocityY = direction[1] * BULLET_SPEED;
+        bullets.add(new Bullet(x, y, velocityX, velocityY, BULLET_SPEED, BULLET_DAMAGE, false));
     }
 
     @Override
     protected void drawBody(Graphics2D g2) {
         int r = (int) radius;
+        int[] xPoints = new int[SIDES];
+        int[] yPoints = new int[SIDES];
 
-        // Draw a simple regular pentagon
-        int sides = 5;
-        int[] xs = new int[sides];
-        int[] ys = new int[sides];
-        for (int i = 0; i < sides; i++) {
-            double ang = -Math.PI / 2 + i * 2 * Math.PI / sides;
-            xs[i] = (int) (Math.cos(ang) * r);
-            ys[i] = (int) (Math.sin(ang) * r);
+        for (int i = 0; i < SIDES; i++) {
+            double angle = -Math.PI / 2 + i * 2 * Math.PI / SIDES;
+            xPoints[i] = (int) (Math.cos(angle) * r);
+            yPoints[i] = (int) (Math.sin(angle) * r);
         }
 
-        Polygon pentagon = new Polygon(xs, ys, sides);
-
-        g2.setColor(new Color(180, 120, 255));
+        Polygon pentagon = new Polygon(xPoints, yPoints, SIDES);
+        g2.setColor(BODY_COLOR);
         g2.fillPolygon(pentagon);
-
         g2.setColor(Color.DARK_GRAY);
         g2.drawPolygon(pentagon);
     }

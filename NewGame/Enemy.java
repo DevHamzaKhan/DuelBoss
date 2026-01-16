@@ -4,6 +4,11 @@ import java.util.List;
 
 public abstract class Enemy extends Entity {
 
+    // Health bar rendering constants
+    private static final int HEALTH_BAR_WIDTH = 40;
+    private static final int HEALTH_BAR_HEIGHT = 6;
+    private static final int HEALTH_BAR_OFFSET_Y = 12;
+
     protected double bodyDamage;
     protected double movementSpeed;
     protected Color customColor = null;
@@ -25,6 +30,12 @@ public abstract class Enemy extends Entity {
             List<Bullet> bullets,
             int mapWidth,
             int mapHeight);
+
+    /**
+     * Returns the score value awarded when this enemy is killed.
+     * Subclasses override to provide their specific value.
+     */
+    public abstract int getScoreValue();
 
     protected void moveTowards(double targetX,
             double targetY,
@@ -92,26 +103,19 @@ public abstract class Enemy extends Entity {
     protected abstract void drawBody(Graphics2D g2);
 
     protected void drawHealthBar(Graphics2D g2) {
-        int barWidth = 40;
-        int barHeight = 6;
+        double hpPercent = MathUtils.clamp(healthLeft / maxHealth, 0.0, 1.0);
 
-        double hpPercent = healthLeft / maxHealth;
-        if (hpPercent < 0)
-            hpPercent = 0;
-        if (hpPercent > 1)
-            hpPercent = 1;
-
-        int xLeft = (int) (x - barWidth / 2.0);
-        int yTop = (int) (y - radius - 12);
+        int xLeft = (int) (x - HEALTH_BAR_WIDTH / 2.0);
+        int yTop = (int) (y - radius - HEALTH_BAR_OFFSET_Y);
 
         g2.setColor(new Color(40, 40, 40, 220));
-        g2.fillRect(xLeft - 1, yTop - 1, barWidth + 2, barHeight + 2);
+        g2.fillRect(xLeft - 1, yTop - 1, HEALTH_BAR_WIDTH + 2, HEALTH_BAR_HEIGHT + 2);
 
         g2.setColor(new Color(90, 0, 0));
-        g2.fillRect(xLeft, yTop, barWidth, barHeight);
+        g2.fillRect(xLeft, yTop, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
 
-        int filled = (int) (barWidth * hpPercent);
+        int filledWidth = (int) (HEALTH_BAR_WIDTH * hpPercent);
         g2.setColor(new Color(0, 220, 0));
-        g2.fillRect(xLeft, yTop, filled, barHeight);
+        g2.fillRect(xLeft, yTop, filledWidth, HEALTH_BAR_HEIGHT);
     }
 }
