@@ -77,7 +77,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         player = new Character(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0);
         bullets = new ArrayList<>();
         enemies = new ArrayList<>();
-        camera = new Camera(0, 0, screenWidth, screenHeight, MAP_WIDTH, MAP_HEIGHT);
+        camera = new Camera(screenWidth, screenHeight);
         uiOverlay = new UIOverlay(player);
 
         addKeyListener(this);
@@ -117,7 +117,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
         
         // Reset player
         player = new Character(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0);
-        camera = new Camera(0, 0, screenWidth, screenHeight, MAP_WIDTH, MAP_HEIGHT);
+        camera = new Camera(screenWidth, screenHeight);
         uiOverlay = new UIOverlay(player);
         
         // Clear all entities
@@ -497,30 +497,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
     }
 
     private void updateCamera() {
-        int margin = 225; // distance from screen edge before camera starts moving (25 more pixels)
-
-        double camX = camera.getX();
-        double camY = camera.getY();
-
-        double playerScreenX = player.getX() - camX;
-        double playerScreenY = player.getY() - camY;
-
-        // Adjust camera so player stays within [margin, screenWidth - margin]
-        if (playerScreenX < margin) {
-            camX = player.getX() - margin;
-        } else if (playerScreenX > screenWidth - margin) {
-            camX = player.getX() - (screenWidth - margin);
-        }
-
-        if (playerScreenY < margin) {
-            camY = player.getY() - margin;
-        } else if (playerScreenY > screenHeight - margin) {
-            camY = player.getY() - (screenHeight - margin);
-        }
-
-        // Apply and clamp to map bounds; if we hit map border, player can then reach screen edge
-        // At bottom, allow camera to go 50 more pixels down to show the border
-        camera.setPosition(camX, camY, 50);
+        camera.centerOn(player.getX(), player.getY());
     }
 
     private void updateShooting() {
