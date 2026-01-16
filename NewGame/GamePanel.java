@@ -364,7 +364,11 @@ public class GamePanel extends JPanel implements ActionListener {
         int statsY = y + 40;
         String[] stats = {
                 "Currency: " + currency + " points",
-                "Max Health: " + (int) player.getMaxHealth() + " (Lv " + player.getMaxHealthLevel() + ")"
+                "Max Health: " + (int) player.getMaxHealth() + " (Lv " + player.getMaxHealthLevel() + ")",
+                "Bullet Speed: Lv " + player.getBulletSpeedLevel(),
+                "Fire Rate: Lv " + player.getFireRateLevel(),
+                "Movement Speed: Lv " + player.getMovementSpeedLevel(),
+                "Bullet Damage: Lv " + player.getBulletDamageLevel()
         };
 
         g2.setFont(g2.getFont().deriveFont(java.awt.Font.PLAIN, 12f));
