@@ -9,7 +9,7 @@ Description: Suicide bomber enemy with visible force field radius. Explodes when
 
 import entity.Character;
 import entity.Bullet;
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -48,7 +48,7 @@ public class CircleEnemy extends Enemy {
             int mapHeight) {
         double dx = player.getX() - x;
         double dy = player.getY() - y;
-        double distanceSq = MathUtils.distanceSquared(x, y, player.getX(), player.getY());
+        double distanceSq = Utils.distanceSquared(x, y, player.getX(), player.getY());
         // calculate trigger distance accounting for both force field and player radius
         // this ensures explosion triggers when player's edge touches field edge, not
         // just center

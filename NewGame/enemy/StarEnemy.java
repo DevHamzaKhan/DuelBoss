@@ -9,7 +9,7 @@ Description: Star enemy that spawns triangles and squares over time
 
 import entity.Character;
 import entity.Bullet;
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -51,7 +51,7 @@ public class StarEnemy extends Enemy {
             List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
-        double distance = MathUtils.distance(x, y, player.getX(), player.getY());
+        double distance = Utils.distance(x, y, player.getX(), player.getY());
         faceTowards(player.getX(), player.getY());
 
         // maintain safe distance from player while staying in spawn range
@@ -65,7 +65,7 @@ public class StarEnemy extends Enemy {
     // spawns enemies if within range of player and spawn timer is ready
     // must be called externally from game loop (not in update)
     public boolean trySpawn(Character player, List<Enemy> collector) {
-        double distance = MathUtils.distance(x, y, player.getX(), player.getY());
+        double distance = Utils.distance(x, y, player.getX(), player.getY());
 
         if (distance > SPAWN_RANGE) {
             return false; // too far from player

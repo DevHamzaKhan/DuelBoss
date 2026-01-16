@@ -1,10 +1,10 @@
 package util;
 
 /*
-Name: MathUtils.java
+Name: Utils.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Utility class providing common math operations (distance, normalization, clamping) and button rendering helpers used throughout the game.
+Description: Utils class for math operations and button drawing.
 */
 
 import java.awt.Graphics2D;
@@ -14,10 +14,10 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 
-public final class MathUtils {
+public final class Utils {
 
     // private constructor prevents instantiation of this utility class
-    private MathUtils() {
+    private Utils() {
     }
 
     // calculates euclidean distance between two points using pythagorean theorem
@@ -27,7 +27,8 @@ public final class MathUtils {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    // calculates squared distance (faster than distance since it avoids expensive sqrt operation)
+    // calculates squared distance (faster than distance since it avoids expensive
+    // sqrt operation)
     // useful for distance comparisons where exact distance isn't needed
     public static double distanceSquared(double x1, double y1, double x2, double y2) {
         double dx = x2 - x1;
@@ -40,19 +41,20 @@ public final class MathUtils {
     public static double[] normalize(double x, double y) {
         double length = Math.sqrt(x * x + y * y);
         if (length == 0) {
-            return new double[]{0, 0};
+            return new double[] { 0, 0 };
         }
-        return new double[]{x / length, y / length};
+        return new double[] { x / length, y / length };
     }
 
     // normalizes a vector but uses a default direction when input is zero-length
-    // essential for bullets - prevents crash when mouse is exactly on player position
+    // essential for bullets - prevents crash when mouse is exactly on player
+    // position
     public static double[] normalizeWithDefault(double x, double y, double defaultX, double defaultY) {
         double length = Math.sqrt(x * x + y * y);
         if (length == 0) {
-            return new double[]{defaultX, defaultY};
+            return new double[] { defaultX, defaultY };
         }
-        return new double[]{x / length, y / length};
+        return new double[] { x / length, y / length };
     }
 
     // constrains a value to lie within a specified range [min, max]
@@ -68,7 +70,7 @@ public final class MathUtils {
     // renders a styled rectangular button with rounded corners and hover effect
     // used by menu renderer for consistent button appearance across all menus
     public static void drawButton(Graphics2D g2, Rectangle bounds, String text,
-                                   boolean isHovered, Color baseColor, Color hoverColor) {
+            boolean isHovered, Color baseColor, Color hoverColor) {
         // darker background and thicker border when hovered for visual feedback
         Color bgColor = isHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
         Color borderColor = isHovered ? hoverColor : baseColor;

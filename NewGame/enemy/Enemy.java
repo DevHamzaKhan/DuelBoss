@@ -10,7 +10,7 @@ Description: Abstract base class for all enemy types.
 import entity.Entity;
 import entity.Character;
 import entity.Bullet;
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -136,7 +136,7 @@ public abstract class Enemy extends Entity {
 
     // renders health bar above enemy with percentage-based fill
     protected void drawHealthBar(Graphics2D g2) {
-        double hpPercent = MathUtils.clamp(healthLeft / maxHealth, 0.0, 1.0);
+        double hpPercent = Utils.clamp(healthLeft / maxHealth, 0.0, 1.0);
 
         int xLeft = (int) (x - HEALTH_BAR_WIDTH / 2.0);
         int yTop = (int) (y - radius - HEALTH_BAR_OFFSET_Y);

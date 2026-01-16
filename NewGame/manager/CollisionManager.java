@@ -10,7 +10,7 @@ package manager;
 import entity.Bullet;
 import entity.Character;
 import enemy.Enemy;
-import util.MathUtils;
+import util.Utils;
 
 import java.util.List;
 
@@ -27,14 +27,14 @@ public class CollisionManager {
     }
 
     public boolean bulletHitsEnemy(Bullet bullet, Enemy enemy) {
-        double distanceSq = MathUtils.distanceSquared(bullet.getX(), bullet.getY(),
+        double distanceSq = Utils.distanceSquared(bullet.getX(), bullet.getY(),
                 enemy.getX(), enemy.getY());
         double radiusSum = bullet.getRadius() + enemy.getRadius();
         return distanceSq <= radiusSum * radiusSum;
     }
 
     public boolean bulletHitsPlayer(Bullet bullet, Character player) {
-        double distanceSq = MathUtils.distanceSquared(bullet.getX(), bullet.getY(),
+        double distanceSq = Utils.distanceSquared(bullet.getX(), bullet.getY(),
                 player.getX(), player.getY());
         double radiusSum = bullet.getRadius() + player.getRadius();
         return distanceSq <= radiusSum * radiusSum;
@@ -85,10 +85,10 @@ public class CollisionManager {
     }
 
     private double clampX(double xPos, double radius) {
-        return MathUtils.clamp(xPos, radius, mapWidth - radius);
+        return Utils.clamp(xPos, radius, mapWidth - radius);
     }
 
     private double clampY(double yPos, double radius) {
-        return MathUtils.clamp(yPos, radius, mapHeight - radius);
+        return Utils.clamp(yPos, radius, mapHeight - radius);
     }
 }

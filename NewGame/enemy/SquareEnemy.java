@@ -9,7 +9,7 @@ Description: Square enemy that dodges player bullets.
 
 import entity.Character;
 import entity.Bullet;
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -63,7 +63,7 @@ public class SquareEnemy extends Enemy {
         double dodgeRadiusSq = dodgeRadius * dodgeRadius;
 
         for (Bullet bullet : bullets) {
-            double distSq = MathUtils.distanceSquared(x, y, bullet.getX(), bullet.getY());
+            double distSq = Utils.distanceSquared(x, y, bullet.getX(), bullet.getY());
             if (distSq <= dodgeRadiusSq && distSq < closestDistSq) {
                 closestDistSq = distSq;
                 closest = bullet;
@@ -75,7 +75,7 @@ public class SquareEnemy extends Enemy {
     // moves perpendicular to bullet trajectory using vector rotation
     // rotates bullet direction 90 degrees to get perpendicular dodge direction
     private void dodgeBullet(Bullet bullet, double deltaSeconds, int mapWidth, int mapHeight) {
-        double[] normalized = MathUtils.normalize(bullet.getVx(), bullet.getVy());
+        double[] normalized = Utils.normalize(bullet.getVx(), bullet.getVy());
         if (normalized[0] != 0 || normalized[1] != 0) {
             // rotate velocity 90 degrees: (x,y) -> (-y,x) gives perpendicular vector
             double dodgeX = -normalized[1];

@@ -7,7 +7,7 @@ Date: January 16, 2026
 Description: Player character class with upgrade system and sprite.
 */
 
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -155,10 +155,10 @@ public class Character extends Entity {
 
     // updates player position based on directional input, normalizing diagonal
     // movement
-    // uses MathUtils.normalize to ensure diagonal movement isn't faster than
+    // uses Utils.normalize to ensure diagonal movement isn't faster than
     // cardinal
     public void update(double dirX, double dirY, double deltaSeconds, int mapWidth, int mapHeight) {
-        double[] normalized = MathUtils.normalize(dirX, dirY);
+        double[] normalized = Utils.normalize(dirX, dirY);
         x += normalized[0] * movementSpeed * deltaSeconds;
         y += normalized[1] * movementSpeed * deltaSeconds;
         clampToMap(mapWidth, mapHeight); // prevent moving outside map

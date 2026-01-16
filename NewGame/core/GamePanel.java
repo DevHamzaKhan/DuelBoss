@@ -31,7 +31,7 @@ import ui.InputHandler;
 import ui.HUDRenderer;
 import ability.BeamAbility;
 import ability.TSPSolver;
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -235,7 +235,7 @@ public class GamePanel extends JPanel implements ActionListener {
             if (!enemy.isAlive()) {
                 continue;
             }
-            double distance = MathUtils.distance(worldX, worldY, enemy.getX(), enemy.getY());
+            double distance = Utils.distance(worldX, worldY, enemy.getX(), enemy.getY());
             if (distance <= enemy.getRadius()) {
                 return enemy;
             }
@@ -481,7 +481,7 @@ public class GamePanel extends JPanel implements ActionListener {
             int targetX = inputHandler.getMouseX() + camera.getX();
             int targetY = inputHandler.getMouseY() + camera.getY();
 
-            double[] direction = MathUtils.normalizeWithDefault(targetX - originX, targetY - originY, 1, 0);
+            double[] direction = Utils.normalizeWithDefault(targetX - originX, targetY - originY, 1, 0);
             double velocityX = direction[0] * player.getBulletSpeed();
             double velocityY = direction[1] * player.getBulletSpeed();
 

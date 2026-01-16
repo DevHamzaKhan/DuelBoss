@@ -9,7 +9,7 @@ Description: Triangle enemy that chases player.
 
 import entity.Character;
 import entity.Bullet;
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -44,7 +44,7 @@ public class TriangleEnemy extends Enemy {
 
     // starts explosion phase where triangle flies outward before chasing player
     public void startExplosionPhase(double dirX, double dirY, double durationSeconds, double speed) {
-        double[] normalized = MathUtils.normalize(dirX, dirY);
+        double[] normalized = Utils.normalize(dirX, dirY);
         this.explodeDirX = normalized[0];
         this.explodeDirY = normalized[1];
         this.explodeTimeRemaining = Math.max(0, durationSeconds);

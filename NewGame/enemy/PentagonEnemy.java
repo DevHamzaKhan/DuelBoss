@@ -9,7 +9,7 @@ Description: Pentagon-shaped ranged enemy that maintains distance and fires proj
 
 import entity.Character;
 import entity.Bullet;
-import util.MathUtils;
+import util.Utils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -50,7 +50,7 @@ public class PentagonEnemy extends Enemy {
             int mapWidth,
             int mapHeight) {
 
-        double distance = MathUtils.distance(x, y, player.getX(), player.getY());
+        double distance = Utils.distance(x, y, player.getX(), player.getY());
         faceTowards(player.getX(), player.getY()); // always aim at player
 
         // maintain distance - only approach if too far away
@@ -69,7 +69,7 @@ public class PentagonEnemy extends Enemy {
     }
 
     private void shootAt(Character player, List<Bullet> bullets) {
-        double[] direction = MathUtils.normalize(player.getX() - x, player.getY() - y);
+        double[] direction = Utils.normalize(player.getX() - x, player.getY() - y);
         double velocityX = direction[0] * BULLET_SPEED;
         double velocityY = direction[1] * BULLET_SPEED;
         bullets.add(new Bullet(x, y, velocityX, velocityY, BULLET_SPEED, BULLET_DAMAGE, false));
