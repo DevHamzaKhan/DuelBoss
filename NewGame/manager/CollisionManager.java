@@ -2,7 +2,7 @@
 Name: CollisionManager.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Handles collision detection and resolution for all entity interactions. Uses circle-based collision with separating axis for enemy-enemy collisions to prevent overlap. Optimized with distance squared comparisons.
+Description: Handles collision detection and resolution for all entities
 */
 
 package manager;
@@ -58,16 +58,23 @@ public class CollisionManager {
         double minDistance = enemyA.getRadius() + enemyB.getRadius();
         double minDistanceSq = minDistance * minDistance;
 
+        // skip if not colliding or enemies are at exact same position
         if (distanceSq >= minDistanceSq || distanceSq == 0) {
             return;
         }
 
+        // calculate normalized direction from b to a
         double distance = Math.sqrt(distanceSq);
         double normalX = deltaX / distance;
         double normalY = deltaY / distance;
+
+        // calculate how much the circles are overlapping and push them apart
+        // overlap = how far inside each other they are
+        // we push each enemy half the overlap distance in opposite directions
         double overlap = minDistance - distance;
         double pushAmount = overlap * COLLISION_PUSH_FACTOR;
 
+        // apply push in opposite directions and clamp to map bounds
         double newX1 = clampX(enemyA.getX() + normalX * pushAmount, enemyA.getRadius());
         double newY1 = clampY(enemyA.getY() + normalY * pushAmount, enemyA.getRadius());
         double newX2 = clampX(enemyB.getX() - normalX * pushAmount, enemyB.getRadius());
