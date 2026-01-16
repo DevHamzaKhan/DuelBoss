@@ -20,7 +20,7 @@ public class HUDRenderer {
     // Beam cooldown bar constants
     private static final int BEAM_BAR_WIDTH = 200;
     private static final int BEAM_BAR_HEIGHT = 20;
-    private static final int BEAM_BAR_MARGIN = 20;
+    private static final int BEAM_BAR_MARGIN = 40; // increased margin to prevent cutoff at window edge
     
     // Score panel constants
     private static final int SCORE_X = 20;
@@ -49,8 +49,9 @@ public class HUDRenderer {
         long timeSinceLastUltimate = currentTime - lastUltimateTime;
         double cooldownProgress = Math.min(1.0, (double) timeSinceLastUltimate / ULTIMATE_COOLDOWN_MS);
         
-        int barX = screenWidth - BEAM_BAR_WIDTH - BEAM_BAR_MARGIN;
-        int barY = screenHeight - BEAM_BAR_HEIGHT - BEAM_BAR_MARGIN;
+        // position centered above health bar (health bar is at screenHeight - 130)
+        int barX = (screenWidth - BEAM_BAR_WIDTH) / 2;
+        int barY = screenHeight - 170; // 40 pixels above health bar
         
         // Background
         g2.setColor(new Color(40, 40, 40, 220));

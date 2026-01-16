@@ -58,6 +58,16 @@ public class WaveManager {
     private static final double SHOOTER_DAMAGE = 5;
     private static final double SHOOTER_SPEED = 220;
 
+    private static final double HEXAGON_RADIUS = 30;
+    private static final double HEXAGON_HEALTH = 120;
+    private static final double HEXAGON_DAMAGE = 8;
+    private static final double HEXAGON_SPEED = 180;
+
+    private static final double SPAWNER_RADIUS = 32;
+    private static final double SPAWNER_HEALTH = 150;
+    private static final double SPAWNER_DAMAGE = 6;
+    private static final double SPAWNER_SPEED = 140;
+
     // Spawn probabilities for wave 2
     private static final double WAVE2_TRIANGLE_CHANCE = 0.6;
 
@@ -153,29 +163,35 @@ public class WaveManager {
     }
 
     private void spawnEnemyForCurrentWave(List<Enemy> enemies) {
+        // rounds 1-7: introduce one new enemy type per round
+        // round 8+: spawn from all enemy types
+        
         if (waveNumber == 1) {
             spawnTriangleEnemy(enemies);
-            return;
-        }
-
-        if (waveNumber == 2) {
-            if (random.nextDouble() < WAVE2_TRIANGLE_CHANCE) {
-                spawnTriangleEnemy(enemies);
-            } else {
-                spawnSquareEnemy(enemies);
-            }
-            return;
-        }
-
-        double roll = random.nextDouble();
-        if (roll < TRIANGLE_SPAWN_CHANCE) {
-            spawnTriangleEnemy(enemies);
-        } else if (roll < SQUARE_SPAWN_CHANCE) {
-            spawnSquareEnemy(enemies);
-        } else if (roll < CIRCLE_SPAWN_CHANCE) {
+        } else if (waveNumber == 2) {
             spawnCircleEnemy(enemies);
-        } else {
+        } else if (waveNumber == 3) {
+            spawnSquareEnemy(enemies);
+        } else if (waveNumber == 4) {
             spawnShooterEnemy(enemies);
+        } else if (waveNumber == 5) {
+            spawnHexagonEnemy(enemies);
+        } else if (waveNumber == 6) {
+            spawnOctagonEnemy(enemies);
+        } else if (waveNumber == 7) {
+            spawnSpawnerEnemy(enemies);
+        } else {
+            // wave 8+: random mix of all enemy types
+            int enemyType = random.nextInt(7);
+            switch (enemyType) {
+                case 0: spawnTriangleEnemy(enemies); break;
+                case 1: spawnCircleEnemy(enemies); break;
+                case 2: spawnSquareEnemy(enemies); break;
+                case 3: spawnShooterEnemy(enemies); break;
+                case 4: spawnHexagonEnemy(enemies); break;
+                case 5: spawnOctagonEnemy(enemies); break;
+                case 6: spawnSpawnerEnemy(enemies); break;
+            }
         }
     }
 
@@ -204,6 +220,27 @@ public class WaveManager {
         double[] position = getNextSpawnPosition(SHOOTER_RADIUS);
         enemies.add(new ShooterEnemy(position[0], position[1], SHOOTER_RADIUS,
                 SHOOTER_HEALTH, SHOOTER_DAMAGE, SHOOTER_SPEED));
+        enemiesSpawnedThisWave++;
+    }
+
+    private void spawnHexagonEnemy(List<Enemy> enemies) {
+        double[] position = getNextSpawnPosition(HEXAGON_RADIUS);
+        enemies.add(new HexagonEnemy(position[0], position[1], HEXAGON_RADIUS,
+                HEXAGON_HEALTH, HEXAGON_DAMAGE, HEXAGON_SPEED));
+        enemiesSpawnedThisWave++;
+    }
+
+    private void spawnOctagonEnemy(List<Enemy> enemies) {
+        double[] position = getNextSpawnPosition(OCTAGON_RADIUS);
+        enemies.add(new OctagonEnemy(position[0], position[1], OCTAGON_RADIUS,
+                OCTAGON_HEALTH, OCTAGON_DAMAGE, OCTAGON_SPEED));
+        enemiesSpawnedThisWave++;
+    }
+
+    private void spawnSpawnerEnemy(List<Enemy> enemies) {
+        double[] position = getNextSpawnPosition(SPAWNER_RADIUS);
+        enemies.add(new SpawnerEnemy(position[0], position[1], SPAWNER_RADIUS,
+                SPAWNER_HEALTH, SPAWNER_DAMAGE, SPAWNER_SPEED));
         enemiesSpawnedThisWave++;
     }
 
