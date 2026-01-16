@@ -2,7 +2,7 @@
 Name: ParticleManager.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Manages particle effects for enemy deaths. Uses true recursion to generate multi-level particle explosions (parent spawns children immediately). Handles particle lifecycle (update, render, cleanup).
+Description: Manages particle effects for enemy deaths.
 */
 
 package manager;
@@ -32,12 +32,18 @@ public class ParticleManager {
     }
 
     public void update(double dt) {
-        particles.removeIf(p -> { p.update(dt); return p.isDead(); });
+        particles.removeIf(p -> {
+            p.update(dt);
+            return p.isDead();
+        });
     }
 
     public void draw(Graphics2D g2) {
-        for (DeathParticle p : particles) p.draw(g2);
+        for (DeathParticle p : particles)
+            p.draw(g2);
     }
 
-    public void clear() { particles.clear(); }
+    public void clear() {
+        particles.clear();
+    }
 }
