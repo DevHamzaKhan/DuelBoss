@@ -4,7 +4,7 @@ package enemy;
 Name: CircleEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Suicide bomber enemy with visible force field radius. Explodes when player enters force field, dealing massive damage. Trades direct contact for area-denial gameplay.
+Description: Suicide bomber enemy with visible force field radius. Explodes when player enters force field.
 */
 
 import entity.Character;
@@ -13,6 +13,7 @@ import util.MathUtils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.List;
 
 public class CircleEnemy extends Enemy {
 
@@ -42,15 +43,18 @@ public class CircleEnemy extends Enemy {
     @Override
     public void update(double deltaSeconds,
             Character player,
-            java.util.List<Bullet> bullets,
+            List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
         double dx = player.getX() - x;
         double dy = player.getY() - y;
         double distanceSq = MathUtils.distanceSquared(x, y, player.getX(), player.getY());
+        // calculate trigger distance accounting for both force field and player radius
+        // this ensures explosion triggers when player's edge touches field edge, not just center
         double triggerRadius = forceFieldRadius + player.getRadius();
 
         // check if player has entered the force field - if so, explode
+        // we use squared distance comparison to avoid expensive sqrt calculation
         if (distanceSq <= triggerRadius * triggerRadius) {
             player.takeDamage(bodyDamage); // deal explosion damage
             healthLeft = 0; // destroy self
