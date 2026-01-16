@@ -415,9 +415,9 @@ public class MenuRenderer {
         // Calculate center position based on heading
         int bossCenterX = bossesHeadingX + fm.stringWidth(bossesHeading) / 2;
 
-        // Row 1: 1 enemy (Octagon)
+        // Row 1: 1 enemy (Hexagon)
         EnemyInfo[] bossRow1 = {
-            new EnemyInfo("Octagon", "Tanky chaser", 5)
+            new EnemyInfo("Hexagon", "Splits into triangles", 4)
         };
         currentY = drawEnemyRowCentered(g2, bossCenterX, currentY, enemySize, bossRow1[0]);
         currentY += rowSpacing;
