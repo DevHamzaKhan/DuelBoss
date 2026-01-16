@@ -4,7 +4,7 @@ package entity;
 Name: Character.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Player character class with upgrade system and sprite rendering. Features scalable stats based on upgrade levels, image loading from classpath/filesystem, and rotation-based movement and aiming.
+Description: Player character class with upgrade system and sprite.
 */
 
 import util.MathUtils;
@@ -24,14 +24,16 @@ public class Character extends Entity {
     private static final String SPRITE_PATH_FALLBACK = "Images/player.png";
 
     // base stats for scaling - all upgrades are multiplicative on these base values
-    // this design ensures consistent scaling: level 1 = base, level 10 = base * (1 + 9 * multiplier)
+    // this design ensures consistent scaling: level 1 = base, level 10 = base * (1
+    // + 9 * multiplier)
     private static final double BASE_MAX_HEALTH = 200;
     private static final double BASE_BULLET_SPEED = 600;
     private static final double BASE_FIRE_RATE = 1;
     private static final double BASE_MOVEMENT_SPEED = 340;
     private static final double BASE_BULLET_DAMAGE = 20;
 
-    // upgrade multipliers per level - each level adds this percentage to the base stat
+    // upgrade multipliers per level - each level adds this percentage to the base
+    // stat
     // example: health level 5 = 200 * (1 + (5-1) * 0.2) = 200 * 1.8 = 360 hp
     private static final double HEALTH_MULTIPLIER_PER_LEVEL = 0.2;
     private static final double BULLET_SPEED_MULTIPLIER_PER_LEVEL = 0.15;
@@ -46,7 +48,8 @@ public class Character extends Entity {
     private BufferedImage sprite;
     private double angle = -Math.PI / 2; // default facing up (-90 degrees)
 
-    // current stats (calculated from upgrades) - recalculated whenever upgrades change
+    // current stats (calculated from upgrades) - recalculated whenever upgrades
+    // change
     private double bulletSpeed;
     private double bulletDamage;
     private double fireRate;
@@ -96,7 +99,8 @@ public class Character extends Entity {
         angle = Math.atan2(dy, dx); // atan2 handles all four quadrants correctly
     }
 
-    // recalculates all stats based on current upgrade levels using multiplicative scaling
+    // recalculates all stats based on current upgrade levels using multiplicative
+    // scaling
     // called after every upgrade to update character's active stats
     private void applyUpgrades() {
         maxHealth = BASE_MAX_HEALTH * (1 + (maxHealthLevel - 1) * HEALTH_MULTIPLIER_PER_LEVEL);
@@ -149,8 +153,10 @@ public class Character extends Entity {
         healthLeft = Math.min(maxHealth, healthLeft + HEALTH_BUY_AMOUNT); // caps at max health
     }
 
-    // updates player position based on directional input, normalizing diagonal movement
-    // uses MathUtils.normalize to ensure diagonal movement isn't faster than cardinal
+    // updates player position based on directional input, normalizing diagonal
+    // movement
+    // uses MathUtils.normalize to ensure diagonal movement isn't faster than
+    // cardinal
     public void update(double dirX, double dirY, double deltaSeconds, int mapWidth, int mapHeight) {
         double[] normalized = MathUtils.normalize(dirX, dirY);
         x += normalized[0] * movementSpeed * deltaSeconds;
