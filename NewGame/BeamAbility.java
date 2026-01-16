@@ -17,7 +17,6 @@ public class BeamAbility {
     private List<Enemy> targetEnemies;
     private List<Boolean> enemiesKilled;
     private ParticleManager particleManager;
-    private AudioManager audioManager;
     
     public BeamAbility() {
         path = new ArrayList<>();
@@ -26,11 +25,10 @@ public class BeamAbility {
         enemiesKilled = new ArrayList<>();
     }
     
-    public void activate(List<double[]> path, List<Enemy> enemiesToKill, ParticleManager particleManager, AudioManager audioManager) {
+    public void activate(List<double[]> path, List<Enemy> enemiesToKill, ParticleManager particleManager) {
         this.path = new ArrayList<>(path);
         this.targetEnemies = new ArrayList<>(enemiesToKill);
         this.particleManager = particleManager;
-        this.audioManager = audioManager;
         this.isActive = true;
         this.startTime = System.currentTimeMillis();
         this.enemiesKilled.clear();
@@ -90,7 +88,6 @@ public class BeamAbility {
         enemy.takeDamage(enemy.getMaxHealth() * 10);
         enemiesKilled.set(index, true);
         if (particleManager != null) particleManager.spawnDeathEffect(enemy);
-        if (audioManager != null) audioManager.playExplosion();
     }
     
     public double[] getCurrentPosition() {
