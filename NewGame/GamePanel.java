@@ -13,8 +13,11 @@ import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener {
 
-    public static final int MAP_WIDTH = 4000;
-    public static final int MAP_HEIGHT = 4000;
+    // DEV MODE: Set to true to enable round 0 for testing all enemy types
+    private static final boolean DEV_MODE = false;
+
+    public static final int MAP_WIDTH = 2000;
+    public static final int MAP_HEIGHT = 2000;
 
     private final int screenWidth;
     private final int screenHeight;
@@ -208,7 +211,11 @@ public class GamePanel extends JPanel implements ActionListener {
         isGamePaused = false;
         lastUltimateTime = 0;
 
-        waveManager.setupRoundZero(enemies, bullets);
+        if (DEV_MODE) {
+            waveManager.setupRoundZero(enemies, bullets);
+        } else {
+            waveManager.startNewWave(1, enemies, bullets);
+        }
     }
 
     @Override
@@ -229,7 +236,7 @@ public class GamePanel extends JPanel implements ActionListener {
             g2.translate(camera.getX(), camera.getY());
 
             if (showingUpgradeShop) {
-                menuRenderer.drawUpgradeShop(g2, player, currency);
+                menuRenderer.drawUpgradeShop(g2, player, currency, score);
             } else {
                 drawHUD(g2);
             }

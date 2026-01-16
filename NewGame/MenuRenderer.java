@@ -291,7 +291,7 @@ public class MenuRenderer {
         }
     }
 
-    public void drawUpgradeShop(Graphics2D g2, Character player, int currency) {
+    public void drawUpgradeShop(Graphics2D g2, Character player, int currency, int score) {
         drawSpaceBackground(g2, screenWidth, screenHeight);
 
         int panelWidth = 800;
@@ -315,9 +315,11 @@ public class MenuRenderer {
         int yStart = panelY + 100;
         int buttonWidth = 200;
         int buttonHeight = 50;
-        int buttonSpacing = 15;
+        int rowSpacing = 65; // Total height per row (stat + progress bar)
         int progressBarWidth = 200;
         int progressBarHeight = 20;
+        int containerWidth = 500;
+        int containerX = panelX + (panelWidth - containerWidth) / 2;
 
         String[] statNames = { "Max Health", "Bullet Speed", "Fire Rate", "Movement Speed", "Bullet Damage" };
         int[] levels = {
@@ -331,14 +333,14 @@ public class MenuRenderer {
         shopButtonRects.clear();
 
         for (int i = 0; i < statNames.length; i++) {
-            int y = yStart + i * (buttonHeight + buttonSpacing);
+            int y = yStart + i * rowSpacing;
 
             g2.setColor(Color.WHITE);
             g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
-            g2.drawString(statNames[i] + " (Lv " + levels[i] + "/10)", panelX + 30, y + 20);
+            g2.drawString(statNames[i] + " (Lv " + levels[i] + "/10)", containerX, y + 20);
 
-            int progX = panelX + 30;
-            int progY = y + 50;
+            int progX = containerX;
+            int progY = y + 30;
             g2.setColor(new Color(50, 50, 50));
             g2.fillRoundRect(progX, progY, progressBarWidth, progressBarHeight, 5, 5);
 
@@ -349,7 +351,7 @@ public class MenuRenderer {
                         3);
             }
 
-            int btnX = panelX + 280;
+            int btnX = containerX + containerWidth - buttonWidth;
             boolean canUpgrade = currency > 0 && levels[i] < 10;
             g2.setColor(canUpgrade ? new Color(0, 150, 0) : new Color(100, 100, 100));
             g2.fillRoundRect(btnX, y, buttonWidth, buttonHeight, 10, 10);
@@ -367,14 +369,17 @@ public class MenuRenderer {
             shopButtonRects.add(new Rectangle(btnX, y, buttonWidth, buttonHeight));
         }
 
-        int extraY = yStart + statNames.length * (buttonHeight + buttonSpacing) + 30;
+        int extraY = yStart + statNames.length * rowSpacing + 30;
 
         // Buy Health button
         g2.setColor(Color.WHITE);
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
-        g2.drawString("Buy Health +20 HP", panelX + 30, extraY + 20);
+        g2.drawString("Buy Health +20 HP", containerX, extraY + 20);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 14f));
+        g2.setColor(new Color(200, 200, 200));
+        g2.drawString("Current: " + (int)player.getHealthLeft() + "/" + (int)player.getMaxHealth(), containerX, extraY + 38);
 
-        int healthBtnX = panelX + 280;
+        int healthBtnX = containerX + containerWidth - buttonWidth;
         boolean canBuyHealth = currency > 0;
         g2.setColor(canBuyHealth ? new Color(150, 0, 0) : new Color(100, 100, 100));
         g2.fillRoundRect(healthBtnX, extraY, buttonWidth, buttonHeight, 10, 10);
@@ -390,12 +395,15 @@ public class MenuRenderer {
         shopButtonRects.add(new Rectangle(healthBtnX, extraY, buttonWidth, buttonHeight));
 
         // Buy Score button
-        int scoreY = extraY + buttonHeight + buttonSpacing;
+        int scoreY = extraY + rowSpacing;
         g2.setColor(Color.WHITE);
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
-        g2.drawString("Buy Score +10", panelX + 30, scoreY + 20);
+        g2.drawString("Buy Score +10", containerX, scoreY + 20);
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 14f));
+        g2.setColor(new Color(200, 200, 200));
+        g2.drawString("Current Score: " + score, containerX, scoreY + 38);
 
-        int scoreBtnX = panelX + 280;
+        int scoreBtnX = containerX + containerWidth - buttonWidth;
         boolean canBuyScore = currency > 0;
         g2.setColor(canBuyScore ? new Color(0, 0, 150) : new Color(100, 100, 100));
         g2.fillRoundRect(scoreBtnX, scoreY, buttonWidth, buttonHeight, 10, 10);
