@@ -330,10 +330,12 @@ public class GamePanel extends JPanel implements ActionListener {
     private void drawGameWorld(Graphics2D g2) {
         drawGridBackground(g2);
         player.draw(g2);
+        // OPTIMIZATION: DO NOT RENDER OFF-SCREEN ENTITIES
         for (Bullet bullet : bullets)
-            bullet.draw(g2);
+            if (camera.isInView(bullet.getX(), bullet.getY(), 10))
+                bullet.draw(g2);
         for (Enemy enemy : enemies)
-            if (enemy.isAlive())
+            if (enemy.isAlive() && camera.isInView(enemy.getX(), enemy.getY(), enemy.getRadius()))
                 enemy.draw(g2);
         particleManager.draw(g2);
         beamAbility.draw(g2);

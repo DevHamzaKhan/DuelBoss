@@ -31,4 +31,10 @@ public class Camera {
     public int getY() {
         return (int) y;
     }
+
+    // check if object is visible in camera viewport
+    public boolean isInView(double objX, double objY, double objRadius) {
+        return objX + objRadius >= x && objX - objRadius <= x + screenWidth &&
+               objY + objRadius >= y && objY - objRadius <= y + screenHeight;
+    }
 }
