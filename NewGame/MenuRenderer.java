@@ -139,25 +139,25 @@ public class MenuRenderer {
         fm = g2.getFontMetrics();
         String[] instructions = {
                 "CONTROLS:",
-                "• WASD - Move character",
-                "• Mouse - Aim and shoot automatically",
+                "WASD - Move character",
+                "Mouse - Aim and shoot automatically",
                 "",
                 "OBJECTIVE:",
-                "• Survive waves of enemies",
-                "• Clear all enemies to advance to the next wave",
-                "• Earn currency to upgrade your character",
+                "Survive waves of enemies",
+                "Clear all enemies to advance to the next wave",
+                "Earn currency to upgrade your character",
                 "",
                 "ENEMIES:",
-                "• Triangle - Chases you",
-                "• Square - Chases you and dodges bullets",
-                "• Circle - Explodes when you're in its force field",
-                "• Pentagon - Shoots at you from distance",
-                "• Hexagon - Splits into 6 triangles when destroyed"
+                "Triangle - Chases you",
+                "Square - Chases you and dodges bullets",
+                "Circle - Explodes when you're in its force field",
+                "Pentagon - Shoots at you from distance",
+                "Hexagon - Splits into 6 triangles when destroyed"
         };
 
         int y = 120;
         int lineHeight = fm.getHeight() + 5;
-        int maxY = screenHeight - 100;
+        int maxY = screenHeight - 120;
 
         for (String line : instructions) {
             if (y + lineHeight > maxY)
@@ -179,7 +179,7 @@ public class MenuRenderer {
         int buttonWidth = 300;
         int buttonHeight = 60;
         int buttonX = (screenWidth - buttonWidth) / 2;
-        int buttonY = screenHeight - buttonHeight - 20;
+        int buttonY = screenHeight - buttonHeight - 60;
 
         menuButtonRects.clear();
 
