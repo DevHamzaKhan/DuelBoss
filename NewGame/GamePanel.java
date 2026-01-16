@@ -32,6 +32,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private final WaveManager waveManager;
     private final CollisionManager collisionManager;
     private final MenuRenderer menuRenderer;
+    private final ParticleManager particleManager;
 
     // Game state
     private enum GameState { MAIN_MENU, HOW_TO_PLAY, PLAYING, GAME_OVER }
@@ -62,6 +63,7 @@ public class GamePanel extends JPanel implements ActionListener {
         waveManager = new WaveManager(MAP_WIDTH, MAP_HEIGHT);
         collisionManager = new CollisionManager(MAP_WIDTH, MAP_HEIGHT);
         menuRenderer = new MenuRenderer(screenWidth, screenHeight);
+        particleManager = new ParticleManager();
 
         // Register input listeners
         addKeyListener(inputHandler);
@@ -103,6 +105,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         bullets.clear();
         enemies.clear();
+        particleManager.clear();
 
         waveManager.setupRoundZero(enemies, bullets);
     }
@@ -137,6 +140,7 @@ public class GamePanel extends JPanel implements ActionListener {
         player.draw(g2);
         for (Bullet bullet : bullets) bullet.draw(g2);
         for (Enemy enemy : enemies) if (enemy.isAlive()) enemy.draw(g2);
+        particleManager.draw(g2);
     }
 
     private void drawGridBackground(Graphics2D g2) {
@@ -219,6 +223,7 @@ public class GamePanel extends JPanel implements ActionListener {
         updateEnemies(deltaSeconds);
         waveManager.updateSpawning(enemies);
         updateWaveProgress();
+        particleManager.update(deltaSeconds);
     }
 
     private void updatePlayer(double deltaSeconds) {
@@ -302,6 +307,7 @@ public class GamePanel extends JPanel implements ActionListener {
             Enemy enemy = iterator.next();
             if (!enemy.isAlive()) {
                 awardScoreForEnemy(enemy);
+                particleManager.spawnDeathEffect(enemy);
                 if (enemy instanceof HexagonEnemy) spawnHexSplit((HexagonEnemy) enemy, spawnedFromDeaths);
                 iterator.remove();
                 continue;
@@ -318,6 +324,7 @@ public class GamePanel extends JPanel implements ActionListener {
             if (enemy.collidesWith(player)) {
                 enemy.onCollideWithPlayer(player);
                 awardScoreForEnemy(enemy);
+                particleManager.spawnDeathEffect(enemy);
                 if (enemy instanceof HexagonEnemy) spawnHexSplit((HexagonEnemy) enemy, spawnedFromDeaths);
                 iterator.remove();
             }
