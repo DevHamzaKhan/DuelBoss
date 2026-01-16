@@ -4,7 +4,7 @@ package entity;
 Name: Bullet.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Projectile entity fired by player and enemies. Renders as a colored line with motion trail, supports different colors for player vs enemy bullets, and handles velocity-based movement.
+Description: Bullet fired by player and enemies
 */
 
 import java.awt.BasicStroke;
@@ -58,7 +58,7 @@ public class Bullet extends Entity {
     // checks if bullet has left the visible map area (with radius buffer)
     public boolean isOutOfBounds(int minX, int minY, int maxX, int maxY) {
         return x < minX - radius || x > maxX + radius ||
-               y < minY - radius || y > maxY + radius;
+                y < minY - radius || y > maxY + radius;
     }
 
     public double getVx() {
