@@ -2,7 +2,7 @@
 Name: ButtonManager.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Manages button state and click detection for all menus. Tracks button rectangles, hover states, and provides click detection. Extracted from MenuRenderer to centralize button logic and fix hover bugs.
+Description: Manages button state and click detection for menus.
 */
 
 package ui;
@@ -25,9 +25,7 @@ public class ButtonManager {
         this.hoveredShopButtonIndex = -1;
     }
     
-    /**
-     * Updates hover state for menu buttons.
-     */
+    // updates hover state for menu buttons
     public void updateMenuHover(int mouseX, int mouseY) {
         hoveredMenuButtonIndex = -1;
         for (int i = 0; i < menuButtonRects.size(); i++) {
@@ -38,9 +36,7 @@ public class ButtonManager {
         }
     }
     
-    /**
-     * Updates hover state for shop buttons.
-     */
+    // updates hover state for shop buttons
     public void updateShopHover(int mouseX, int mouseY) {
         hoveredShopButtonIndex = -1;
         for (int i = 0; i < shopButtonRects.size(); i++) {
@@ -51,9 +47,7 @@ public class ButtonManager {
         }
     }
     
-    /**
-     * Gets the index of the clicked menu button, or -1 if none.
-     */
+    // gets the index of the clicked menu button, or -1 if none
     public int getClickedMenuButton(int x, int y) {
         for (int i = 0; i < menuButtonRects.size(); i++) {
             if (menuButtonRects.get(i).contains(x, y)) {
@@ -63,9 +57,7 @@ public class ButtonManager {
         return -1;
     }
     
-    /**
-     * Gets the index of the clicked shop button, or -1 if none.
-     */
+    // gets the index of the clicked shop button, or -1 if none
     public int getClickedShopButton(int x, int y) {
         for (int i = 0; i < shopButtonRects.size(); i++) {
             if (shopButtonRects.get(i).contains(x, y)) {
@@ -75,60 +67,42 @@ public class ButtonManager {
         return -1;
     }
     
-    /**
-     * Registers a menu button rectangle.
-     */
+    // registers a menu button rectangle
     public void addMenuButton(Rectangle rect) {
         menuButtonRects.add(rect);
     }
     
-    /**
-     * Registers a shop button rectangle.
-     */
+    // registers a shop button rectangle
     public void addShopButton(Rectangle rect) {
         shopButtonRects.add(rect);
     }
     
-    /**
-     * Clears all menu buttons.
-     * Note: Does not reset hover state - that's managed by updateMenuHover().
-     */
+    // clears all menu buttons (hover state managed by updatemenuhover)
     public void clearMenuButtons() {
         menuButtonRects.clear();
     }
     
-    /**
-     * Clears all shop buttons.
-     * Note: Does not reset hover state - that's managed by updateShopHover().
-     */
+    // clears all shop buttons (hover state managed by updateshophover)
     public void clearShopButtons() {
         shopButtonRects.clear();
     }
     
-    /**
-     * Gets the index of the hovered menu button, or -1 if none.
-     */
+    // gets the index of the hovered menu button, or -1 if none
     public int getHoveredMenuButtonIndex() {
         return hoveredMenuButtonIndex;
     }
     
-    /**
-     * Gets the index of the hovered shop button, or -1 if none.
-     */
+    // gets the index of the hovered shop button, or -1 if none
     public int getHoveredShopButtonIndex() {
         return hoveredShopButtonIndex;
     }
     
-    /**
-     * Checks if a specific menu button is hovered.
-     */
+    // checks if a specific menu button is hovered
     public boolean isMenuButtonHovered(int index) {
         return hoveredMenuButtonIndex == index;
     }
     
-    /**
-     * Checks if a specific shop button is hovered.
-     */
+    // checks if a specific shop button is hovered
     public boolean isShopButtonHovered(int index) {
         return hoveredShopButtonIndex == index;
     }
