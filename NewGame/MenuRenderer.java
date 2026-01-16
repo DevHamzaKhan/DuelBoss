@@ -17,6 +17,28 @@ public class MenuRenderer {
     private int hoveredButtonIndex = -1;
     private int hoveredShopButtonIndex = -1;
 
+    private static void drawSpaceBackground(Graphics2D g2, int width, int height) {
+        g2.setColor(new Color(10, 10, 30));
+        g2.fillRect(0, 0, width, height);
+
+        g2.setColor(new Color(255, 255, 255, 200));
+        java.util.Random rand = new java.util.Random(12345);
+        for (int i = 0; i < 200; i++) {
+            int x = rand.nextInt(width);
+            int y = rand.nextInt(height);
+            int size = rand.nextInt(3) + 1;
+            g2.fillOval(x, y, size, size);
+        }
+
+        g2.setColor(new Color(255, 255, 255, 255));
+        rand = new java.util.Random(54321);
+        for (int i = 0; i < 40; i++) {
+            int x = rand.nextInt(width);
+            int y = rand.nextInt(height);
+            g2.fillOval(x, y, 2, 2);
+        }
+    }
+
     public MenuRenderer(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -59,8 +81,7 @@ public class MenuRenderer {
     }
 
     public void drawMainMenu(Graphics2D g2, int highScore) {
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, screenWidth, screenHeight);
+        drawSpaceBackground(g2, screenWidth, screenHeight);
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 72f));
         FontMetrics fm = g2.getFontMetrics();
@@ -125,8 +146,7 @@ public class MenuRenderer {
     }
 
     public void drawHowToPlay(Graphics2D g2) {
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, screenWidth, screenHeight);
+        drawSpaceBackground(g2, screenWidth, screenHeight);
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48f));
         FontMetrics fm = g2.getFontMetrics();
@@ -205,8 +225,7 @@ public class MenuRenderer {
     }
 
     public void drawGameOver(Graphics2D g2, int score, int waveNumber, int highScore) {
-        g2.setColor(new Color(0, 0, 0, 230));
-        g2.fillRect(0, 0, screenWidth, screenHeight);
+        drawSpaceBackground(g2, screenWidth, screenHeight);
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 64f));
         FontMetrics fm = g2.getFontMetrics();
@@ -273,8 +292,7 @@ public class MenuRenderer {
     }
 
     public void drawUpgradeShop(Graphics2D g2, Character player, int currency) {
-        g2.setColor(new Color(0, 0, 0, 200));
-        g2.fillRect(0, 0, screenWidth, screenHeight);
+        drawSpaceBackground(g2, screenWidth, screenHeight);
 
         int panelWidth = 800;
         int panelHeight = Math.min(700, screenHeight - 100);
