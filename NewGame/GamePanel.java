@@ -144,22 +144,42 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void drawGridBackground(Graphics2D g2) {
-        g2.setColor(new Color(25, 25, 25));
+        // Space background - dark blue/purple gradient
+        g2.setColor(new Color(10, 10, 30));
         g2.fillRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
 
-        g2.setColor(new Color(45, 45, 45));
-        int gridSize = 50;
-        for (int x = 0; x <= MAP_WIDTH; x += gridSize) g2.drawLine(x, 0, x, MAP_HEIGHT);
-        for (int y = 0; y <= MAP_HEIGHT; y += gridSize) g2.drawLine(0, y, MAP_WIDTH, y);
+        // Add stars (small white dots)
+        g2.setColor(new Color(255, 255, 255, 200));
+        java.util.Random rand = new java.util.Random(12345); // Fixed seed for consistent star positions
+        for (int i = 0; i < 300; i++) {
+            int x = rand.nextInt(MAP_WIDTH);
+            int y = rand.nextInt(MAP_HEIGHT);
+            int size = rand.nextInt(3) + 1;
+            g2.fillOval(x, y, size, size);
+        }
 
-        g2.setColor(new Color(80, 80, 160, 60));
+        // Add some larger, brighter stars
+        g2.setColor(new Color(255, 255, 255, 255));
+        rand = new java.util.Random(54321);
+        for (int i = 0; i < 50; i++) {
+            int x = rand.nextInt(MAP_WIDTH);
+            int y = rand.nextInt(MAP_HEIGHT);
+            g2.fillOval(x, y, 2, 2);
+        }
+
+        // Corner nebula effects (purple/blue haze)
+        g2.setColor(new Color(80, 60, 140, 40));
         g2.fillRect(0, 0, 400, 400);
+        g2.setColor(new Color(60, 80, 160, 40));
         g2.fillRect(MAP_WIDTH - 400, 0, 400, 400);
+        g2.setColor(new Color(100, 60, 120, 40));
         g2.fillRect(0, MAP_HEIGHT - 400, 400, 400);
+        g2.setColor(new Color(70, 70, 150, 40));
         g2.fillRect(MAP_WIDTH - 400, MAP_HEIGHT - 400, 400, 400);
 
+        // Border
         g2.setStroke(new java.awt.BasicStroke(8));
-        g2.setColor(Color.BLACK);
+        g2.setColor(new Color(60, 60, 100));
         g2.drawRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
         g2.setStroke(new java.awt.BasicStroke(1));
     }
