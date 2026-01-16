@@ -4,7 +4,7 @@ package enemy;
 Name: TriangleEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Basic chase enemy with explosion phase mechanic. Can be spawned from hexagon splits with initial outward velocity before transitioning to normal chase behavior. Simplest enemy type for early waves.
+Description: Triangle enemy that chases player.
 */
 
 import entity.Character;
@@ -14,18 +14,19 @@ import util.MathUtils;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.util.List;
 
 public class TriangleEnemy extends Enemy {
 
     private static final int SCORE_VALUE = 10;
     private static final Color DEFAULT_COLOR = new Color(255, 80, 80);
 
-    // explosion phase state (when spawned from hexagonenemy death)
-    // triangles initially fly outward before chasing player
-    private double explodeTimeRemaining = 0.0; // time left in explosion phase
-    private double explodeDirX = 0.0; // normalized direction x
-    private double explodeDirY = 0.0; // normalized direction y
-    private double explodeSpeed = 0.0; // explosion velocity
+    // explosion phase: triangles fly outward briefly when spawned from hexagon
+    // death
+    private double explodeTimeRemaining = 0.0;
+    private double explodeDirX = 0.0;
+    private double explodeDirY = 0.0;
+    private double explodeSpeed = 0.0;
 
     public TriangleEnemy(double x,
             double y,
@@ -41,10 +42,7 @@ public class TriangleEnemy extends Enemy {
         return SCORE_VALUE;
     }
 
-    /**
-     * Configure this triangle to start in an explosion phase, flying outward
-     * for the given duration (seconds) in the given direction at the given speed.
-     */
+    // starts explosion phase where triangle flies outward before chasing player
     public void startExplosionPhase(double dirX, double dirY, double durationSeconds, double speed) {
         double[] normalized = MathUtils.normalize(dirX, dirY);
         this.explodeDirX = normalized[0];
@@ -56,7 +54,7 @@ public class TriangleEnemy extends Enemy {
     @Override
     public void update(double deltaSeconds,
             Character player,
-            java.util.List<Bullet> bullets,
+            List<Bullet> bullets,
             int mapWidth,
             int mapHeight) {
         // if in explosion phase, move outward without chasing player
