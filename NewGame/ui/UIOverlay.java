@@ -2,7 +2,7 @@
 Name: UIOverlay.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Renders in-game overlay elements including health bar, wave timer, wave number, and enemy counter. Provides visual feedback during gameplay without cluttering main render loop.
+Description: Renders in-game overlay elements (health bar, timer, wave info, enemy counter).
 */
 
 package ui;
@@ -23,13 +23,13 @@ public class UIOverlay {
     }
 
     public void draw(Graphics2D g2,
-                     int screenWidth,
-                     int screenHeight,
-                     int waveNumber,
-                     long waveStartTime,
-                     long currentTime,
-                     int enemiesRemaining,
-                     String waveStatusText) {
+            int screenWidth,
+            int screenHeight,
+            int waveNumber,
+            long waveStartTime,
+            long currentTime,
+            int enemiesRemaining,
+            String waveStatusText) {
 
         drawHealthBar(g2, screenWidth, screenHeight);
         drawTimerTopLeft(g2, waveStartTime, currentTime);
@@ -38,14 +38,17 @@ public class UIOverlay {
     }
 
     private void drawHealthBar(Graphics2D g2, int screenWidth, int screenHeight) {
+        // center health bar at bottom of screen
         int width = 400;
         int height = 30;
         int x = (screenWidth - width) / 2;
         int y = screenHeight - height - 100;
-        
+
+        // calculate health percentage and clamp between 0 and 1
         double healthPercent = player.getHealthLeft() / player.getMaxHealth();
         healthPercent = Math.max(0, Math.min(1, healthPercent));
 
+        // draw layered health bar: shadow, empty bar, filled bar
         g2.setColor(new Color(40, 40, 40, 220));
         g2.fillRoundRect(x - 3, y - 3, width + 6, height + 6, 10, 10);
 
@@ -66,6 +69,7 @@ public class UIOverlay {
         int tx = x + (width - fm.stringWidth(text)) / 2;
         int ty = y + (height + fm.getAscent()) / 2 - 4;
 
+        // draw text with shadow effect for readability
         g2.setColor(Color.BLACK);
         g2.drawString(text, tx + 1, ty + 1);
         g2.setColor(Color.WHITE);
@@ -73,6 +77,7 @@ public class UIOverlay {
     }
 
     private void drawWaveInfo(Graphics2D g2, int screenWidth, int waveNumber, String waveStatusText) {
+        // format wave text with optional status message
         String text = "Wave " + waveNumber;
         if (waveStatusText != null && !waveStatusText.isEmpty()) {
             text += " - " + waveStatusText;
@@ -81,6 +86,7 @@ public class UIOverlay {
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
 
+        // center wave info at top of screen
         int textWidth = fm.stringWidth(text);
         int x = (screenWidth - textWidth) / 2;
         int y = 40;
@@ -93,6 +99,7 @@ public class UIOverlay {
     }
 
     private void drawTimerTopLeft(Graphics2D g2, long waveStartTime, long currentTime) {
+        // convert elapsed milliseconds to mm:ss format
         long elapsedMs = currentTime - waveStartTime;
         long seconds = elapsedMs / 1000;
         long minutes = seconds / 60;
@@ -120,6 +127,7 @@ public class UIOverlay {
         g2.setFont(font);
         FontMetrics fm = g2.getFontMetrics();
 
+        // position counter at top-right corner
         int padding = 20;
         int textWidth = fm.stringWidth(text);
         int x = screenWidth - textWidth - padding;
@@ -132,5 +140,3 @@ public class UIOverlay {
         g2.drawString(text, x, y);
     }
 }
-
-
