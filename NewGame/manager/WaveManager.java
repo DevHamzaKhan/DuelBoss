@@ -2,7 +2,7 @@
 Name: WaveManager.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Controls enemy wave spawning with difficulty scaling. Manages spawn timing, enemy type selection based on wave number, and spatial distribution. Includes dev mode round 0 for testing all enemy types simultaneously.
+Description: Controls enemy wave spawning.
 */
 
 package manager;
@@ -27,7 +27,7 @@ public class WaveManager {
     private static final int CORNER_REGION_SIZE = 400;
     private static final int NUM_CORNERS = 4;
 
-    // Round zero constants
+    // round zero constants
     private static final int ROUND_ZERO_ENEMIES_PER_CORNER = 4;
     private static final double ROUND_ZERO_CLUSTER_RADIUS = 40;
     private static final double OCTAGON_RADIUS = 28;
@@ -35,7 +35,7 @@ public class WaveManager {
     private static final double OCTAGON_DAMAGE = 5;
     private static final double OCTAGON_SPEED = 200;
 
-    // Enemy spawn constants
+    // enemy spawn constants
     private static final double TRIANGLE_RADIUS = 24;
     private static final double TRIANGLE_HEALTH = 50;
     private static final double TRIANGLE_DAMAGE = 5;
@@ -68,10 +68,10 @@ public class WaveManager {
     private static final double SPAWNER_DAMAGE = 6;
     private static final double SPAWNER_SPEED = 140;
 
-    // Spawn probabilities for wave 2
+    // spawn probabilities for wave 2
     private static final double WAVE2_TRIANGLE_CHANCE = 0.6;
 
-    // Spawn probabilities for wave 3+
+    // spawn probabilities for wave 3+
     private static final double TRIANGLE_SPAWN_CHANCE = 0.4;
     private static final double SQUARE_SPAWN_CHANCE = 0.7;
     private static final double CIRCLE_SPAWN_CHANCE = 0.9;
@@ -109,6 +109,7 @@ public class WaveManager {
 
     private void spawnRoundZeroEnemies(List<Enemy> enemies) {
         double padding = 30;
+        // spawn 4 enemies in each map corner arranged in a cross pattern
         for (int corner = 0; corner < NUM_CORNERS; corner++) {
             double[] cornerPos = positionInCorner(corner, padding);
             for (int i = 0; i < ROUND_ZERO_ENEMIES_PER_CORNER; i++) {
@@ -148,6 +149,8 @@ public class WaveManager {
         long now = System.currentTimeMillis();
         long elapsed = now - waveStartTime;
 
+        // check if wave time expired, spawn quota reached, or not enough time passed
+        // since last spawn
         if (elapsed > WAVE_DURATION_MS) {
             return;
         }
@@ -163,8 +166,8 @@ public class WaveManager {
     }
 
     private void spawnEnemyForCurrentWave(List<Enemy> enemies) {
-        // rounds 1-7: introduce one new enemy type per round
-        // round 8+: spawn from all enemy types
+        // waves 1-7: introduce enemy types progressively
+        // wave 8+: spawn random mix of all types
 
         if (waveNumber == 1) {
             spawnTriangleEnemy(enemies);
@@ -267,22 +270,23 @@ public class WaveManager {
     private double[] positionInCorner(int corner, double padding) {
         double spawnX;
         double spawnY;
+        // calculate usable region size accounting for padding on all sides
         double regionSize = CORNER_REGION_SIZE - 2 * padding;
 
         switch (corner) {
-            case 0: // Top-left
+            case 0: // top-left
                 spawnX = padding + random.nextDouble() * regionSize;
                 spawnY = padding + random.nextDouble() * regionSize;
                 break;
-            case 1: // Top-right
+            case 1: // top-right
                 spawnX = mapWidth - CORNER_REGION_SIZE + padding + random.nextDouble() * regionSize;
                 spawnY = padding + random.nextDouble() * regionSize;
                 break;
-            case 2: // Bottom-left
+            case 2: // bottom-left
                 spawnX = padding + random.nextDouble() * regionSize;
                 spawnY = mapHeight - CORNER_REGION_SIZE + padding + random.nextDouble() * regionSize;
                 break;
-            case 3: // Bottom-right
+            case 3: // bottom-right
                 spawnX = mapWidth - CORNER_REGION_SIZE + padding + random.nextDouble() * regionSize;
                 spawnY = mapHeight - CORNER_REGION_SIZE + padding + random.nextDouble() * regionSize;
                 break;
