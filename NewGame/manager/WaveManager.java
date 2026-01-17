@@ -177,10 +177,10 @@ public class WaveManager {
             spawnSquareEnemy(enemies);
         } else if (waveNumber == 4) {
             spawnPentagonEnemy(enemies);
-        } else if (waveNumber >= 4) {
+        } else if (waveNumber == 5) {
             spawnHexagonEnemy(enemies);
-        } else if (waveNumber >= 3) {
-            spawnStarEnemy(enemies);
+        } else if (waveNumber == 6) {
+            spawnOctagonEnemy(enemies);
         } else if (waveNumber == 7) {
             spawnStarEnemy(enemies);
         } else {
