@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: SquareEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Square enemy that dodges player bullets.
 */
+
+package enemy;
 
 import entity.Character;
 import entity.Bullet;
@@ -22,6 +22,7 @@ public class SquareEnemy extends Enemy {
 
     private final double dodgeRadius;
 
+    // constructor with dodge radius parameter for bullet avoidance
     public SquareEnemy(double x,
             double y,
             double halfSize,
@@ -57,6 +58,7 @@ public class SquareEnemy extends Enemy {
         }
     }
 
+    // finds nearest player bullet within dodge range
     private Bullet findClosestBulletInRange(List<Bullet> bullets) {
         Bullet closest = null;
         double closestDistSq = Double.MAX_VALUE;

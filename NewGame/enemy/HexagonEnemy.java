@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: HexagonEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Special enemy that splits into 6 triangles on death.
 */
+
+package enemy;
 
 import entity.Character;
 import entity.Bullet;

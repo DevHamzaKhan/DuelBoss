@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: Enemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Abstract base class for all enemy types.
 */
+
+package enemy;
 
 import entity.Entity;
 import entity.Character;

@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: OctagonEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Tanky enemy with simple chasing behavior
 */
+
+package enemy;
 
 import entity.Character;
 import entity.Bullet;

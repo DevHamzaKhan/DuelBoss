@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: PentagonEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Pentagon-shaped ranged enemy that maintains distance and fires projectiles. Keeps away from player while shooting.
 */
+
+package enemy;
 
 import entity.Character;
 import entity.Bullet;
@@ -68,6 +68,7 @@ public class PentagonEnemy extends Enemy {
         }
     }
 
+    // fires a bullet toward the player
     private void shootAt(Character player, List<Bullet> bullets) {
         double[] direction = Utils.normalize(player.getX() - x, player.getY() - y);
         double velocityX = direction[0] * BULLET_SPEED;

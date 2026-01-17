@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: TriangleEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Triangle enemy that chases player.
 */
+
+package enemy;
 
 import entity.Character;
 import entity.Bullet;
@@ -51,6 +51,7 @@ public class TriangleEnemy extends Enemy {
         this.explodeSpeed = speed;
     }
 
+    // moves toward player unless in explosion phase
     @Override
     public void update(double deltaSeconds,
             Character player,
@@ -69,6 +70,7 @@ public class TriangleEnemy extends Enemy {
         }
     }
 
+    // draws triangle shape pointing in movement direction
     @Override
     protected void drawBody(Graphics2D g2) {
         int r = (int) radius;

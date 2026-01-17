@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: CircleEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Suicide bomber enemy with visible force field radius. Explodes when player enters force field.
 */
+
+package enemy;
 
 import entity.Character;
 import entity.Bullet;
@@ -24,6 +24,7 @@ public class CircleEnemy extends Enemy {
 
     private final double forceFieldRadius;
 
+    // constructor with force field radius for explosion
     public CircleEnemy(double x,
             double y,
             double radius,

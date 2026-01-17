@@ -1,11 +1,11 @@
-package enemy;
-
 /*
 Name: StarEnemy.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Star enemy that spawns triangles and squares over time
 */
+
+package enemy;
 
 import entity.Character;
 import entity.Bullet;
