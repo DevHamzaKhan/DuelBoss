@@ -219,6 +219,8 @@ public class GamePanel extends JPanel implements ActionListener {
         return scoreManager.getHighScore();
     }
 
+    // handles right-click to activate beam ability on all enemies of the clicked
+    // type
     private void handleRightClick(int screenX, int screenY) {
         if (showingShop || gamePaused)
             return;
@@ -250,6 +252,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // returns the enemy at the given world position, or null if none found
     private Enemy findEnemyAt(double worldX, double worldY) {
         for (Enemy enemy : enemies) {
             if (enemy.isAlive()) {
@@ -262,6 +265,7 @@ public class GamePanel extends JPanel implements ActionListener {
         return null;
     }
 
+    // activates beam ability using TSP solver to find optimal path through enemies
     private void activateUltimateAbility(List<Enemy> targetEnemies) {
         List<double[]> points = new ArrayList<>();
         for (Enemy enemy : targetEnemies) {
@@ -526,6 +530,7 @@ public class GamePanel extends JPanel implements ActionListener {
         enemies.addAll(spawnedFromSpawners);
     }
 
+    // checks if wave is complete and opens shop when all enemies are defeated
     private void updateWaveProgress() {
         if (waveManager.getWaveNumber() == 0) {
             if (enemies.isEmpty() && !showingShop) {
@@ -550,6 +555,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // spawns 6 triangle enemies in a circle when a hexagon enemy dies
     private void spawnHexSplit(HexagonEnemy hex, List<Enemy> collector) {
         double centerX = hex.getX();
         double centerY = hex.getY();

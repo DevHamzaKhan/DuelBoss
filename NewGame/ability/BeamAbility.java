@@ -31,6 +31,7 @@ public class BeamAbility {
     private List<Boolean> enemiesKilled;
     private ParticleManager particleManager;
 
+    // constructor initializes empty lists for path tracking and enemy management
     public BeamAbility() {
         path = new ArrayList<>();
         cumulativeDistances = new ArrayList<>();
@@ -38,6 +39,7 @@ public class BeamAbility {
         enemiesKilled = new ArrayList<>();
     }
 
+    // starts the beam with given path and targets, records start time for animation
     public void activate(List<double[]> path, List<Enemy> enemiesToKill, ParticleManager particleManager) {
         this.path = new ArrayList<>(path);
         this.targetEnemies = new ArrayList<>(enemiesToKill);
@@ -71,6 +73,7 @@ public class BeamAbility {
         totalPathLength = cumulative;
     }
 
+    // updates beam state each frame, returns true if still active
     public boolean update(double deltaSeconds) {
         if (!isActive)
             return false;
@@ -87,6 +90,7 @@ public class BeamAbility {
         return true;
     }
 
+    // checks if beam is close enough to any enemy to kill them
     private void checkAndKillEnemies() {
         double[] pos = getCurrentPosition();
         for (int i = 0; i < targetEnemies.size(); i++) {
@@ -103,6 +107,7 @@ public class BeamAbility {
         }
     }
 
+    // kills enemy by dealing massive damage and spawns death particles
     private void killEnemy(Enemy enemy, int index) {
         if (enemy == null || !enemy.isAlive() || enemiesKilled.get(index))
             return;
@@ -112,6 +117,7 @@ public class BeamAbility {
             particleManager.spawnDeathEffect(enemy);
     }
 
+    // returns current x,y position of beam head based on elapsed time
     public double[] getCurrentPosition() {
         if (path.isEmpty())
             return new double[] { 0, 0 };
@@ -147,6 +153,7 @@ public class BeamAbility {
         return new double[] { p1[0] + (p2[0] - p1[0]) * segProgress, p1[1] + (p2[1] - p1[1]) * segProgress };
     }
 
+    // renders the beam trail and glowing head on screen
     public void draw(Graphics2D g2) {
         if (!isActive || path.size() < 2)
             return;
@@ -198,15 +205,18 @@ public class BeamAbility {
         g2.fillOval((int) (startPos[0] - glowSize / 2), (int) (startPos[1] - glowSize / 2), glowSize, glowSize);
     }
 
+    // calculates distance between two points using pythagorean theorem
     private double dist(double x1, double y1, double x2, double y2) {
         double dx = x2 - x1, dy = y2 - y1;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    // getter for beam active state
     public boolean isActive() {
         return isActive;
     }
 
+    // stops the beam immediately
     public void deactivate() {
         isActive = false;
     }

@@ -15,7 +15,7 @@ public class TSPSolver {
     // exact solution is O(n!) so we limit it to prevent performance issues
     private static final int MAX_POINTS_FOR_EXACT = 8;
 
-    // main entry point: chooses algorithm based on problem size
+    // solves tsp from start point through all given points, returns optimal path
     public static List<double[]> solveTSP(double startX, double startY, List<double[]> points) {
         if (points.isEmpty()) {
             List<double[]> result = new ArrayList<>();
@@ -122,6 +122,7 @@ public class TSPSolver {
         }
     }
 
+    // helper to calculate euclidean distance between two points
     private static double dist(double x1, double y1, double x2, double y2) {
         double dx = x2 - x1, dy = y2 - y1;
         return Math.sqrt(dx * dx + dy * dy);
