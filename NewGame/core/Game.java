@@ -39,7 +39,7 @@ public class Game extends JFrame {
 
     // constructor sets up jframe and initializes all screen panels
     public Game() {
-        super("DuelBoss - New Game");
+        super("Polygon Wars");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
