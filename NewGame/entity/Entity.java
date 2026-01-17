@@ -1,11 +1,11 @@
-package entity;
-
 /*
 Name: Entity.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Abstract base class for all game entities (player, bullets, enemies)
 */
+
+package entity;
 
 import java.awt.Graphics2D;
 

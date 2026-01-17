@@ -1,11 +1,11 @@
-package entity;
-
 /*
 Name: Character.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Player character class with upgrade system and sprite.
 */
+
+package entity;
 
 import util.Utils;
 

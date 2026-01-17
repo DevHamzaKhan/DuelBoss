@@ -1,11 +1,11 @@
-package entity;
-
 /*
 Name: Bullet.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Bullet fired by player and enemies
 */
+
+package entity;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
