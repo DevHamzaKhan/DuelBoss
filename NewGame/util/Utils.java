@@ -1,11 +1,11 @@
-package util;
-
 /*
 Name: Utils.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Utils class for math operations and button drawing.
 */
+
+package util;
 
 import java.awt.Graphics2D;
 import java.awt.Color;
