@@ -26,6 +26,7 @@ public class CollisionManager {
         this.mapHeight = mapHeight;
     }
 
+    // checks circle-circle collision using squared distance for performance
     public boolean bulletHitsEnemy(Bullet bullet, Enemy enemy) {
         double distanceSq = Utils.distanceSquared(bullet.getX(), bullet.getY(),
                 enemy.getX(), enemy.getY());
@@ -40,6 +41,7 @@ public class CollisionManager {
         return distanceSq <= radiusSum * radiusSum;
     }
 
+    // pushes overlapping enemies apart to prevent stacking
     public void resolveEnemyCollisions(Enemy currentEnemy, List<Enemy> enemies, int currentIndex) {
         for (int i = currentIndex + 1; i < enemies.size(); i++) {
             Enemy other = enemies.get(i);

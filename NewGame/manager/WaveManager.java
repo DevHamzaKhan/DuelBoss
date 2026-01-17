@@ -68,14 +68,6 @@ public class WaveManager {
     private static final double SPAWNER_DAMAGE = 6;
     private static final double SPAWNER_SPEED = 140;
 
-    // spawn probabilities for wave 2
-    private static final double WAVE2_TRIANGLE_CHANCE = 0.6;
-
-    // spawn probabilities for wave 3+
-    private static final double TRIANGLE_SPAWN_CHANCE = 0.4;
-    private static final double SQUARE_SPAWN_CHANCE = 0.7;
-    private static final double CIRCLE_SPAWN_CHANCE = 0.9;
-
     private final int mapWidth;
     private final int mapHeight;
     private final Random random = new Random();
@@ -124,6 +116,7 @@ public class WaveManager {
         }
     }
 
+    // initializes a new wave with calculated enemy count
     public void startNewWave(int newWaveNumber, List<Enemy> enemies, List<Bullet> bullets) {
         waveNumber = newWaveNumber;
         waveStartTime = System.currentTimeMillis();
