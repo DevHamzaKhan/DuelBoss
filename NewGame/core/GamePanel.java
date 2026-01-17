@@ -381,7 +381,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         // pause game updates during beam (but still update beam animation)
         // this freezes enemies, bullets, and player movement while beam travels
-        if (stateManager.isGamePaused() && beamAbility.isActive()) {
+        if (gamePaused && beamAbility.isActive()) {
             // only update camera to follow player (visual only)
             updateCamera();
             return;
