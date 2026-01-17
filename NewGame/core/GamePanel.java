@@ -107,6 +107,7 @@ public class GamePanel extends JPanel implements ActionListener {
         void onGameOver(int score, int waveNumber, int highScore);
     }
 
+    // constructor initializes all game components and input handlers
     public GamePanel(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -149,22 +150,28 @@ public class GamePanel extends JPanel implements ActionListener {
         // don't start timer until game begins
     }
 
+    // registers game listener shop open and game over
+    //
     public void setGameListener(GameListener listener) {
         this.gameListener = listener;
     }
 
+    // stops the game timer to pause all updates
     public void pauseGame() {
         gameTimer.stop();
     }
 
+    // restarts the game timer to resume updates
     public void resumeGame() {
         gameTimer.start();
     }
 
+    // stops the game timer permanently (for game over)
     public void stopGame() {
         gameTimer.stop();
     }
 
+    // resets all game state and starts a fresh game
     public void startNewGame() {
         scoreManager.reset();
         player = new Character(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0);
@@ -189,12 +196,14 @@ public class GamePanel extends JPanel implements ActionListener {
         gameTimer.start();
     }
 
+    // returns to gameplay and starts the next wave after shop
     public void resumeFromShop() {
         showingShop = false;
         int nextWave = (waveManager.getWaveNumber() == 0) ? 1 : waveManager.getWaveNumber() + 1;
         waveManager.startNewWave(nextWave, enemies, bullets);
     }
 
+    // processes a shop purchase and updates player stats
     public void handleShopPurchase(int buttonIndex) {
         ShopController.ShopPurchaseResult result = shopController.handlePurchase(buttonIndex, player, scoreManager);
         if (result.getType() == ShopController.ShopPurchaseType.SCORE_PURCHASED) {
@@ -285,6 +294,7 @@ public class GamePanel extends JPanel implements ActionListener {
         beamAbility.activate(path, targetEnemies, particleManager);
     }
 
+    // renders game world with camera offset then hud on top
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -297,6 +307,7 @@ public class GamePanel extends JPanel implements ActionListener {
         drawHUD(g2);
     }
 
+    // draws background, player, bullets, enemies, particles in world space
     private void drawGameWorld(Graphics2D g2) {
         drawGridBackground(g2);
         player.draw(g2);
@@ -311,6 +322,7 @@ public class GamePanel extends JPanel implements ActionListener {
         beamAbility.draw(g2);
     }
 
+    // draws starfield background with nebula effects and border
     private void drawGridBackground(Graphics2D g2) {
         g2.setColor(BACKGROUND_COLOR);
         g2.fillRect(0, 0, MAP_WIDTH, MAP_HEIGHT);
@@ -351,6 +363,7 @@ public class GamePanel extends JPanel implements ActionListener {
         g2.setStroke(new BasicStroke(1));
     }
 
+    // draws score, health, wave info in screen space
     private void drawHUD(Graphics2D g2) {
         long now = System.currentTimeMillis();
         int enemiesRemaining = waveManager.getEnemiesRemaining(enemies.size());
@@ -361,12 +374,14 @@ public class GamePanel extends JPanel implements ActionListener {
                 scoreManager.getCurrency(), player, lastUltimateTime, now);
     }
 
+    // updates game state and triggers repaint on timer tick
     @Override
     public void actionPerformed(ActionEvent e) {
         updateGame();
         repaint();
     }
 
+    // main update loop
     private void updateGame() {
         double deltaSeconds = DELTA_SECONDS;
 
@@ -412,6 +427,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // moves player based on wasd input and rotates toward mouse
     private void updatePlayer(double deltaSeconds) {
         double dx = 0, dy = 0;
         if (inputHandler.isUpPressed())
@@ -430,10 +446,12 @@ public class GamePanel extends JPanel implements ActionListener {
         player.setAngleToward(targetX, targetY);
     }
 
+    // keeps camera centered on player position
     private void updateCamera() {
         camera.centerOn(player.getX(), player.getY());
     }
 
+    // fires bullets toward mouse at player's fire rate
     private void updateShooting() {
         long now = System.currentTimeMillis();
         long fireInterval = (long) (1000 / player.getFireRate());
@@ -454,6 +472,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // moves bullets and checks for collisions with enemies or player
     private void updateBullets(double deltaSeconds) {
         Iterator<Bullet> iterator = bullets.iterator();
         while (iterator.hasNext()) {
@@ -481,6 +500,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // updates enemy ai, spawning, collisions, and death effects
     private void updateEnemies(double deltaSeconds) {
         // keep track of new enemies spawned during this update
         // we can't add directly to enemies list while iterating

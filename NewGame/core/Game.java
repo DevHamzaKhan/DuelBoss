@@ -1,11 +1,11 @@
-package core;
-
 /*
 Name: Game.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
 Description: Main entry point, screen management.
 */
+
+package core;
 
 import ui.*;
 import entity.Character;
@@ -37,6 +37,7 @@ public class Game extends JFrame {
     private ShopPanel shopPanel;
     private GameOverPanel gameOverPanel;
 
+    // constructor sets up jframe and initializes all screen panels
     public Game() {
         super("DuelBoss - New Game");
 
@@ -56,6 +57,7 @@ public class Game extends JFrame {
         cardLayout.show(cardContainer, MAIN_MENU);
     }
 
+    // creates all screen panels and adds them to the cardlayout
     private void initializePanels() {
         mainMenuPanel = new MainMenuPanel(SCREEN_WIDTH, SCREEN_HEIGHT);
         howToPlayPanel = new HowToPlayPanel(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -70,6 +72,7 @@ public class Game extends JFrame {
         cardContainer.add(gameOverPanel, GAME_OVER);
     }
 
+    // connects button callbacks to screen transitions and game actions
     private void setupListeners() {
         // main menu event handling
         mainMenuPanel.setListener(new MainMenuPanel.ScreenSwitchListener() {
@@ -165,6 +168,7 @@ public class Game extends JFrame {
         });
     }
 
+    // entry point, creates and displays the game window
     public static void main(String[] args) {
         Game game = new Game();
         game.setVisible(true);
