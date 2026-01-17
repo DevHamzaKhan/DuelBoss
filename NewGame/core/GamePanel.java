@@ -1,8 +1,8 @@
 /*
 Name: GamePanel.java
-Authors: Hamza Khan & Alec Li
+Authors: Hamza Khan & Alec Li  
 Date: January 16, 2026
-Description: Core game loop and rendering engine.
+Description: Core game loop
 */
 
 package core;
@@ -11,22 +11,15 @@ import entity.Character;
 import entity.Bullet;
 import enemy.Enemy;
 import enemy.TriangleEnemy;
-import enemy.CircleEnemy;
-import enemy.SquareEnemy;
-import enemy.PentagonEnemy;
 import enemy.HexagonEnemy;
-import enemy.OctagonEnemy;
 import enemy.StarEnemy;
 import manager.WaveManager;
 import manager.CollisionManager;
 import manager.ParticleManager;
 import manager.ScoreManager;
-import manager.GameStateManager;
-import manager.GameStateManager.GameState;
 import manager.ShopController;
 import ui.Camera;
 import ui.UIOverlay;
-import ui.MenuRenderer;
 import ui.InputHandler;
 import ui.HUDRenderer;
 import ability.BeamAbility;
@@ -36,8 +29,6 @@ import util.Utils;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -54,22 +45,17 @@ import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener {
 
-    // dev mode spawns all enemy types in round 0 for testing
     private static final boolean DEV_MODE = false;
-
     public static final int MAP_WIDTH = 2000;
     public static final int MAP_HEIGHT = 2000;
-
-    // 60 fps game loop (16ms per frame)
     private static final int FRAME_DELAY_MS = 16;
     private static final double DELTA_SECONDS = FRAME_DELAY_MS / 1000.0;
 
-    // background rendering constants for starfield effect
+    // starfield constants
     private static final int SMALL_STAR_COUNT = 300;
     private static final int LARGE_STAR_COUNT = 50;
     private static final int NEBULA_SIZE = 400;
     private static final int BORDER_WIDTH = 8;
-    // deterministic random for consistent star positions across frames
     private static final Random STAR_RANDOM_1 = new Random(12345);
     private static final Random STAR_RANDOM_2 = new Random(54321);
     private static final Color BACKGROUND_COLOR = new Color(10, 10, 30);
@@ -77,22 +63,13 @@ public class GamePanel extends JPanel implements ActionListener {
     private static final Color STAR_COLOR_BRIGHT = new Color(255, 255, 255, 255);
     private static final Color BORDER_COLOR = new Color(60, 60, 100);
 
-    // beam cooldown bar constants
-    private static final int BEAM_BAR_WIDTH = 200;
-    private static final int BEAM_BAR_HEIGHT = 20;
-    private static final int BEAM_BAR_MARGIN = 20;
-
-    // score panel constants
-    private static final int SCORE_X = 20;
-    private static final int SCORE_Y = 70;
-    private static final int STATS_LINE_HEIGHT = 28;
-
-    // when hexagon enemy is killed, it spawns 6 triangles in a circle
+    // hexagon split constants
     private static final int HEX_SPLIT_COUNT = 6;
     private static final double HEX_SPLIT_TRIANGLE_RADIUS = 14;
     private static final double HEX_SPLIT_TRIANGLE_HEALTH = 40;
     private static final double HEX_SPLIT_TRIANGLE_DAMAGE = 5;
     private static final double HEX_SPLIT_TRIANGLE_SPEED = 280;
+    private static final long ULTIMATE_COOLDOWN_MS = 10_000;
 
     private final int screenWidth;
     private final int screenHeight;
@@ -109,20 +86,26 @@ public class GamePanel extends JPanel implements ActionListener {
     private final InputHandler inputHandler;
     private final WaveManager waveManager;
     private final CollisionManager collisionManager;
-    private final MenuRenderer menuRenderer;
     private final ParticleManager particleManager;
     private final ScoreManager scoreManager;
-    private final GameStateManager stateManager;
     private final ShopController shopController;
     private final HUDRenderer hudRenderer;
-
-    // game state
-    private long lastShotTime;
-
-    // ultimate ability system
     private final BeamAbility beamAbility;
+
+    // state
+    private long lastShotTime;
     private long lastUltimateTime = 0;
-    private static final long ULTIMATE_COOLDOWN_MS = 10_000; // 10 seconds
+    private boolean showingShop = false;
+    private boolean gamePaused = false;
+    private boolean gameOver = false;
+    private GameListener gameListener;
+
+    // listener interface for communication with parent container
+    public interface GameListener {
+        void onShopOpen(Character player, int currency, int score);
+
+        void onGameOver(int score, int waveNumber, int highScore);
+    }
 
     public GamePanel(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
@@ -143,76 +126,116 @@ public class GamePanel extends JPanel implements ActionListener {
         inputHandler = new InputHandler();
         waveManager = new WaveManager(MAP_WIDTH, MAP_HEIGHT);
         collisionManager = new CollisionManager(MAP_WIDTH, MAP_HEIGHT);
-        menuRenderer = new MenuRenderer(screenWidth, screenHeight);
         particleManager = new ParticleManager();
         scoreManager = new ScoreManager();
-        stateManager = new GameStateManager();
         shopController = new ShopController();
         hudRenderer = new HUDRenderer();
         beamAbility = new BeamAbility();
 
-        // register input listeners
+        // event handling setup
         addKeyListener(inputHandler);
         addMouseMotionListener(inputHandler);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    // right click - ultimate ability
                     handleRightClick(e.getX(), e.getY());
-                } else {
-                    handleClick(e.getX(), e.getY());
                 }
             }
         });
 
         lastShotTime = 0;
+        gameTimer = new Timer(FRAME_DELAY_MS, this);
+        // don't start timer until game begins
+    }
 
-        gameTimer = new Timer(16, this);
+    public void setGameListener(GameListener listener) {
+        this.gameListener = listener;
+    }
+
+    public void pauseGame() {
+        gameTimer.stop();
+    }
+
+    public void resumeGame() {
         gameTimer.start();
     }
 
-    private void handleClick(int x, int y) {
-        if (stateManager.isShowingUpgradeShop()) {
-            handleShopClick(x, y);
-        } else if (stateManager.getCurrentState() == GameState.MAIN_MENU) {
-            handleMainMenuClick(x, y);
-        } else if (stateManager.getCurrentState() == GameState.GAME_OVER) {
-            handleGameOverClick(x, y);
-        } else if (stateManager.getCurrentState() == GameState.HOW_TO_PLAY) {
-            handleHowToPlayClick(x, y);
+    public void stopGame() {
+        gameTimer.stop();
+    }
+
+    public void startNewGame() {
+        scoreManager.reset();
+        player = new Character(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0);
+        camera = new Camera(screenWidth, screenHeight);
+        uiOverlay = new UIOverlay(player);
+        bullets.clear();
+        enemies.clear();
+        particleManager.clear();
+        beamAbility.deactivate();
+        lastUltimateTime = 0;
+        showingShop = false;
+        gamePaused = false;
+        gameOver = false;
+
+        if (DEV_MODE) {
+            waveManager.setupRoundZero(enemies, bullets);
+        } else {
+            waveManager.startNewWave(1, enemies, bullets);
+        }
+
+        // start timer when game begins
+        gameTimer.start();
+    }
+
+    public void resumeFromShop() {
+        showingShop = false;
+        int nextWave = (waveManager.getWaveNumber() == 0) ? 1 : waveManager.getWaveNumber() + 1;
+        waveManager.startNewWave(nextWave, enemies, bullets);
+    }
+
+    public void handleShopPurchase(int buttonIndex) {
+        ShopController.ShopPurchaseResult result = shopController.handlePurchase(buttonIndex, player, scoreManager);
+        if (result.getType() == ShopController.ShopPurchaseType.SCORE_PURCHASED) {
+            scoreManager.addScore(result.getScoreAwarded());
         }
     }
 
+    // accessor methods for parent container
+    public Character getPlayer() {
+        return player;
+    }
+
+    public int getCurrency() {
+        return scoreManager.getCurrency();
+    }
+
+    public int getScore() {
+        return scoreManager.getScore();
+    }
+
+    public int getHighScore() {
+        return scoreManager.getHighScore();
+    }
+
     private void handleRightClick(int screenX, int screenY) {
-        if (stateManager.getCurrentState() != GameState.PLAYING || stateManager.isShowingUpgradeShop()
-                || stateManager.isGamePaused()) {
+        if (showingShop || gamePaused)
             return;
-        }
 
-        // check cooldown
         long now = System.currentTimeMillis();
-        if (now - lastUltimateTime < ULTIMATE_COOLDOWN_MS) {
-            return; // still on cooldown
-        }
+        if (now - lastUltimateTime < ULTIMATE_COOLDOWN_MS)
+            return;
 
-        // convert screen coordinates to world coordinates
-        // screen coords are relative to viewport, world coords are absolute in the
-        // 2000x2000 map
-        // we add camera offset to translate from what player sees to actual position
+        // convert screen to world coordinates
         double worldX = screenX + camera.getX();
         double worldY = screenY + camera.getY();
 
-        // find enemy at click position
         Enemy clickedEnemy = findEnemyAt(worldX, worldY);
-        if (clickedEnemy == null || !clickedEnemy.isAlive()) {
+        if (clickedEnemy == null || !clickedEnemy.isAlive())
             return;
-        }
 
-        // find all enemies of the same type
-        // ultimate targets all enemies that match the clicked enemy's class
-        // so clicking a triangle will target ALL triangles, clicking a circle targets
-        // ALL circles, etc
+        // find all enemies of same type
         Class<?> enemyType = clickedEnemy.getClass();
         List<Enemy> enemiesOfType = new ArrayList<>();
         for (Enemy enemy : enemies) {
@@ -221,84 +244,41 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-        if (enemiesOfType.isEmpty()) {
-            return;
+        if (!enemiesOfType.isEmpty()) {
+            activateUltimateAbility(enemiesOfType);
+            lastUltimateTime = now;
         }
-
-        // activate ultimate ability
-        activateUltimateAbility(enemiesOfType);
-        lastUltimateTime = now;
     }
 
     private Enemy findEnemyAt(double worldX, double worldY) {
         for (Enemy enemy : enemies) {
-            if (!enemy.isAlive()) {
-                continue;
-            }
-            double distance = Utils.distance(worldX, worldY, enemy.getX(), enemy.getY());
-            if (distance <= enemy.getRadius()) {
-                return enemy;
+            if (enemy.isAlive()) {
+                double distance = Utils.distance(worldX, worldY, enemy.getX(), enemy.getY());
+                if (distance <= enemy.getRadius()) {
+                    return enemy;
+                }
             }
         }
         return null;
     }
 
     private void activateUltimateAbility(List<Enemy> targetEnemies) {
-        if (targetEnemies.isEmpty())
-            return;
-
-        // get player position as start
-        double startX = player.getX();
-        double startY = player.getY();
-
-        // build list of points to visit
-        // converts enemy objects into [x, y] coordinate pairs for the pathfinding
-        // algorithm
         List<double[]> points = new ArrayList<>();
         for (Enemy enemy : targetEnemies) {
             if (enemy != null && enemy.isAlive()) {
                 points.add(new double[] { enemy.getX(), enemy.getY() });
             }
         }
-
         if (points.isEmpty())
             return;
 
-        // solve tsp (traveling salesman problem) to find shortest path
-        // this finds the most efficient route to visit all enemies, minimizing total
-        // distance traveled
-        // the beam will follow this optimized path instead of zigzagging randomly
-        List<double[]> path = TSPSolver.solveTSP(startX, startY, points);
-
+        // solve tsp for optimal beam path
+        List<double[]> path = TSPSolver.solveTSP(player.getX(), player.getY(), points);
         if (path.isEmpty() || path.size() < 2)
             return;
 
-        // pause the game so player can watch the beam animation without enemies moving
-        stateManager.setGamePaused(true);
-
-        // activate beam (pass particlemanager for explosions when enemies die)
+        gamePaused = true;
         beamAbility.activate(path, targetEnemies, particleManager);
-    }
-
-    private void startNewGame() {
-        scoreManager.reset();
-        stateManager.startNewGame();
-
-        player = new Character(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0);
-        camera = new Camera(screenWidth, screenHeight);
-        uiOverlay = new UIOverlay(player);
-
-        bullets.clear();
-        enemies.clear();
-        particleManager.clear();
-        beamAbility.deactivate();
-        lastUltimateTime = 0;
-
-        if (DEV_MODE) {
-            waveManager.setupRoundZero(enemies, bullets);
-        } else {
-            waveManager.startNewWave(1, enemies, bullets);
-        }
     }
 
     @Override
@@ -307,24 +287,10 @@ public class GamePanel extends JPanel implements ActionListener {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (stateManager.getCurrentState() == GameState.MAIN_MENU) {
-            menuRenderer.drawMainMenu(g2, scoreManager.getHighScore());
-        } else if (stateManager.getCurrentState() == GameState.HOW_TO_PLAY) {
-            menuRenderer.drawHowToPlay(g2);
-        } else if (stateManager.getCurrentState() == GameState.GAME_OVER) {
-            menuRenderer.drawGameOver(g2, scoreManager.getScore(), waveManager.getWaveNumber(),
-                    scoreManager.getHighScore());
-        } else if (stateManager.getCurrentState() == GameState.PLAYING) {
-            g2.translate(-camera.getX(), -camera.getY());
-            drawGameWorld(g2);
-            g2.translate(camera.getX(), camera.getY());
-
-            if (stateManager.isShowingUpgradeShop()) {
-                menuRenderer.drawUpgradeShop(g2, player, scoreManager.getCurrency(), scoreManager.getScore());
-            } else {
-                drawHUD(g2);
-            }
-        }
+        g2.translate(-camera.getX(), -camera.getY());
+        drawGameWorld(g2);
+        g2.translate(camera.getX(), camera.getY());
+        drawHUD(g2);
     }
 
     private void drawGameWorld(Graphics2D g2) {
@@ -393,18 +359,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // update hover state for menus
-        boolean isMenu = stateManager.getCurrentState() == GameState.MAIN_MENU
-                || stateManager.getCurrentState() == GameState.GAME_OVER
-                || stateManager.getCurrentState() == GameState.HOW_TO_PLAY;
-        menuRenderer.updateHover(inputHandler.getMouseX(), inputHandler.getMouseY(), isMenu,
-                stateManager.isShowingUpgradeShop());
-
-        if (stateManager.getCurrentState() == GameState.PLAYING) {
-            updateGame();
-            if (player.getHealthLeft() <= 0)
-                gameOver();
-        }
+        updateGame();
         repaint();
     }
 
@@ -420,9 +375,7 @@ public class GamePanel extends JPanel implements ActionListener {
         // if beam just finished, unpause game and process dead enemies
         // the beam was active last frame but isn't anymore = animation complete
         if (beamWasActive && !beamStillActive) {
-            stateManager.setGamePaused(false);
-            // process any enemies that were killed by the beam
-            // pass 0.0 delta so we just clean up corpses without advancing game state
+            gamePaused = false;
             updateEnemies(0.0);
         }
 
@@ -434,20 +387,28 @@ public class GamePanel extends JPanel implements ActionListener {
             return;
         }
 
-        updatePlayer(deltaSeconds);
-        updateCamera();
-        updateShooting();
-        updateBullets(deltaSeconds);
-        updateEnemies(deltaSeconds);
-        waveManager.updateSpawning(enemies);
-        updateWaveProgress();
-        particleManager.update(deltaSeconds);
+        if (!showingShop) {
+            updatePlayer(deltaSeconds);
+            updateCamera();
+            updateShooting();
+            updateBullets(deltaSeconds);
+            updateEnemies(deltaSeconds);
+            waveManager.updateSpawning(enemies);
+            updateWaveProgress();
+            particleManager.update(deltaSeconds);
+
+            if (player.getHealthLeft() <= 0 && !gameOver) {
+                gameOver = true;
+                scoreManager.updateHighScore();
+                if (gameListener != null) {
+                    gameListener.onGameOver(scoreManager.getScore(), waveManager.getWaveNumber(),
+                            scoreManager.getHighScore());
+                }
+            }
+        }
     }
 
     private void updatePlayer(double deltaSeconds) {
-        if (stateManager.isShowingUpgradeShop())
-            return;
-
         double dx = 0, dy = 0;
         if (inputHandler.isUpPressed())
             dy -= 1;
@@ -470,10 +431,6 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void updateShooting() {
-        if (stateManager.isShowingUpgradeShop()) {
-            return;
-        }
-
         long now = System.currentTimeMillis();
         long fireInterval = (long) (1000 / player.getFireRate());
 
@@ -571,9 +528,12 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void updateWaveProgress() {
         if (waveManager.getWaveNumber() == 0) {
-            if (enemies.isEmpty() && !stateManager.isShowingUpgradeShop()) {
+            if (enemies.isEmpty() && !showingShop) {
                 scoreManager.awardWaveCurrency(0);
-                stateManager.setShowingUpgradeShop(true);
+                showingShop = true;
+                if (gameListener != null) {
+                    gameListener.onShopOpen(player, scoreManager.getCurrency(), scoreManager.getScore());
+                }
             }
             return;
         }
@@ -581,9 +541,12 @@ public class GamePanel extends JPanel implements ActionListener {
         if (!waveManager.isSpawningComplete())
             return;
 
-        if (enemies.isEmpty() && !stateManager.isShowingUpgradeShop()) {
+        if (enemies.isEmpty() && !showingShop) {
             scoreManager.awardWaveCurrency(waveManager.getWaveNumber());
-            stateManager.setShowingUpgradeShop(true);
+            showingShop = true;
+            if (gameListener != null) {
+                gameListener.onShopOpen(player, scoreManager.getCurrency(), scoreManager.getScore());
+            }
         }
     }
 
@@ -592,73 +555,14 @@ public class GamePanel extends JPanel implements ActionListener {
         double centerY = hex.getY();
         double spawnDistance = hex.getRadius();
 
-        // spawn 6 triangles in a circle around where the hexagon died
-        // this creates a satisfying explosion effect where triangles burst outward
+        // spawn 6 triangles in a circle
         for (int i = 0; i < HEX_SPLIT_COUNT; i++) {
-            // calculate angle for this triangle (divide full circle into 6 equal slices)
-            // i=0 is 0°, i=1 is 60°, i=2 is 120°, etc
             double angle = i * (2 * Math.PI / HEX_SPLIT_COUNT);
-            // use polar coordinates to position: convert angle to x,y offset from center
-            // cos gives x offset, sin gives y offset, multiply by distance from center
             double spawnX = centerX + Math.cos(angle) * spawnDistance;
             double spawnY = centerY + Math.sin(angle) * spawnDistance;
             collector.add(new TriangleEnemy(spawnX, spawnY,
                     HEX_SPLIT_TRIANGLE_RADIUS, HEX_SPLIT_TRIANGLE_HEALTH,
                     HEX_SPLIT_TRIANGLE_DAMAGE, HEX_SPLIT_TRIANGLE_SPEED));
-        }
-    }
-
-    private void gameOver() {
-        stateManager.endGame();
-        scoreManager.updateHighScore();
-    }
-
-    // click handlers
-    private void handleMainMenuClick(int x, int y) {
-        int btn = menuRenderer.getClickedMenuButton(x, y);
-        if (btn == 0)
-            startNewGame();
-        else if (btn == 1)
-            stateManager.setState(GameState.HOW_TO_PLAY);
-        else if (btn == 2)
-            System.exit(0);
-    }
-
-    private void handleGameOverClick(int x, int y) {
-        int btn = menuRenderer.getClickedMenuButton(x, y);
-        if (btn == 0)
-            stateManager.returnToMenu();
-        else if (btn == 1)
-            startNewGame();
-    }
-
-    private void handleHowToPlayClick(int x, int y) {
-        if (menuRenderer.getClickedMenuButton(x, y) == 0)
-            stateManager.returnToMenu();
-    }
-
-    private void handleShopClick(int x, int y) {
-        int btn = menuRenderer.getClickedShopButton(x, y);
-        if (btn == -1)
-            return;
-
-        ShopController.ShopPurchaseResult result = shopController.handlePurchase(btn, player, scoreManager);
-
-        switch (result.getType()) {
-            case CONTINUE:
-                stateManager.setShowingUpgradeShop(false);
-                int nextWave = (waveManager.getWaveNumber() == 0) ? 1 : waveManager.getWaveNumber() + 1;
-                waveManager.startNewWave(nextWave, enemies, bullets);
-                break;
-            case SCORE_PURCHASED:
-                scoreManager.addScore(result.getScoreAwarded());
-                break;
-            case SUCCESS:
-            case INSUFFICIENT_CURRENCY:
-            case MAX_LEVEL_REACHED:
-            case INVALID_BUTTON:
-                // No additional action needed
-                break;
         }
     }
 }
