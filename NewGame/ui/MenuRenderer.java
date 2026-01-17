@@ -720,10 +720,11 @@ public class MenuRenderer {
 
             int btnX = containerX + containerWidth - buttonWidth;
             boolean canUpgrade = currency > 0 && levels[i] < 10;
-            g2.setColor(canUpgrade ? new Color(0, 150, 0) : new Color(100, 100, 100));
+            boolean isHovered = buttonManager.isShopButtonHovered(i);
+            g2.setColor(canUpgrade ? (isHovered ? new Color(0, 180, 0) : new Color(0, 150, 0)) : new Color(100, 100, 100));
             g2.fillRoundRect(btnX, y, buttonWidth, buttonHeight, 10, 10);
-            g2.setColor(canUpgrade ? new Color(0, 200, 0) : new Color(150, 150, 150));
-            g2.setStroke(new BasicStroke(2));
+            g2.setColor(canUpgrade ? (isHovered ? new Color(0, 255, 0) : new Color(0, 200, 0)) : new Color(150, 150, 150));
+            g2.setStroke(new BasicStroke(isHovered ? 3 : 2));
             g2.drawRoundRect(btnX, y, buttonWidth, buttonHeight, 10, 10);
 
             g2.setColor(Color.WHITE);
@@ -749,10 +750,11 @@ public class MenuRenderer {
 
         int healthBtnX = containerX + containerWidth - buttonWidth;
         boolean canBuyHealth = currency > 0;
-        g2.setColor(canBuyHealth ? new Color(150, 0, 0) : new Color(100, 100, 100));
+        boolean isHealthHovered = buttonManager.isShopButtonHovered(5);
+        g2.setColor(canBuyHealth ? (isHealthHovered ? new Color(180, 0, 0) : new Color(150, 0, 0)) : new Color(100, 100, 100));
         g2.fillRoundRect(healthBtnX, extraY, buttonWidth, buttonHeight, 10, 10);
-        g2.setColor(canBuyHealth ? new Color(200, 0, 0) : new Color(150, 150, 150));
-        g2.setStroke(new BasicStroke(2));
+        g2.setColor(canBuyHealth ? (isHealthHovered ? new Color(255, 0, 0) : new Color(200, 0, 0)) : new Color(150, 150, 150));
+        g2.setStroke(new BasicStroke(isHealthHovered ? 3 : 2));
         g2.drawRoundRect(healthBtnX, extraY, buttonWidth, buttonHeight, 10, 10);
 
         g2.setColor(Color.WHITE);
@@ -773,10 +775,11 @@ public class MenuRenderer {
 
         int scoreBtnX = containerX + containerWidth - buttonWidth;
         boolean canBuyScore = currency > 0;
-        g2.setColor(canBuyScore ? new Color(0, 0, 150) : new Color(100, 100, 100));
+        boolean isScoreHovered = buttonManager.isShopButtonHovered(6);
+        g2.setColor(canBuyScore ? (isScoreHovered ? new Color(0, 0, 180) : new Color(0, 0, 150)) : new Color(100, 100, 100));
         g2.fillRoundRect(scoreBtnX, scoreY, buttonWidth, buttonHeight, 10, 10);
-        g2.setColor(canBuyScore ? new Color(0, 0, 200) : new Color(150, 150, 150));
-        g2.setStroke(new BasicStroke(2));
+        g2.setColor(canBuyScore ? (isScoreHovered ? new Color(0, 0, 255) : new Color(0, 0, 200)) : new Color(150, 150, 150));
+        g2.setStroke(new BasicStroke(isScoreHovered ? 3 : 2));
         g2.drawRoundRect(scoreBtnX, scoreY, buttonWidth, buttonHeight, 10, 10);
 
         g2.setColor(Color.WHITE);
