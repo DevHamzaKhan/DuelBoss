@@ -9,7 +9,6 @@ package ui;
 
 import entity.Character;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -20,7 +19,6 @@ public class HUDRenderer {
     // beam cooldown bar constants
     private static final int BEAM_BAR_WIDTH = 200;
     private static final int BEAM_BAR_HEIGHT = 20;
-    private static final int BEAM_BAR_MARGIN = 40;
 
     // score panel constants
     private static final int SCORE_X = 20;
@@ -34,7 +32,6 @@ public class HUDRenderer {
 
     // beam cooldown constants
     private static final long ULTIMATE_COOLDOWN_MS = 10_000; // 10 seconds
-    private static final int SCORE_POINTS_PER_CURRENCY = 10;
 
     // draws the complete hud overlay
     public void drawHUD(Graphics2D g2, int screenWidth, int screenHeight,

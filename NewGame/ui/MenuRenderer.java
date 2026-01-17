@@ -7,7 +7,6 @@ Description: Renders all menu screens with space-theme
 
 package ui;
 
-import ui.ButtonManager;
 import entity.Character;
 
 import java.awt.Color;
@@ -19,8 +18,6 @@ import java.awt.Rectangle;
 import java.awt.BasicStroke;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import javax.imageio.ImageIO;
 
 public class MenuRenderer {
