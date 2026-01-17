@@ -560,6 +560,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         // wave completes when spawning is done and all enemies are dead
+        if(waveManager.isSpawningComplete() && enemies.isEmpty() && !showingShop) {
             scoreManager.awardWaveCurrency(waveManager.getWaveNumber());
             showingShop = true;
             if (gameListener != null) {
