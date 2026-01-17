@@ -13,10 +13,16 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 public class DeathParticle {
-    double x, y, vx, vy, life = 0.25; // 0.25 second lifespan per particle
-    Color color;
-    int depth; // recursion depth (0 = parent, 1 = child, 2 = grandchild)
-    boolean spawned;
+
+    private static final double LIFESPAN = 0.25; // seconds per particle
+    private static final double CHILD_SPEED_RATIO = 0.6; // children move 60% as fast
+    private static final double ANGLE_SPREAD = 1.2; // randomization range for child angles
+    private static final double TRAIL_LENGTH = 0.02; // trail extends backward by velocity * this
+
+    private double x, y, vx, vy;
+    private double life = LIFESPAN;
+    private Color color;
+    private int depth; // recursion depth (0 = parent, 1 = child, 2 = grandchild)
 
     public DeathParticle(double x, double y, double angle, double speed, Color color, int depth) {
         this.x = x;
@@ -28,20 +34,19 @@ public class DeathParticle {
         this.depth = depth;
     }
 
-    // true recursive function: spawns children which immediately spawn their own
-    // children
-    // creates entire particle tree in one call (not iterative spawning over time)
+    // spawns children which immediately spawn their own children
     public void spawnChildren(List<DeathParticle> out, int maxDepth) {
         if (depth >= maxDepth)
             return; // base case: stop at max recursion depth
 
         // calculate child properties from parent velocity
         double angle = Math.atan2(vy, vx);
-        double speed = Math.sqrt(vx * vx + vy * vy) * 0.6; // children move 60% as fast
+        double speed = Math.sqrt(vx * vx + vy * vy) * CHILD_SPEED_RATIO;
 
         // spawn 2 children per particle, each with slightly randomized angle
         for (int i = 0; i < 2; i++) {
-            DeathParticle child = new DeathParticle(x, y, angle + (Math.random() - 0.5) * 1.2, speed, color, depth + 1);
+            DeathParticle child = new DeathParticle(x, y, angle + (Math.random() - 0.5) * ANGLE_SPREAD, speed, color,
+                    depth + 1);
             out.add(child);
             child.spawnChildren(out, maxDepth); // recursion: child spawns its own children
         }
@@ -55,12 +60,12 @@ public class DeathParticle {
 
     // renders particle as a short line segment showing motion trail
     public void draw(Graphics2D g2) {
-        // fade out as life decreases (life/0.25 gives percentage remaining)
-        int a = (int) (Math.max(0, life / 0.25) * 255);
+        // fade out as life decreases
+        int a = (int) (Math.max(0, life / LIFESPAN) * 255);
         g2.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), a));
         g2.setStroke(new BasicStroke(2));
         // line extends backward along velocity direction for motion blur effect
-        g2.drawLine((int) (x - vx * 0.02), (int) (y - vy * 0.02), (int) x, (int) y);
+        g2.drawLine((int) (x - vx * TRAIL_LENGTH), (int) (y - vy * TRAIL_LENGTH), (int) x, (int) y);
     }
 
     public boolean isDead() {
