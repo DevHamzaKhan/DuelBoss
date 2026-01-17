@@ -19,7 +19,6 @@ import manager.ParticleManager;
 import manager.ScoreManager;
 import manager.ShopController;
 import ui.Camera;
-import ui.UIOverlay;
 import ui.InputHandler;
 import ui.HUDRenderer;
 import ability.BeamAbility;
@@ -80,7 +79,6 @@ public class GamePanel extends JPanel implements ActionListener {
     private final List<Bullet> bullets;
     private final List<Enemy> enemies;
     private Camera camera;
-    private UIOverlay uiOverlay;
 
     // managers
     private final InputHandler inputHandler;
@@ -121,7 +119,6 @@ public class GamePanel extends JPanel implements ActionListener {
         bullets = new ArrayList<>();
         enemies = new ArrayList<>();
         camera = new Camera(screenWidth, screenHeight);
-        uiOverlay = new UIOverlay(player);
 
         // initialize managers
         inputHandler = new InputHandler();
@@ -176,7 +173,6 @@ public class GamePanel extends JPanel implements ActionListener {
         scoreManager.reset();
         player = new Character(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0);
         camera = new Camera(screenWidth, screenHeight);
-        uiOverlay = new UIOverlay(player);
         bullets.clear();
         enemies.clear();
         particleManager.clear();
@@ -368,10 +364,10 @@ public class GamePanel extends JPanel implements ActionListener {
         long now = System.currentTimeMillis();
         int enemiesRemaining = waveManager.getEnemiesRemaining(enemies.size());
         String status = waveManager.getWaveStatusText();
-        uiOverlay.draw(g2, screenWidth, screenHeight, waveManager.getWaveNumber(),
-                waveManager.getWaveStartTime(), now, enemiesRemaining, status);
         hudRenderer.drawHUD(g2, screenWidth, screenHeight, scoreManager.getScore(),
-                scoreManager.getCurrency(), player, lastUltimateTime, now);
+                scoreManager.getCurrency(), player, lastUltimateTime, now,
+                waveManager.getWaveNumber(), waveManager.getWaveStartTime(),
+                enemiesRemaining, status);
     }
 
     // updates game state and triggers repaint on timer tick
