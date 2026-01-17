@@ -19,7 +19,7 @@ import java.util.List;
 public class TriangleEnemy extends Enemy {
 
     private static final int SCORE_VALUE = 10;
-    private static final Color DEFAULT_COLOR = new Color(255, 80, 80);
+    public static final Color DEFAULT_COLOR = new Color(255, 80, 80);
 
     // explosion phase: triangles fly outward briefly when spawned from hexagon
     // death

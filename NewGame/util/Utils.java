@@ -15,6 +15,10 @@ import java.awt.Rectangle;
 
 public final class Utils {
 
+    // button color constants
+    private static final Color BUTTON_BG_DEFAULT = new Color(30, 30, 50, 200);
+    private static final Color BUTTON_BG_HOVER = new Color(50, 50, 70, 220);
+
     // private constructor prevents instantiation of this utility class
     private Utils() {
     }
@@ -71,7 +75,7 @@ public final class Utils {
     public static void drawButton(Graphics2D g2, Rectangle bounds, String text,
             boolean isHovered, Color baseColor, Color hoverColor) {
         // darker background and thicker border when hovered for visual feedback
-        Color bgColor = isHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
+        Color bgColor = isHovered ? BUTTON_BG_HOVER : BUTTON_BG_DEFAULT;
         Color borderColor = isHovered ? hoverColor : baseColor;
 
         g2.setColor(bgColor);

@@ -24,6 +24,11 @@ public abstract class Enemy extends Entity {
     private static final int HEALTH_BAR_HEIGHT = 6;
     private static final int HEALTH_BAR_OFFSET_Y = 12; // distance above enemy
 
+    // health bar color constants
+    private static final Color HEALTH_BAR_BG = new Color(40, 40, 40, 220);
+    private static final Color HEALTH_BAR_EMPTY = new Color(90, 0, 0);
+    private static final Color HEALTH_BAR_FILLED = new Color(0, 220, 0);
+
     protected double bodyDamage; // damage dealt on collision with player
     protected double movementSpeed; // pixels per second
     protected Color customColor = null; // overrides default color if set (used by spawned enemies)
@@ -142,16 +147,16 @@ public abstract class Enemy extends Entity {
         int yTop = (int) (y - radius - HEALTH_BAR_OFFSET_Y);
 
         // background/border
-        g2.setColor(new Color(40, 40, 40, 220));
+        g2.setColor(HEALTH_BAR_BG);
         g2.fillRect(xLeft - 1, yTop - 1, HEALTH_BAR_WIDTH + 2, HEALTH_BAR_HEIGHT + 2);
 
         // empty health (red background)
-        g2.setColor(new Color(90, 0, 0));
+        g2.setColor(HEALTH_BAR_EMPTY);
         g2.fillRect(xLeft, yTop, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT);
 
         // filled health (green)
         int filledWidth = (int) (HEALTH_BAR_WIDTH * hpPercent);
-        g2.setColor(new Color(0, 220, 0));
+        g2.setColor(HEALTH_BAR_FILLED);
         g2.fillRect(xLeft, yTop, filledWidth, HEALTH_BAR_HEIGHT);
     }
 }

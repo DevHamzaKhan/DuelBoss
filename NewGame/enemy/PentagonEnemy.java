@@ -25,7 +25,7 @@ public class PentagonEnemy extends Enemy {
     private static final double STOP_DISTANCE = 400; // stops moving when this close to player
     private static final double SHOOT_RANGE = 500; // only shoots within this range
     private static final int SIDES = 5; // pentagon shape
-    private static final Color BODY_COLOR = new Color(180, 120, 255);
+    public static final Color BODY_COLOR = new Color(180, 120, 255);
 
     private double timeSinceLastShot = 0; // tracks firing cooldown
 

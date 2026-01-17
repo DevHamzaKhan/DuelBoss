@@ -24,8 +24,8 @@ public class StarEnemy extends Enemy {
     private static final double KEEP_DISTANCE = 300; // maintains this distance from player
     private static final double STAR_INNER_RATIO = 0.4; // ratio for star inner points
     private static final int STAR_POINTS = 10; // 5-pointed star (10 vertices)
-    private static final Color BODY_COLOR = new Color(255, 255, 0);
-    private static final Color BORDER_COLOR = new Color(200, 200, 0);
+    public static final Color BODY_COLOR = new Color(255, 255, 0);
+    public static final Color BORDER_COLOR = new Color(200, 200, 0);
     private static final Color SPAWN_COLOR = new Color(255, 255, 0); // color for spawned enemies
 
     private double timeSinceLastSpawn = 0;

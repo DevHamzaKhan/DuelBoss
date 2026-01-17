@@ -20,7 +20,7 @@ public class HexagonEnemy extends Enemy {
     // hexagon gives no direct score (splits into triangles on death)
     private static final int SCORE_VALUE = 0;
     private static final int SIDES = 6;
-    private static final Color BODY_COLOR = new Color(120, 200, 120);
+    public static final Color BODY_COLOR = new Color(120, 200, 120);
 
     public HexagonEnemy(double x,
             double y,

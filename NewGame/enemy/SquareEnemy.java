@@ -18,7 +18,7 @@ import java.util.List;
 public class SquareEnemy extends Enemy {
 
     private static final int SCORE_VALUE = 20;
-    private static final Color DEFAULT_COLOR = new Color(255, 150, 80);
+    public static final Color DEFAULT_COLOR = new Color(255, 150, 80);
 
     private final double dodgeRadius;
 

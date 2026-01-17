@@ -22,6 +22,44 @@ import javax.imageio.ImageIO;
 
 public class MenuRenderer {
 
+    // ui color constants
+    private static final Color BUTTON_BG_DEFAULT = new Color(30, 30, 50, 200);
+    private static final Color BUTTON_BG_HOVER = new Color(50, 50, 70, 220);
+    private static final Color BUTTON_BORDER_DEFAULT = new Color(0, 200, 255);
+    private static final Color BUTTON_BORDER_HOVER = new Color(100, 255, 255);
+    private static final Color SPACE_BG = new Color(10, 10, 30);
+    private static final Color STAR_DIM = new Color(255, 255, 255, 200);
+    private static final Color STAR_BRIGHT = new Color(255, 255, 255, 255);
+    private static final Color PANEL_BG = new Color(30, 30, 50, 220);
+    private static final Color TITLE_GLOW = new Color(0, 200, 255, 100);
+    private static final Color TITLE_COLOR = new Color(0, 255, 255);
+    private static final Color HOWTOPLAY_PANEL = new Color(30, 30, 50, 220);
+    private static final Color PLAYER_SPRITE_TINT = new Color(100, 150, 255);
+    private static final Color TEXT_DIVIDER = new Color(60, 60, 80);
+    private static final Color SHOP_PANEL_BG = new Color(30, 30, 40, 250);
+    private static final Color PROGRESS_BAR_BG = new Color(50, 50, 50);
+    private static final Color PROGRESS_FILLED = new Color(0, 200, 0);
+    private static final Color PROGRESS_EMPTY = new Color(100, 100, 100);
+    private static final Color DISABLED_COLOR = new Color(100, 100, 100);
+    private static final Color DISABLED_BORDER = new Color(150, 150, 150);
+    private static final Color UPGRADE_BG = new Color(0, 150, 0);
+    private static final Color UPGRADE_BG_HOVER = new Color(0, 180, 0);
+    private static final Color UPGRADE_BORDER = new Color(0, 200, 0);
+    private static final Color UPGRADE_BORDER_HOVER = new Color(0, 255, 0);
+    private static final Color HEALTH_BG = new Color(150, 0, 0);
+    private static final Color HEALTH_BG_HOVER = new Color(180, 0, 0);
+    private static final Color HEALTH_BORDER = new Color(200, 0, 0);
+    private static final Color HEALTH_BORDER_HOVER = new Color(255, 0, 0);
+    private static final Color SCORE_BG = new Color(0, 0, 150);
+    private static final Color SCORE_BG_HOVER = new Color(0, 0, 180);
+    private static final Color SCORE_BORDER = new Color(0, 0, 200);
+    private static final Color SCORE_BORDER_HOVER = new Color(0, 0, 255);
+    private static final Color CONTINUE_BG = new Color(0, 150, 0);
+    private static final Color CONTINUE_BG_HOVER = new Color(0, 180, 0);
+    private static final Color CONTINUE_BORDER = new Color(0, 200, 0);
+    private static final Color CONTINUE_BORDER_HOVER = new Color(0, 255, 0);
+    private static final Color SUBTEXT_COLOR = new Color(200, 200, 200);
+
     private final int screenWidth;
     private final int screenHeight;
 
@@ -29,11 +67,11 @@ public class MenuRenderer {
     private BufferedImage playerImage = null;
 
     private static void drawSpaceBackground(Graphics2D g2, int width, int height) {
-        g2.setColor(new Color(10, 10, 30));
+        g2.setColor(SPACE_BG);
         g2.fillRect(0, 0, width, height);
 
         // use fixed random seeds so star positions are consistent across redraws
-        g2.setColor(new Color(255, 255, 255, 200));
+        g2.setColor(STAR_DIM);
         java.util.Random rand = new java.util.Random(12345);
         for (int i = 0; i < 200; i++) {
             int x = rand.nextInt(width);
@@ -42,7 +80,7 @@ public class MenuRenderer {
             g2.fillOval(x, y, size, size);
         }
 
-        g2.setColor(new Color(255, 255, 255, 255));
+        g2.setColor(STAR_BRIGHT);
         rand = new java.util.Random(54321);
         for (int i = 0; i < 40; i++) {
             int x = rand.nextInt(width);
@@ -92,11 +130,11 @@ public class MenuRenderer {
         int titleX = (screenWidth - fm.stringWidth(title)) / 2;
         int titleY = 150;
 
-        g2.setColor(new Color(0, 200, 255, 100));
+        g2.setColor(TITLE_GLOW);
         for (int i = 0; i < 5; i++) {
             g2.drawString(title, titleX + i, titleY + i);
         }
-        g2.setColor(new Color(0, 255, 255));
+        g2.setColor(TITLE_COLOR);
         g2.drawString(title, titleX, titleY);
 
         // menu buttons (play, how to play, quit)
@@ -117,8 +155,8 @@ public class MenuRenderer {
                 break;
 
             boolean isHovered = buttonManager.isMenuButtonHovered(i);
-            Color bgColor = isHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
-            Color borderColor = isHovered ? new Color(100, 255, 255) : new Color(0, 200, 255);
+            Color bgColor = isHovered ? BUTTON_BG_HOVER : BUTTON_BG_DEFAULT;
+            Color borderColor = isHovered ? BUTTON_BORDER_HOVER : BUTTON_BORDER_DEFAULT;
 
             g2.setColor(bgColor);
             g2.fillRoundRect(x, y, buttonWidth, buttonHeight, 15, 15);
@@ -184,17 +222,17 @@ public class MenuRenderer {
         int cornerRadius = 20;
 
         // left side: character section box
-        g2.setColor(new Color(30, 30, 50, 220));
+        g2.setColor(PANEL_BG);
         g2.fillRoundRect(leftBoxX, boxY, leftBoxWidth, boxHeight, cornerRadius, cornerRadius);
-        g2.setColor(new Color(0, 200, 255));
+        g2.setColor(BUTTON_BORDER_DEFAULT);
         g2.setStroke(new BasicStroke(3));
         g2.drawRoundRect(leftBoxX, boxY, leftBoxWidth, boxHeight, cornerRadius, cornerRadius);
         drawCharacterSection(g2, leftBoxX + 20, boxY, leftBoxWidth - 40, boxHeight);
 
         // right side: enemy types section box
-        g2.setColor(new Color(30, 30, 50, 220));
+        g2.setColor(PANEL_BG);
         g2.fillRoundRect(rightBoxX, boxY, rightBoxWidth, boxHeight, cornerRadius, cornerRadius);
-        g2.setColor(new Color(0, 200, 255));
+        g2.setColor(BUTTON_BORDER_DEFAULT);
         g2.setStroke(new BasicStroke(3));
         g2.drawRoundRect(rightBoxX, boxY, rightBoxWidth, boxHeight, cornerRadius, cornerRadius);
         drawEnemySection(g2, rightBoxX + 20, boxY, rightBoxWidth - 40, boxHeight);
@@ -208,8 +246,8 @@ public class MenuRenderer {
         buttonManager.clearMenuButtons();
 
         boolean isBackHovered = buttonManager.isMenuButtonHovered(0);
-        Color backBgColor = isBackHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
-        Color backBorderColor = isBackHovered ? new Color(100, 255, 255) : new Color(0, 200, 255);
+        Color backBgColor = isBackHovered ? BUTTON_BG_HOVER : BUTTON_BG_DEFAULT;
+        Color backBorderColor = isBackHovered ? BUTTON_BORDER_HOVER : BUTTON_BORDER_DEFAULT;
 
         g2.setColor(backBgColor);
         g2.fillRoundRect(buttonX, buttonY, buttonWidth, buttonHeight, 15, 15);
@@ -268,7 +306,7 @@ public class MenuRenderer {
             g2.drawImage(playerImage, imageX, imageY, imageSize, imageSize, null);
         } else {
             // draw placeholder circle if image not found
-            g2.setColor(new Color(100, 150, 255));
+            g2.setColor(PLAYER_SPRITE_TINT);
             g2.fillOval(imageX, imageY, imageSize, imageSize);
         }
         currentY += imageSize + 20;
@@ -330,7 +368,7 @@ public class MenuRenderer {
     }
 
     private void drawKey(Graphics2D g2, String key, int x, int y, int size) {
-        g2.setColor(new Color(60, 60, 80));
+        g2.setColor(TEXT_DIVIDER);
         g2.fillRoundRect(x, y, size, size, 5, 5);
         g2.setColor(Color.WHITE);
         g2.setStroke(new BasicStroke(2));
@@ -488,20 +526,20 @@ public class MenuRenderer {
                 int[] triX = { 0, -radius, radius };
                 int[] triY = { -radius, radius, radius };
                 Polygon triangle = new Polygon(triX, triY, 3);
-                g2.setColor(new Color(255, 80, 80));
+                g2.setColor(enemy.TriangleEnemy.DEFAULT_COLOR);
                 g2.fillPolygon(triangle);
                 g2.setColor(Color.DARK_GRAY);
                 g2.drawPolygon(triangle);
                 break;
             case 1: // square
                 int half = radius;
-                g2.setColor(new Color(255, 150, 80));
+                g2.setColor(enemy.SquareEnemy.DEFAULT_COLOR);
                 g2.fillRect(-half, -half, half * 2, half * 2);
                 g2.setColor(Color.BLACK);
                 g2.drawRect(-half, -half, half * 2, half * 2);
                 break;
             case 2: // circle
-                g2.setColor(new Color(120, 120, 255));
+                g2.setColor(enemy.CircleEnemy.BODY_COLOR);
                 g2.fillOval(-radius, -radius, radius * 2, radius * 2);
                 g2.setColor(Color.WHITE);
                 g2.drawOval(-radius, -radius, radius * 2, radius * 2);
@@ -516,7 +554,7 @@ public class MenuRenderer {
                     pentY[i] = (int) (Math.sin(ang) * radius);
                 }
                 Polygon pentagon = new Polygon(pentX, pentY, sides);
-                g2.setColor(new Color(180, 120, 255));
+                g2.setColor(enemy.PentagonEnemy.BODY_COLOR);
                 g2.fillPolygon(pentagon);
                 g2.setColor(Color.DARK_GRAY);
                 g2.drawPolygon(pentagon);
@@ -531,7 +569,7 @@ public class MenuRenderer {
                     hexY[i] = (int) (Math.sin(ang) * radius);
                 }
                 Polygon hex = new Polygon(hexX, hexY, hexSides);
-                g2.setColor(new Color(120, 200, 120));
+                g2.setColor(enemy.HexagonEnemy.BODY_COLOR);
                 g2.fillPolygon(hex);
                 g2.setColor(Color.DARK_GRAY);
                 g2.drawPolygon(hex);
@@ -546,7 +584,7 @@ public class MenuRenderer {
                     octY[i] = (int) (Math.sin(ang) * radius);
                 }
                 Polygon octagon = new Polygon(octX, octY, octSides);
-                g2.setColor(new Color(150, 80, 200));
+                g2.setColor(enemy.OctagonEnemy.DEFAULT_COLOR);
                 g2.fillPolygon(octagon);
                 g2.setColor(Color.DARK_GRAY);
                 g2.drawPolygon(octagon);
@@ -561,9 +599,9 @@ public class MenuRenderer {
                     starY[i] = (int) (Math.sin(ang) * dist);
                 }
                 Polygon star = new Polygon(starX, starY, 10);
-                g2.setColor(new Color(255, 255, 0));
+                g2.setColor(enemy.StarEnemy.BODY_COLOR);
                 g2.fillPolygon(star);
-                g2.setColor(new Color(200, 200, 0));
+                g2.setColor(enemy.StarEnemy.BORDER_COLOR);
                 g2.drawPolygon(star);
                 break;
         }
@@ -634,8 +672,8 @@ public class MenuRenderer {
                 break;
 
             boolean isHovered = buttonManager.isMenuButtonHovered(i);
-            Color bgColor = isHovered ? new Color(50, 50, 70, 220) : new Color(30, 30, 50, 200);
-            Color borderColor = isHovered ? new Color(100, 255, 255) : new Color(0, 200, 255);
+            Color bgColor = isHovered ? BUTTON_BG_HOVER : BUTTON_BG_DEFAULT;
+            Color borderColor = isHovered ? BUTTON_BORDER_HOVER : BUTTON_BORDER_DEFAULT;
 
             g2.setColor(bgColor);
             g2.fillRoundRect(x, y, buttonWidth, buttonHeight, 15, 15);
@@ -663,7 +701,7 @@ public class MenuRenderer {
         int panelX = screenWidth / 2 - panelWidth / 2;
         int panelY = (screenHeight - panelHeight) / 2;
 
-        g2.setColor(new Color(30, 30, 40, 250));
+        g2.setColor(SHOP_PANEL_BG);
         g2.fillRoundRect(panelX, panelY, panelWidth, panelHeight, 20, 20);
         g2.setColor(Color.WHITE);
         g2.setStroke(new BasicStroke(3));
@@ -707,13 +745,13 @@ public class MenuRenderer {
 
             int progX = containerX;
             int progY = y + 30;
-            g2.setColor(new Color(50, 50, 50));
+            g2.setColor(PROGRESS_BAR_BG);
             g2.fillRoundRect(progX, progY, progressBarWidth, progressBarHeight, 5, 5);
 
             // draw 10 segments, fill up to current level
             int segmentWidth = progressBarWidth / 10;
             for (int seg = 0; seg < 10; seg++) {
-                g2.setColor(seg < levels[i] ? new Color(0, 200, 0) : new Color(100, 100, 100));
+                g2.setColor(seg < levels[i] ? PROGRESS_FILLED : PROGRESS_EMPTY);
                 g2.fillRoundRect(progX + seg * segmentWidth + 2, progY + 2, segmentWidth - 4, progressBarHeight - 4, 3,
                         3);
             }
@@ -721,9 +759,11 @@ public class MenuRenderer {
             int btnX = containerX + containerWidth - buttonWidth;
             boolean canUpgrade = currency > 0 && levels[i] < 10;
             boolean isHovered = buttonManager.isShopButtonHovered(i);
-            g2.setColor(canUpgrade ? (isHovered ? new Color(0, 180, 0) : new Color(0, 150, 0)) : new Color(100, 100, 100));
+            g2.setColor(
+                    canUpgrade ? (isHovered ? UPGRADE_BG_HOVER : UPGRADE_BG) : DISABLED_COLOR);
             g2.fillRoundRect(btnX, y, buttonWidth, buttonHeight, 10, 10);
-            g2.setColor(canUpgrade ? (isHovered ? new Color(0, 255, 0) : new Color(0, 200, 0)) : new Color(150, 150, 150));
+            g2.setColor(
+                    canUpgrade ? (isHovered ? UPGRADE_BORDER_HOVER : UPGRADE_BORDER) : DISABLED_BORDER);
             g2.setStroke(new BasicStroke(isHovered ? 3 : 2));
             g2.drawRoundRect(btnX, y, buttonWidth, buttonHeight, 10, 10);
 
@@ -744,16 +784,18 @@ public class MenuRenderer {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
         g2.drawString("Buy Health +20 HP", containerX, extraY + 20);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 14f));
-        g2.setColor(new Color(200, 200, 200));
+        g2.setColor(SUBTEXT_COLOR);
         g2.drawString("Current: " + (int) player.getHealthLeft() + "/" + (int) player.getMaxHealth(), containerX,
                 extraY + 38);
 
         int healthBtnX = containerX + containerWidth - buttonWidth;
         boolean canBuyHealth = currency > 0;
         boolean isHealthHovered = buttonManager.isShopButtonHovered(5);
-        g2.setColor(canBuyHealth ? (isHealthHovered ? new Color(180, 0, 0) : new Color(150, 0, 0)) : new Color(100, 100, 100));
+        g2.setColor(canBuyHealth ? (isHealthHovered ? HEALTH_BG_HOVER : HEALTH_BG)
+                : DISABLED_COLOR);
         g2.fillRoundRect(healthBtnX, extraY, buttonWidth, buttonHeight, 10, 10);
-        g2.setColor(canBuyHealth ? (isHealthHovered ? new Color(255, 0, 0) : new Color(200, 0, 0)) : new Color(150, 150, 150));
+        g2.setColor(canBuyHealth ? (isHealthHovered ? HEALTH_BORDER_HOVER : HEALTH_BORDER)
+                : DISABLED_BORDER);
         g2.setStroke(new BasicStroke(isHealthHovered ? 3 : 2));
         g2.drawRoundRect(healthBtnX, extraY, buttonWidth, buttonHeight, 10, 10);
 
@@ -770,15 +812,17 @@ public class MenuRenderer {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 18f));
         g2.drawString("Buy Score +10", containerX, scoreY + 20);
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 14f));
-        g2.setColor(new Color(200, 200, 200));
+        g2.setColor(SUBTEXT_COLOR);
         g2.drawString("Current Score: " + score, containerX, scoreY + 38);
 
         int scoreBtnX = containerX + containerWidth - buttonWidth;
         boolean canBuyScore = currency > 0;
         boolean isScoreHovered = buttonManager.isShopButtonHovered(6);
-        g2.setColor(canBuyScore ? (isScoreHovered ? new Color(0, 0, 180) : new Color(0, 0, 150)) : new Color(100, 100, 100));
+        g2.setColor(canBuyScore ? (isScoreHovered ? SCORE_BG_HOVER : SCORE_BG)
+                : DISABLED_COLOR);
         g2.fillRoundRect(scoreBtnX, scoreY, buttonWidth, buttonHeight, 10, 10);
-        g2.setColor(canBuyScore ? (isScoreHovered ? new Color(0, 0, 255) : new Color(0, 0, 200)) : new Color(150, 150, 150));
+        g2.setColor(canBuyScore ? (isScoreHovered ? SCORE_BORDER_HOVER : SCORE_BORDER)
+                : DISABLED_BORDER);
         g2.setStroke(new BasicStroke(isScoreHovered ? 3 : 2));
         g2.drawRoundRect(scoreBtnX, scoreY, buttonWidth, buttonHeight, 10, 10);
 
@@ -798,9 +842,9 @@ public class MenuRenderer {
 
         // continue button is button index 7 (5 upgrades + health + score = 7)
         boolean isContinueHovered = buttonManager.isShopButtonHovered(7);
-        g2.setColor(isContinueHovered ? new Color(0, 180, 0) : new Color(0, 150, 0));
+        g2.setColor(isContinueHovered ? CONTINUE_BG_HOVER : CONTINUE_BG);
         g2.fillRoundRect(continueButtonX, continueButtonY, continueButtonWidth, continueButtonHeight, 10, 10);
-        g2.setColor(isContinueHovered ? new Color(0, 255, 0) : new Color(0, 200, 0));
+        g2.setColor(isContinueHovered ? CONTINUE_BORDER_HOVER : CONTINUE_BORDER);
         g2.setStroke(new BasicStroke(isContinueHovered ? 4 : 3));
         g2.drawRoundRect(continueButtonX, continueButtonY, continueButtonWidth, continueButtonHeight, 10, 10);
 

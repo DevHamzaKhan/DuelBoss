@@ -16,6 +16,16 @@ import java.awt.Graphics2D;
 
 public class HUDRenderer {
 
+    // ui color constants
+    private static final Color SHADOW_COLOR = new Color(40, 40, 40, 220);
+    private static final Color PANEL_BG_COLOR = new Color(0, 0, 0, 180);
+    private static final Color EMPTY_BAR_COLOR = new Color(60, 0, 0);
+    private static final Color FILLED_BAR_COLOR = new Color(0, 200, 0);
+    private static final Color FILLED_BAR_PARTIAL = new Color(255, 150, 0);
+    private static final Color EMPTY_HEALTH_COLOR = new Color(80, 0, 0);
+    private static final Color STATS_TEXT_COLOR = new Color(200, 200, 200);
+    private static final Color PANEL_BG_ALT = new Color(0, 0, 0, 150);
+
     // beam cooldown bar constants
     private static final int BEAM_BAR_WIDTH = 200;
     private static final int BEAM_BAR_HEIGHT = 20;
@@ -57,17 +67,17 @@ public class HUDRenderer {
         int barY = screenHeight - 170; // 40 pixels above health bar
 
         // background
-        g2.setColor(new Color(40, 40, 40, 220));
+        g2.setColor(SHADOW_COLOR);
         g2.fillRoundRect(barX - 3, barY - 3, BEAM_BAR_WIDTH + 6, BEAM_BAR_HEIGHT + 6, 8, 8);
 
         // cooldown background
-        g2.setColor(new Color(60, 0, 0));
+        g2.setColor(EMPTY_BAR_COLOR);
         g2.fillRoundRect(barX, barY, BEAM_BAR_WIDTH, BEAM_BAR_HEIGHT, 6, 6);
 
         // progress fill
         int filledWidth = (int) (BEAM_BAR_WIDTH * cooldownProgress);
         if (filledWidth > 0) {
-            Color fillColor = cooldownProgress >= 1.0 ? new Color(0, 200, 0) : new Color(255, 150, 0);
+            Color fillColor = cooldownProgress >= 1.0 ? FILLED_BAR_COLOR : FILLED_BAR_PARTIAL;
             g2.setColor(fillColor);
             g2.fillRoundRect(barX, barY, filledWidth, BEAM_BAR_HEIGHT, 6, 6);
         }
@@ -96,7 +106,7 @@ public class HUDRenderer {
         FontMetrics fm = g2.getFontMetrics();
         String scoreText = "Score: " + score;
 
-        g2.setColor(new Color(0, 0, 0, 180));
+        g2.setColor(PANEL_BG_COLOR);
         g2.fillRoundRect(SCORE_X - 10, SCORE_Y - fm.getAscent() - 5,
                 fm.stringWidth(scoreText) + 20, fm.getHeight() + 10, 10, 10);
         g2.setColor(Color.WHITE);
@@ -116,10 +126,10 @@ public class HUDRenderer {
         fm = g2.getFontMetrics();
         for (int i = 0; i < stats.length; i++) {
             int lineY = statsStartY + i * STATS_LINE_HEIGHT;
-            g2.setColor(new Color(0, 0, 0, 150));
+            g2.setColor(PANEL_BG_ALT);
             g2.fillRoundRect(SCORE_X - 10, lineY - fm.getAscent() - 2,
                     fm.stringWidth(stats[i]) + 20, fm.getHeight() + 4, 5, 5);
-            g2.setColor(new Color(200, 200, 200));
+            g2.setColor(STATS_TEXT_COLOR);
             g2.drawString(stats[i], SCORE_X, lineY);
         }
     }
@@ -134,14 +144,14 @@ public class HUDRenderer {
         healthPercent = Math.max(0, Math.min(1, healthPercent));
 
         // draw layered health bar: shadow, empty bar, filled bar
-        g2.setColor(new Color(40, 40, 40, 220));
+        g2.setColor(SHADOW_COLOR);
         g2.fillRoundRect(x - 3, y - 3, HEALTH_BAR_WIDTH + 6, HEALTH_BAR_HEIGHT + 6, 10, 10);
 
-        g2.setColor(new Color(80, 0, 0));
+        g2.setColor(EMPTY_HEALTH_COLOR);
         g2.fillRoundRect(x, y, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 8, 8);
 
         int filledWidth = (int) (HEALTH_BAR_WIDTH * healthPercent);
-        g2.setColor(new Color(0, 200, 0));
+        g2.setColor(FILLED_BAR_COLOR);
         g2.fillRoundRect(x, y, filledWidth, HEALTH_BAR_HEIGHT, 8, 8);
 
         g2.setColor(Color.WHITE);
@@ -175,7 +185,7 @@ public class HUDRenderer {
         int x = (screenWidth - textWidth) / 2;
         int y = 40;
 
-        g2.setColor(new Color(0, 0, 0, 180));
+        g2.setColor(PANEL_BG_COLOR);
         g2.fillRoundRect(x - 12, y - fm.getAscent(), textWidth + 24, fm.getHeight() + 4, 12, 12);
 
         g2.setColor(Color.WHITE);
@@ -198,7 +208,7 @@ public class HUDRenderer {
         int y = 30;
         int textWidth = fm.stringWidth(text);
 
-        g2.setColor(new Color(0, 0, 0, 180));
+        g2.setColor(PANEL_BG_COLOR);
         g2.fillRoundRect(x - 10, y - fm.getAscent(), textWidth + 20, fm.getHeight() + 4, 10, 10);
 
         g2.setColor(Color.WHITE);
@@ -217,7 +227,7 @@ public class HUDRenderer {
         int x = screenWidth - textWidth - padding;
         int y = 30;
 
-        g2.setColor(new Color(0, 0, 0, 180));
+        g2.setColor(PANEL_BG_COLOR);
         g2.fillRoundRect(x - 10, y - fm.getAscent(), textWidth + 20, fm.getHeight() + 4, 10, 10);
 
         g2.setColor(Color.WHITE);

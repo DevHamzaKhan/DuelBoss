@@ -21,6 +21,8 @@ public class BeamAbility {
     private static final double BEAM_WIDTH = 8.0;
     private static final Color BEAM_COLOR = new Color(255, 100, 0, 200); // orange semi-transparent
     private static final double KILL_RADIUS = 30.0; // how close beam must be to kill enemy
+    private static final Color BEAM_HEAD_COLOR = new Color(255, 200, 100, 255);
+    private static final Color BEAM_TAIL_COLOR = new Color(255, 150, 50, 180);
 
     private boolean isActive = false;
     private long startTime;
@@ -198,9 +200,9 @@ public class BeamAbility {
         }
 
         int glowSize = 25;
-        g2.setColor(new Color(255, 200, 100, 255));
+        g2.setColor(BEAM_HEAD_COLOR);
         g2.fillOval((int) (currentPos[0] - glowSize / 2), (int) (currentPos[1] - glowSize / 2), glowSize, glowSize);
-        g2.setColor(new Color(255, 150, 50, 180));
+        g2.setColor(BEAM_TAIL_COLOR);
         double[] startPos = path.get(0);
         g2.fillOval((int) (startPos[0] - glowSize / 2), (int) (startPos[1] - glowSize / 2), glowSize, glowSize);
     }

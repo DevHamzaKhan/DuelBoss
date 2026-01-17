@@ -19,7 +19,7 @@ public class OctagonEnemy extends Enemy {
 
     private static final int SCORE_VALUE = 50;
     private static final int SIDES = 8;
-    private static final Color DEFAULT_COLOR = new Color(150, 80, 200);
+    public static final Color DEFAULT_COLOR = new Color(150, 80, 200);
 
     public OctagonEnemy(double x,
             double y,

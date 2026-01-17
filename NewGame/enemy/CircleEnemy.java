@@ -20,7 +20,7 @@ public class CircleEnemy extends Enemy {
     private static final int SCORE_VALUE = 20;
     private static final Color FORCE_FIELD_FILL = new Color(150, 150, 255, 40);
     private static final Color FORCE_FIELD_BORDER = new Color(120, 120, 255, 120);
-    private static final Color BODY_COLOR = new Color(120, 120, 255);
+    public static final Color BODY_COLOR = new Color(120, 120, 255);
 
     private final double forceFieldRadius;
 

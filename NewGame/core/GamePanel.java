@@ -44,7 +44,7 @@ import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener {
 
-    private static final boolean DEV_MODE = false;
+    private static final boolean DEV_MODE = true;
     public static final int MAP_WIDTH = 2000;
     public static final int MAP_HEIGHT = 2000;
     private static final int FRAME_DELAY_MS = 16;
@@ -61,6 +61,10 @@ public class GamePanel extends JPanel implements ActionListener {
     private static final Color STAR_COLOR_DIM = new Color(255, 255, 255, 200);
     private static final Color STAR_COLOR_BRIGHT = new Color(255, 255, 255, 255);
     private static final Color BORDER_COLOR = new Color(60, 60, 100);
+    private static final Color NEBULA_PURPLE = new Color(80, 60, 140, 40);
+    private static final Color NEBULA_BLUE = new Color(60, 80, 160, 40);
+    private static final Color NEBULA_MAGENTA = new Color(100, 60, 120, 40);
+    private static final Color NEBULA_INDIGO = new Color(70, 70, 150, 40);
 
     // hexagon split constants
     private static final int HEX_SPLIT_COUNT = 6;
@@ -343,13 +347,13 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         // corner nebula effects
-        g2.setColor(new Color(80, 60, 140, 40));
+        g2.setColor(NEBULA_PURPLE);
         g2.fillRect(0, 0, NEBULA_SIZE, NEBULA_SIZE);
-        g2.setColor(new Color(60, 80, 160, 40));
+        g2.setColor(NEBULA_BLUE);
         g2.fillRect(MAP_WIDTH - NEBULA_SIZE, 0, NEBULA_SIZE, NEBULA_SIZE);
-        g2.setColor(new Color(100, 60, 120, 40));
+        g2.setColor(NEBULA_MAGENTA);
         g2.fillRect(0, MAP_HEIGHT - NEBULA_SIZE, NEBULA_SIZE, NEBULA_SIZE);
-        g2.setColor(new Color(70, 70, 150, 40));
+        g2.setColor(NEBULA_INDIGO);
         g2.fillRect(MAP_WIDTH - NEBULA_SIZE, MAP_HEIGHT - NEBULA_SIZE, NEBULA_SIZE, NEBULA_SIZE);
 
         // border
@@ -560,7 +564,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         // wave completes when spawning is done and all enemies are dead
-        if(waveManager.isSpawningComplete() && enemies.isEmpty() && !showingShop) {
+        if (waveManager.isSpawningComplete() && enemies.isEmpty() && !showingShop) {
             scoreManager.awardWaveCurrency(waveManager.getWaveNumber());
             showingShop = true;
             if (gameListener != null) {
