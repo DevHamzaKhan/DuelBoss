@@ -44,7 +44,7 @@ import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements ActionListener {
 
-    private static final boolean DEV_MODE = true;
+    private static final boolean DEV_MODE = false;
     public static final int MAP_WIDTH = 2000;
     public static final int MAP_HEIGHT = 2000;
     private static final int FRAME_DELAY_MS = 16;
