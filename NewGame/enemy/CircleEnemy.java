@@ -51,8 +51,7 @@ public class CircleEnemy extends Enemy {
         double dy = player.getY() - y;
         double distanceSq = Utils.distanceSquared(x, y, player.getX(), player.getY());
         // calculate trigger distance accounting for both force field and player radius
-        // this ensures explosion triggers when player's edge touches field edge, not
-        // just center
+        // explosion triggers when player's edge touches field edge, not just center
         double triggerRadius = forceFieldRadius + player.getRadius();
 
         // check if player has entered the force field - if so, explode
@@ -69,7 +68,7 @@ public class CircleEnemy extends Enemy {
     }
 
     // overrides default draw to render force field before body
-    // force field provides visual warning to player about danger zone
+    // force field shows visual warning to player about danger zone
     @Override
     public void draw(Graphics2D g2) {
         int centerX = (int) x;

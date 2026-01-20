@@ -261,7 +261,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
-    // returns the enemy at the given world position, or null if none found
+    // returns the enemy at the given world position for beam ability
     private Enemy findEnemyAt(double worldX, double worldY) {
         for (Enemy enemy : enemies) {
             if (enemy.isAlive()) {
@@ -511,6 +511,7 @@ public class GamePanel extends JPanel implements ActionListener {
         int index = 0;
         while (iterator.hasNext()) {
             Enemy enemy = iterator.next();
+            // enemy has been killed
             if (!enemy.isAlive()) {
                 scoreManager.awardScoreForEnemy(enemy);
                 particleManager.spawnDeathEffect(enemy);

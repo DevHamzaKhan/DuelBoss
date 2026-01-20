@@ -40,7 +40,8 @@ public class DeathParticle {
             return; // base case: stop at max recursion depth
 
         // calculate child properties from parent velocity
-        double angle = Math.atan2(vy, vx);
+        double angle = Math.atan2(vy, vx); // same angle as parent
+        // add the velocity vectors to get original speed
         double speed = Math.sqrt(vx * vx + vy * vy) * CHILD_SPEED_RATIO;
 
         // spawn 2 children per particle, each with slightly randomized angle

@@ -25,13 +25,14 @@ public class ParticleManager {
         for (int i = 0; i < 6; i++) {
             // randomize angle slightly for natural spread
             double angle = i * Math.PI / 3 + Math.random() * 0.3;
+            // randomize speed to be 300-400
             DeathParticle p = new DeathParticle(e.getX(), e.getY(), angle, 300 + Math.random() * 100, c, 0);
             particles.add(p);
             p.spawnChildren(particles, 3); // recursively spawns all child particles immediately
         }
     }
 
-    public void update(double dt) {
+    public void update(double dt) { // dt is seconds per frame
         particles.removeIf(p -> {
             p.update(dt);
             return p.isDead();

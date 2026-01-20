@@ -24,8 +24,7 @@ public class Character extends Entity {
     private static final String SPRITE_PATH_FALLBACK = "Images/player.png";
 
     // base stats for scaling - all upgrades are multiplicative on these base values
-    // this design ensures consistent scaling: level 1 = base, level 10 = base * (1
-    // + 9 * multiplier)
+    // consistent scaling: level 1 = base, level 10 = base * (1 + 9 * multiplier)
     private static final double BASE_MAX_HEALTH = 200;
     private static final double BASE_BULLET_SPEED = 600;
     private static final double BASE_FIRE_RATE = 1;
@@ -178,6 +177,7 @@ public class Character extends Entity {
 
         int width = sprite.getWidth();
         int height = sprite.getHeight();
+        // x, y are center of img
         g2.drawImage(sprite, -width / 2, -height / 2, null); // center sprite on position
 
         g2.setTransform(oldTransform); // restore original transform

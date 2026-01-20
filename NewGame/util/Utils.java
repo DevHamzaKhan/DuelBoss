@@ -50,8 +50,7 @@ public final class Utils {
     }
 
     // normalizes a vector but uses a default direction when input is zero-length
-    // essential for bullets - prevents crash when mouse is exactly on player
-    // position
+    // fixes crash when mouse is exactly on player position
     public static double[] normalizeWithDefault(double x, double y, double defaultX, double defaultY) {
         double length = Math.sqrt(x * x + y * y);
         if (length == 0) {

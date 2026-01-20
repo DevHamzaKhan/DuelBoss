@@ -2,7 +2,7 @@
 Name: ShopController.java
 Authors: Hamza Khan & Alec Li
 Date: January 16, 2026
-Description: Manages upgrade shop logic and purchases. Validates purchase attempts, applies upgrades to player character, and handles special purchases (health, score conversion).
+Description: Manages upgrade shop logic and purchases.
 */
 
 package manager;
